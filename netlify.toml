@@ -21,3 +21,9 @@
   for = "/*.glb"
   [headers.values]
     Content-Type = "model/gltf-binary"
+
+# Sin este tipo MIME el navegador no ofrece "añadir a la pantalla de inicio".
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json; charset=utf-8"

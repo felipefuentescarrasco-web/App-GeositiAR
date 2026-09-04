@@ -1,3 +1,8 @@
+# dependencias del CLI de despliegue: no van al repositorio
+node_modules/
+package-lock.json
+package.json
+
 # archivos temporales de Python
 __pycache__/
 *.pyc

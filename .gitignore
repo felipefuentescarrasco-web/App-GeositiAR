@@ -1,0 +1,13 @@
+# archivos temporales de Python
+__pycache__/
+*.pyc
+
+# renders de comprobación de tools/vista_malla.py
+*_planta.png
+*_frente.png
+*_final.png
+
+# sistema
+Thumbs.db
+.DS_Store
+.netlify/

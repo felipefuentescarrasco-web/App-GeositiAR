@@ -1,0 +1,23 @@
+# Configuración de despliegue en Netlify.
+# La app es estática: no hay build, se publica la carpeta tal cual.
+
+[build]
+  publish = "."
+  command = ""
+
+# El service worker no debe quedarse pegado en una versión vieja.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+# Los modelos y las fotos sí conviene que el navegador los guarde.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/*.glb"
+  [headers.values]
+    Content-Type = "model/gltf-binary"

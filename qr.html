@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carteles QR · GeoParquemet</title>
+<style>
+  :root { --tinta: #1c2b26; --lava: #c1622f; --gris: #6b7a72; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: #eceae4; color: var(--tinta);
+    font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif; line-height: 1.5;
+  }
+  header { background: var(--tinta); color: #f4f1ea; padding: 22px 20px; }
+  header h1 { margin: 0 0 6px; font-size: 1.4rem; }
+  header p { margin: 0; opacity: .8; font-size: .9rem; max-width: 70ch; }
+  .panel {
+    background: #fff; margin: 18px auto; max-width: 900px; padding: 18px 20px;
+    border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,.12);
+  }
+  label { display: block; font-size: .85rem; color: var(--gris); margin-bottom: 4px; }
+  input[type=text], select {
+    width: 100%; padding: 10px 12px; border: 1px solid #ccc6bd; border-radius: 8px;
+    font: inherit; margin-bottom: 12px;
+  }
+  .fila { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; }
+  .fila > div { flex: 1 1 240px; }
+  button {
+    padding: 11px 18px; border: 0; border-radius: 999px; background: var(--lava);
+    color: #fff; font: inherit; font-weight: 600; cursor: pointer;
+  }
+  button.sec { background: #e3ded6; color: var(--tinta); }
+
+  .carteles { max-width: 900px; margin: 0 auto 40px; display: grid; gap: 18px; }
+
+  .cartel {
+    background: #fff; border-radius: 10px; padding: 20px 22px;
+    display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,.12); break-inside: avoid;
+    border-top: 8px solid var(--lava);
+  }
+  .cartel .num {
+    display: inline-block; background: var(--lava); color: #fff; border-radius: 999px;
+    padding: 2px 12px; font-size: .8rem; font-weight: 700; letter-spacing: .04em;
+  }
+  .cartel h2 { margin: 8px 0 4px; font-size: 1.25rem; line-height: 1.2; }
+  .cartel .sub { margin: 0 0 10px; color: var(--gris); font-size: .92rem; }
+  .cartel .instruccion { margin: 0; font-size: .85rem; }
+  .cartel .instruccion b { color: var(--lava); }
+  .cartel .pie {
+    margin-top: 12px; padding-top: 10px; border-top: 1px solid #e3ded6;
+    font-size: .72rem; color: var(--gris); display: flex; gap: 10px; justify-content: space-between;
+  }
+  .qr { text-align: center; }
+  .qr canvas, .qr img { display: block; }
+  .qr .codigo { font-size: .72rem; color: var(--gris); margin-top: 6px; letter-spacing: .06em; }
+
+  @media print {
+    body { background: #fff; }
+    header, .panel, .no-imprimir { display: none !important; }
+    .carteles { gap: 0; margin: 0; max-width: none; }
+    .cartel {
+      box-shadow: none; border: 1px solid #ddd; border-top: 8px solid var(--lava);
+      page-break-after: always; height: 96vh; align-content: center;
+    }
+    .cartel:last-child { page-break-after: auto; }
+  }
+  @page { size: A5 landscape; margin: 12mm; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Carteles QR de los geositios</h1>
+  <p>Herramienta interna para el equipo del parque. Genera un código por geositio que,
+     al escanearse, abre su ficha en la app: fotografías interpretadas, modelo 3D,
+     panorámica 360° y descripción geológica. Imprime esta página para obtener un
+     cartel por hoja.</p>
+</header>
+
+<div class="panel no-imprimir">
+  <div class="fila">
+    <div>
+      <label for="base">Dirección donde está publicada la app</label>
+      <input type="text" id="base" placeholder="https://geoparquemet.sernageomin.cl/app/">
+    </div>
+    <div style="flex:0 0 auto">
+      <label for="tam">Tamaño del QR</label>
+      <select id="tam">
+        <option value="180">Mediano (180 px)</option>
+        <option value="240" selected>Grande (240 px)</option>
+        <option value="320">Muy grande (320 px)</option>
+      </select>
+    </div>
+  </div>
+  <div class="fila">
+    <button type="button" id="btnGenerar">Actualizar carteles</button>
+    <button type="button" class="sec" id="btnImprimir">Imprimir</button>
+    <button type="button" class="sec" id="btnPng">Descargar los QR en PNG</button>
+  </div>
+  <p style="font-size:.82rem;color:var(--gris);margin:14px 0 0">
+    El código apunta a <code>&lt;dirección&gt;#/g/&lt;id&gt;?qr=1</code>. El parámetro
+    <code>qr=1</code> hace que el geositio quede marcado como visitado. Los códigos usan
+    corrección de errores alta: siguen leyéndose con una esquina rayada o sucia.
+  </p>
+</div>
+
+<div class="carteles" id="carteles"></div>
+
+<script src="js/datos.js"></script>
+<script src="js/vendor/qrcode.min.js"></script>
+<script>
+(function () {
+  const contenedor = document.getElementById('carteles');
+  const campoBase = document.getElementById('base');
+  const campoTam = document.getElementById('tam');
+
+  /* Por defecto, la misma carpeta donde vive esta página. */
+  campoBase.value = location.href.replace(/qr\.html.*$/, '') + 'index.html';
+
+  function generar() {
+    const base = campoBase.value.trim() || 'index.html';
+    const tam = parseInt(campoTam.value, 10);
+    contenedor.innerHTML = '';
+
+    GEOSITIOS.forEach(g => {
+      const url = base + '#/g/' + g.id + '?qr=1';
+
+      const cajaQR = document.createElement('div');
+      new QRCode(cajaQR, {
+        text: url, width: tam, height: tam,
+        colorDark: '#1c2b26', colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+
+      const cartel = document.createElement('div');
+      cartel.className = 'cartel';
+      cartel.innerHTML =
+        '<div>' +
+          '<span class="num">GEOSITIO ' + g.num + '</span>' +
+          '<h2>' + g.nombre + '</h2>' +
+          '<p class="sub">' + (g.subtitulo || g.interes) + '</p>' +
+          '<p class="instruccion"><b>Escanea este código</b> con la cámara de tu teléfono ' +
+            'y verás la interpretación geológica de lo que tienes al frente: fotografías ' +
+            'con la geología dibujada encima' +
+            (g.modelo ? ', el modelo 3D del afloramiento' : '') +
+            (g.pano ? ' y la panorámica 360°' : '') + '.</p>' +
+          '<div class="pie"><span>' + UNIDADES[g.unidad].nombre + ' · ' + g.alt + ' m s.n.m.</span>' +
+          '<span>SERNAGEOMIN · PARQUEMET</span></div>' +
+        '</div>';
+
+      const zona = document.createElement('div');
+      zona.className = 'qr';
+      zona.appendChild(cajaQR);
+      const codigo = document.createElement('div');
+      codigo.className = 'codigo';
+      codigo.textContent = g.codigo;
+      zona.appendChild(codigo);
+      cartel.appendChild(zona);
+
+      cartel.dataset.nombre = 'QR_geositio_' + String(g.num).padStart(2, '0');
+      contenedor.appendChild(cartel);
+    });
+  }
+
+  /* Guarda cada QR como PNG, uno por uno, para rotularlos en otro programa. */
+  function descargarPng() {
+    Array.from(contenedor.querySelectorAll('.cartel')).forEach((cartel, i) => {
+      const lienzo = cartel.querySelector('canvas');
+      if (!lienzo) return;
+      setTimeout(() => {
+        const a = document.createElement('a');
+        a.href = lienzo.toDataURL('image/png');
+        a.download = cartel.dataset.nombre + '.png';
+        a.click();
+      }, i * 350);
+    });
+  }
+
+  document.getElementById('btnGenerar').addEventListener('click', generar);
+  document.getElementById('btnImprimir').addEventListener('click', () => window.print());
+  document.getElementById('btnPng').addEventListener('click', descargarPng);
+  generar();
+})();
+</script>
+</body>
+</html>

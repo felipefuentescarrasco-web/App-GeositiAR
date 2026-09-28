@@ -130,13 +130,13 @@ const App = (() => {
 
   /* ------------------------------------------------- descarga sin conexión */
 
-  /* Las rutas propias llevan ?v=7, igual que en index.html, para que la copia
+  /* Las rutas propias llevan ?v=8, igual que en index.html, para que la copia
      guardada corresponda exactamente a la que pide la página. */
   const ARCHIVOS_BASE = [
-    'index.html', 'manifest.webmanifest', 'css/app.css?v=7',
-    'js/datos.js?v=7', 'js/util.js?v=7', 'js/cortina.js?v=7', 'js/visor3d.js?v=7',
-    'js/pano.js?v=7', 'js/mapa.js?v=7', 'js/corte.js?v=7', 'js/escaner.js?v=7',
-    'js/vistas.js?v=7', 'js/app.js?v=7',
+    'index.html', 'manifest.webmanifest', 'css/app.css?v=8',
+    'js/datos.js?v=8', 'js/util.js?v=8', 'js/cortina.js?v=8', 'js/visor3d.js?v=8',
+    'js/pano.js?v=8', 'js/mapa.js?v=8', 'js/corte.js?v=8', 'js/escaner.js?v=8',
+    'js/vistas.js?v=8', 'js/app.js?v=8',
     'js/vendor/three.min.js', 'js/vendor/GLTFLoader.js', 'js/vendor/OrbitControls.js',
     'js/vendor/jsqr.js',
     'assets/icons/icono-192.png', 'assets/icons/icono-512.png'

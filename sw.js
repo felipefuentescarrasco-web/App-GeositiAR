@@ -8,7 +8,7 @@
    Las teselas del mapa se guardan aparte, a medida que se navega, para que el
    tramo ya recorrido siga viéndose sin señal. */
 
-const VERSION = 'v7';
+const VERSION = 'v8';
 const CACHE_ESQUELETO = 'geoparquemet-esqueleto-' + VERSION;
 const CACHE_CONTENIDO = 'geoparquemet-contenido';
 const CACHE_TESELAS = 'geoparquemet-teselas';
@@ -18,17 +18,17 @@ const ESQUELETO = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './css/app.css?v=7',
-  './js/datos.js?v=7',
-  './js/util.js?v=7',
-  './js/cortina.js?v=7',
-  './js/visor3d.js?v=7',
-  './js/pano.js?v=7',
-  './js/mapa.js?v=7',
-  './js/corte.js?v=7',
-  './js/escaner.js?v=7',
-  './js/vistas.js?v=7',
-  './js/app.js?v=7',
+  './css/app.css?v=8',
+  './js/datos.js?v=8',
+  './js/util.js?v=8',
+  './js/cortina.js?v=8',
+  './js/visor3d.js?v=8',
+  './js/pano.js?v=8',
+  './js/mapa.js?v=8',
+  './js/corte.js?v=8',
+  './js/escaner.js?v=8',
+  './js/vistas.js?v=8',
+  './js/app.js?v=8',
   './js/vendor/three.min.js',
   './js/vendor/GLTFLoader.js',
   './js/vendor/OrbitControls.js',
@@ -111,10 +111,14 @@ self.addEventListener('fetch', ev => {
     return;
   }
 
-  /* Navegación: si no hay red, se entrega el esqueleto guardado. */
+  /* Navegación: si no hay red, se entrega el esqueleto guardado. Si tampoco
+     está en caché hay que responder algo legible: devolver undefined desde
+     respondWith deja la pantalla en blanco. */
   if (req.mode === 'navigate') {
     ev.respondWith(
-      fetch(req).catch(() => caches.match('./index.html'))
+      fetch(req).catch(() =>
+        caches.match('./index.html').then(hit => hit || paginaSinConexion())
+      )
     );
     return;
   }
@@ -128,6 +132,28 @@ self.addEventListener('fetch', ev => {
         caches.open(CACHE_ESQUELETO).then(c => c.put(req, copia));
       }
       return res;
-    }).catch(() => caches.match(req))
+    }).catch(() =>
+      /* Sin copia guardada conviene un error explícito: si se devuelve
+         undefined, el script no carga y la app se queda en negro. */
+      caches.match(req).then(hit => hit || Response.error())
+    )
   );
 });
+
+function paginaSinConexion() {
+  return new Response(
+    '<!DOCTYPE html><html lang="es"><meta charset="utf-8">' +
+    '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>Sin conexion · GeoParquemet</title>' +
+    '<body style="margin:0;display:grid;place-items:center;min-height:100vh;' +
+    'background:#1c2b26;color:#f4f1ea;font-family:system-ui,sans-serif;text-align:center">' +
+    '<div style="padding:24px;max-width:32ch">' +
+    '<h1 style="font-size:1.3rem">Sin conexión</h1>' +
+    '<p style="color:#93a49b">Todavía no se alcanzó a guardar la app para usarla sin ' +
+    'señal. Conéctate un momento y vuelve a abrirla.</p>' +
+    '<button onclick="location.reload()" style="min-height:48px;padding:0 24px;border:0;' +
+    'border-radius:999px;background:#c1622f;color:#fff;font:inherit;font-weight:600">' +
+    'Reintentar</button></div></body></html>',
+    { headers: { 'Content-Type': 'text/html; charset=utf-8' }, status: 503 }
+  );
+}

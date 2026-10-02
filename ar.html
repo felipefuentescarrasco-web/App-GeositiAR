@@ -261,10 +261,14 @@ if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { fallo(t('
 // deforma y se arrastra detrás del movimiento. Aquí se le deja casi sin filtro y se suaviza la pose
 // completa (posición + rotación) con un tiempo de respuesta que se acorta cuando el movimiento es real
 // y se alarga cuando es solo temblor de la mano.
+// Cada nivel: tiempos de respuesta con el teléfono quieto (lento) y en movimiento (rapido), cuánto cambio de
+// pose se toma como movimiento real si no hay giroscopio (umbralPos, fracción de la distancia; umbralAng,
+// radianes), giro del teléfono que ya cuenta como movimiento pleno (giroMov, grados por segundo) y cuántas
+// poses recientes entran a la mediana (ventana).
 const NIVELES = {
-  agil: { lento: .06, rapido: .02, umbralPos: .02, umbralAng: .03 },
-  media: { lento: .2, rapido: .05, umbralPos: .03, umbralAng: .05 },
-  firme: { lento: .5, rapido: .08, umbralPos: .05, umbralAng: .09 }
+  agil: { lento: .12, rapido: .03, umbralPos: .04, umbralAng: .06, giroMov: 20, ventana: 3 },
+  media: { lento: .35, rapido: .05, umbralPos: .06, umbralAng: .1, giroMov: 25, ventana: 5 },
+  firme: { lento: .8, rapido: .08, umbralPos: .1, umbralAng: .15, giroMov: 30, ventana: 7 }
 };
 let nivel = leer('geoparquemet:ra-estabilidad', 'media');
 if (!NIVELES[nivel]) nivel = 'media';
@@ -347,30 +351,90 @@ function cambiarFuente(f) {
   if (!antes && navigator.vibrate) try { navigator.vibrate(60); } catch { }
 }
 
+// ---------- giroscopio ----------
+// Distingue temblor de movimiento real: si el teléfono no gira, un cambio grande de pose es ruido del
+// detector y se suaviza fuerte; si gira, la capa debe seguirlo rápido. (En iPhone hay que pedir permiso
+// con un toque; en Android llega solo.)
+let giro = null, tGiro = 0;
+addEventListener('devicemotion', e => {
+  const r = e.rotationRate;
+  if (!r || r.alpha == null) return;
+  const g = Math.hypot(r.alpha || 0, r.beta || 0, r.gamma || 0);
+  giro = giro === null ? g : giro * .6 + g * .4;
+  tGiro = performance.now();
+});
+if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function')
+  addEventListener('pointerdown', () => { DeviceMotionEvent.requestPermission().catch(() => { }); }, { once: true });
+
+// ---------- suavizado ----------
 const pObj = new THREE.Vector3(), qObj = new THREE.Quaternion(), sObj = new THREE.Vector3();
 const pSua = new THREE.Vector3(), qSua = new THREE.Quaternion(), sSua = new THREE.Vector3();
+const pMed = new THREE.Vector3(), qMed = new THREE.Quaternion(), sMed = new THREE.Vector3();
 let reiniciarSuavizado = true, tPrevio = performance.now();
+const recientes = [];               // últimas poses distintas que entregó MindAR
+let ultimaMatriz = null;
+const mediana = xs => { const a = xs.slice().sort((x, y) => x - y); return a[a.length >> 1]; };
+// Pose robusta: mediana por componente de la posición y la escala, y la rotación de la pose más cercana a
+// esa mediana. Un salto aislado del detector no mueve la capa; para moverla hacen falta varias poses que
+// coincidan (la mitad de la ventana).
+function poseRobusta(ancla, N) {
+  const m = ancla.group.matrix.elements;
+  if (!ultimaMatriz || m.some((x, i) => x !== ultimaMatriz[i])) {
+    ultimaMatriz = m.slice();
+    const p = new THREE.Vector3(), q = new THREE.Quaternion(), e = new THREE.Vector3();
+    ancla.group.matrix.decompose(p, q, e);
+    recientes.push({ p, q, e });
+    while (recientes.length > N.ventana) recientes.shift();
+  }
+  if (!recientes.length) return false;
+  pMed.set(mediana(recientes.map(r => r.p.x)), mediana(recientes.map(r => r.p.y)), mediana(recientes.map(r => r.p.z)));
+  sMed.set(mediana(recientes.map(r => r.e.x)), mediana(recientes.map(r => r.e.y)), mediana(recientes.map(r => r.e.z)));
+  let mejor = recientes[0], dm = Infinity;
+  for (const r of recientes) { const d = r.p.distanceTo(pMed); if (d < dm) { dm = d; mejor = r; } }
+  qMed.copy(mejor.q);
+  return true;
+}
+
+// Las fotos de la roca se traslapan: si se pierde un momento, durante 2,5 s se vuelve a buscar la misma
+// foto en vez de saltar a otra (cada una trae su propia capa, y el cambio se veía como un brinco).
+let parFijo = -1, tPerdida = 0;
+function mantenerPar() {
+  const c = mind.controller, st = c && c.trackingStates;
+  if (!st) return;
+  const i = st.findIndex((x, j) => j !== IDX_HOJA && x.isTracking);
+  if (i >= 0) { parFijo = i; tPerdida = 0; return; }
+  if (parFijo < 0) return;
+  if (!tPerdida) tPerdida = performance.now();
+  if (performance.now() - tPerdida < 2500) { if (c.interestedTargetIndex === -1) c.interestedTargetIndex = parFijo; }
+  else { parFijo = -1; if (c.interestedTargetIndex !== IDX_HOJA) c.interestedTargetIndex = -1; }
+}
+
 function suavizar() {
   const ahora = performance.now(), dt = Math.min((ahora - tPrevio) / 1000, .1);
   tPrevio = ahora;
   if (congelado) return;
   if (HOJA) reservarHoja();
+  mantenerPar();
   const f = elegirFuente();
   const clave = f ? f.tipo + f.par : '';
-  if (clave !== claveFuente) { claveFuente = clave; cambiarFuente(f); }
+  if (clave !== claveFuente) { claveFuente = clave; recientes.length = 0; ultimaMatriz = null; cambiarFuente(f); }
   autoCalibrar();
   if (!f) return;
-  f.ancla.group.matrix.decompose(pObj, qObj, sObj);
+  const N = NIVELES[nivel];
+  if (!poseRobusta(f.ancla, N)) return;
   if (reiniciarSuavizado) {
-    pSua.copy(pObj); qSua.copy(qObj); sSua.copy(sObj); reiniciarSuavizado = false;
+    pSua.copy(pMed); qSua.copy(qMed); sSua.copy(sMed); reiniciarSuavizado = false;
   } else {
-    const N = NIVELES[nivel];
-    const errPos = pSua.distanceTo(pObj) / Math.max(pObj.length(), 1e-6);
-    const errAng = qSua.angleTo(qObj);
-    const k = Math.min(1, Math.max(errPos / N.umbralPos, errAng / N.umbralAng));
+    let k;
+    if (giro !== null && ahora - tGiro < 500) {
+      k = Math.min(1, Math.max(0, (giro - 2) / N.giroMov));          // 0 quieto … 1 girando
+    } else {
+      const errPos = pSua.distanceTo(pMed) / Math.max(pMed.length(), 1e-6);
+      k = Math.min(1, Math.max(errPos / N.umbralPos, qSua.angleTo(qMed) / N.umbralAng));
+    }
     const tau = N.lento * (1 - k) + N.rapido * k;
     const a = 1 - Math.exp(-dt / tau);
-    pSua.lerp(pObj, a); qSua.slerp(qObj, a); sSua.lerp(sObj, a);
+    pSua.lerp(pMed, a); qSua.slerp(qMed, a); sSua.lerp(sMed, a);
   }
   soporte.matrix.compose(pSua, qSua, sSua);
   soporte.matrixWorldNeedsUpdate = true;
@@ -392,10 +456,24 @@ function reservarHoja() {
 let autoPendiente = HOJA && !calib;
 const muestras = [];
 const relTmp = new THREE.Matrix4(), invHoja = new THREE.Matrix4();
+// Solo se calibra con una pose de roca creíble: las fotos de referencia muestran el talud completo, así que
+// la foto proyectada debe verse más o menos de frente y con un ancho parecido al de la pantalla. Un
+// acercamiento a un trozo de roca puede "reconocerse" con una pose disparatada, y calibrar con ella deja la
+// capa fuera de lugar.
+const vA = new THREE.Vector3(), vB = new THREE.Vector3(), nRoca = new THREE.Vector3();
+function rocaCreible(ancla, par) {
+  const p = o.pares[par], m = ancla.group.matrix;
+  vA.set(-.5, 0, 0).applyMatrix4(m).project(camera);
+  vB.set(.5, 0, 0).applyMatrix4(m).project(camera);
+  const ancho = Math.abs(vB.x - vA.x) / 2;                 // fracción del ancho de pantalla
+  nRoca.set(0, 0, 1).transformDirection(m);
+  const deFrente = Math.abs(nRoca.z);                      // 1 = de frente a la cámara
+  return ancho > .5 && ancho < 3 && deFrente > .6 && p;
+}
 function autoCalibrar() {
   if (!autoPendiente || calibrando) return;
   const i = anclasRoca.findIndex(a => a.group.visible);
-  if (i < 0 || !anclaHoja.group.visible) { muestras.length = 0; return; }
+  if (i < 0 || !anclaHoja.group.visible || !rocaCreible(anclasRoca[i], i)) { muestras.length = 0; return; }
   if (muestras.length && muestras[0].i !== i) muestras.length = 0;
   invHoja.copy(anclaHoja.group.matrix).invert();
   relTmp.multiplyMatrices(invHoja, anclasRoca[i].group.matrix);
@@ -411,6 +489,10 @@ function autoCalibrar() {
     Q.set(Q.x + sg * m.q.x, Q.y + sg * m.q.y, Q.z + sg * m.q.z, Q.w + sg * m.q.w);
   }
   P.divideScalar(muestras.length); E.divideScalar(muestras.length); Q.normalize();
+  // las muestras tienen que coincidir entre sí (la hoja quieta respecto de la roca); si no, se empieza de nuevo
+  const disp = Math.sqrt(muestras.reduce((a, m) => a + m.p.distanceToSquared(P), 0) / muestras.length) / Math.max(P.length(), 1e-6);
+  const giroMax = Math.max(...muestras.map(m => m.q.angleTo(Q)));
+  if (disp > .08 || giroMax > .12) { muestras.length = 0; return; }
   guardarCalib({ par: i, m: new THREE.Matrix4().compose(P, Q, E).toArray(), auto: true });
   autoPendiente = false; muestras.length = 0;
   if (navigator.vibrate) try { navigator.vibrate([60, 60, 120]); } catch { }

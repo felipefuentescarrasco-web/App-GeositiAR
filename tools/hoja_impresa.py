@@ -1,4 +1,5 @@
-"""Arma el PDF para imprimir con el marcador de RA (ar/hoja-ra.pdf): una página A4 por geositio con RA.
+"""Arma los PDF para imprimir con el marcador de RA (ar/hoja-ra.pdf en A4 y ar/hoja-ra-a3.pdf en A3):
+una página por geositio con RA. La hoja A3 se reconoce desde casi el doble de distancia.
 
 Lo que sigue la cámara es el patrón (ar/marcador.png), igual en todas las hojas. El QR solo abre la RA
 del geositio con el escáner de la app; si se pasa una dirección base (python tools/hoja_impresa.py
@@ -13,6 +14,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 DPI = 200
 MM = DPI / 25.4
 A4 = (int(210 * MM), int(297 * MM))
+A3 = (int(297 * MM), int(420 * MM))
 NOMBRES = {1: 'Caída de bloques de roca volcánica', 2: 'Dique en rocas volcánicas',
            3: 'Vegetación, roca y suelo', 6: 'Contacto de roca volcánica con roca intrusiva'}
 
@@ -24,11 +26,11 @@ def fuente(t, negrita=False):
         return ImageFont.load_default()
 
 
-def pagina(n, base, marca):
-    im = Image.new('RGB', A4, 'white')
+def pagina(n, base, marca, papel=A4):
+    im = Image.new('RGB', papel, 'white')
     d = ImageDraw.Draw(im)
-    lado = int(190 * MM)
-    x0 = (A4[0] - lado) // 2
+    lado = papel[0] - int(20 * MM)
+    x0 = (papel[0] - lado) // 2
     y0 = int(12 * MM)
     im.paste(marca.resize((lado, lado), Image.LANCZOS), (x0, y0))
     texto = f'{base}ar.html?g={n}&m=1' if base else f'GEOPARQUEMET-RA-G{n}'
@@ -49,7 +51,7 @@ def pagina(n, base, marca):
     ]
     for i, l in enumerate(lineas):
         d.text((tx, yq + int((16 + i * 6) * MM)), l, fill='#333333', font=fuente(int(3.1 * MM)))
-    d.text((x0, A4[1] - int(8 * MM)), 'Imprimir al 100 % (sin "ajustar a página"), en papel mate. GeoParquemet · Sernageomin',
+    d.text((x0, papel[1] - int(8 * MM)), 'Imprimir al 100 % (sin "ajustar a página"), en papel mate. GeoParquemet · Sernageomin',
            fill='#777777', font=fuente(int(2.8 * MM)))
     return im
 
@@ -58,10 +60,11 @@ def main():
     base = sys.argv[1] if len(sys.argv) > 1 else ''
     if base and not base.endswith('/'): base += '/'
     marca = Image.open(RAIZ / 'ar' / 'marcador.png').convert('RGB')
-    paginas = [pagina(n, base, marca) for n in (1, 2, 3, 6)]
-    sal = RAIZ / 'ar' / 'hoja-ra.pdf'
-    paginas[0].save(sal, save_all=True, append_images=paginas[1:], resolution=DPI)
-    print('guardado', sal)
+    for papel, nombre in ((A4, 'hoja-ra.pdf'), (A3, 'hoja-ra-a3.pdf')):
+        paginas = [pagina(n, base, marca, papel) for n in (1, 2, 3, 6)]
+        sal = RAIZ / 'ar' / nombre
+        paginas[0].save(sal, save_all=True, append_images=paginas[1:], resolution=DPI)
+        print('guardado', sal)
 
 
 if __name__ == '__main__':

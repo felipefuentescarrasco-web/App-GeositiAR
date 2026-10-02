@@ -731,7 +731,7 @@ const Vistas = (() => {
       U.el('h2', { style: 'margin-top:22px', texto: 'Uso sin conexión' }),
       U.el('p', { clase: 'pequeno tenue',
         texto: 'En el cerro la señal es irregular. Descarga el contenido antes de salir: ' +
-               'ocupa unos 95 MB con fotos, modelos 3D y panorámicas.' }),
+               'ocupa unos 120 MB con fotos, modelos 3D y panorámicas.' }),
       btnDescarga, estadoDescarga,
 
       U.el('h2', { style: 'margin-top:22px', texto: 'Tu recorrido' }),

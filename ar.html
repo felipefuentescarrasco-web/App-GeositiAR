@@ -34,6 +34,7 @@
   .deslizador { display: flex; align-items: center; gap: 10px; font-size: .82rem; }
   .deslizador input { flex: 1; accent-color: var(--lava); height: 28px; }
   .ok { color: #7ee07e; font-weight: 700; }
+  .aviso-calib { color: #ffc766; font-weight: 700; }
   .aviso { font-size: .8rem; opacity: .8; margin-top: 8px; }
   .aviso a { color: #ffc766; }
   .fila { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 8px; font-size: .8rem; }
@@ -97,9 +98,9 @@
     <div class="fila">
       <button id="btn-fijar" class="fijar" aria-pressed="false"></button>
       <button id="btn-carteles" aria-pressed="true" hidden></button>
+      <button id="btn-recalib" class="sec" hidden></button>
       <button id="btn-calibrar" class="sec" hidden></button>
     </div>
-    <div class="miniaturas" id="capas-hoja" style="margin-top:8px" hidden></div>
     <p class="aviso" id="txt-toca" hidden></p>
   </div>
   <div id="calibrando" hidden>
@@ -122,8 +123,13 @@ const TXT_RA = {
   es: {
     titulo: 'Geositio {n} · RA', cargando: 'Preparando la cámara…', roca: 'Roca', interp: 'Interpretación',
     apunta: 'Apunta la cámara a la roca con un encuadre parecido a esta foto. Cuando la reconozca, verás la interpretación encima.',
-    apunta_hoja: 'Apunta la cámara a la hoja impresa pegada en la roca. Acércate hasta que la hoja ocupe al menos un cuarto de la pantalla.',
+    apunta_hoja: 'Apunta a la roca con la hoja pegada, con un encuadre parecido a una de estas fotos. La primera vez la app ubica sola la capa respecto de la hoja; después basta con ver la hoja.',
+    apunta_hoja_corto: 'Apunta a la hoja para ajustar la capa.',
     encontrado: '✓ Roca reconocida', encontrado_hoja: '✓ Hoja reconocida',
+    encontrado_roca_hoja: '✓ Roca reconocida. Si también se ve la hoja, la app se calibra sola.',
+    falta_calib: 'Hoja reconocida, falta calibrar: aléjate hasta que se vea también la roca con un encuadre parecido a las fotos, o usa «Ajustar a mano».',
+    calib_auto: '✓ Calibrada con la roca: ahora basta con ver la hoja', recalib: '🔄 Calibrar con la roca', ajustar: '✋ Ajustar a mano',
+    recalib_ayuda: 'Apunta para que se vean juntas la hoja y la roca, con un encuadre parecido a las fotos, y quédate quieto un par de segundos.',
     prueba: '¿No estás en el lugar? Toca una foto para verla en grande y apunta otro teléfono hacia ella.',
     prueba_hoja: 'Imprime la hoja desde <a href="ar/hoja-ra.pdf">ar/hoja-ra.pdf</a> y pégala plana sobre la cara de la roca.',
     no_hay: 'Este geositio todavía no tiene realidad aumentada.', sin_camara: 'No se pudo abrir la cámara de este dispositivo.',
@@ -131,7 +137,7 @@ const TXT_RA = {
     carteles: '🏷️ Carteles', toca: 'Toca un ícono para saber más.', curiosos: '🤓 Para curiosos', cerrar: 'Cerrar', escuchar: '🔊 Escuchar', pausa: '⏸ Pausa',
     modo_roca: 'Roca', modo_hoja: 'Hoja', fijar: '📌 Fijar imagen', soltar: '▶ Seguir cámara',
     estab: 'Estabilidad', agil: 'Ágil', media: 'Media', firme: 'Firme',
-    calibrar: '🎯 Calibrar', guardar: '✓ Guardar', cancelar: 'Cancelar', reiniciar: 'Reiniciar', copiar: 'Copiar valores',
+    calibrar: '🎯 Calibrar', guardar: '✓ Guardar', cancelar: 'Cancelar', reiniciar: 'Borrar calibración', copiar: 'Copiar valores',
     calib_ayuda: 'Imagen fijada. Arrastra la capa con un dedo; pellizca o gira con dos para que calce con la roca. Después, Guardar.',
     calib_ok: 'Calibración guardada en este teléfono', copiado: 'Valores copiados: envíalos para dejarlos fijos en la app',
     elige_capa: 'Capa a mostrar:'
@@ -139,8 +145,13 @@ const TXT_RA = {
   en: {
     titulo: 'Geosite {n} · AR', cargando: 'Starting the camera…', roca: 'Rock', interp: 'Interpretation',
     apunta: 'Point the camera at the rock with a framing similar to this photo. Once it is recognized, the interpretation appears on top.',
-    apunta_hoja: 'Point the camera at the printed sheet stuck on the rock. Get close until the sheet fills at least a quarter of the screen.',
+    apunta_hoja: 'Point at the rock with the sheet stuck on it, framing it like one of these photos. The first time, the app places the layer relative to the sheet by itself; after that, seeing the sheet is enough.',
+    apunta_hoja_corto: 'Point at the sheet to adjust the layer.',
     encontrado: '✓ Rock recognized', encontrado_hoja: '✓ Sheet recognized',
+    encontrado_roca_hoja: '✓ Rock recognized. If the sheet is also in view, the app calibrates itself.',
+    falta_calib: 'Sheet recognized, not calibrated yet: step back until the rock is also in view, framed like the photos, or use “Adjust by hand”.',
+    calib_auto: '✓ Calibrated with the rock: now seeing the sheet is enough', recalib: '🔄 Calibrate with the rock', ajustar: '✋ Adjust by hand',
+    recalib_ayuda: 'Frame the sheet and the rock together, like the photos, and hold still for a couple of seconds.',
     prueba: 'Not on site? Tap a photo to view it full screen and point another phone at it.',
     prueba_hoja: 'Print the sheet from <a href="ar/hoja-ra.pdf">ar/hoja-ra.pdf</a> and stick it flat on the rock face.',
     no_hay: 'This geosite does not have augmented reality yet.', sin_camara: 'The camera on this device could not be opened.',
@@ -148,7 +159,7 @@ const TXT_RA = {
     carteles: '🏷️ Labels', toca: 'Tap an icon to learn more.', curiosos: '🤓 For the curious', cerrar: 'Close', escuchar: '🔊 Listen', pausa: '⏸ Pause',
     modo_roca: 'Rock', modo_hoja: 'Sheet', fijar: '📌 Freeze image', soltar: '▶ Follow camera',
     estab: 'Stability', agil: 'Quick', media: 'Medium', firme: 'Steady',
-    calibrar: '🎯 Calibrate', guardar: '✓ Save', cancelar: 'Cancel', reiniciar: 'Reset', copiar: 'Copy values',
+    calibrar: '🎯 Calibrate', guardar: '✓ Save', cancelar: 'Cancel', reiniciar: 'Clear calibration', copiar: 'Copy values',
     calib_ayuda: 'Image frozen. Drag the layer with one finger; pinch or twist with two until it matches the rock. Then Save.',
     calib_ok: 'Calibration saved on this phone', copiado: 'Values copied: send them so they can be fixed in the app',
     elige_capa: 'Layer to show:'
@@ -156,8 +167,13 @@ const TXT_RA = {
   pt: {
     titulo: 'Geossítio {n} · RA', cargando: 'Preparando a câmera…', roca: 'Rocha', interp: 'Interpretação',
     apunta: 'Aponte a câmera para a rocha com um enquadramento parecido com esta foto. Quando ela for reconhecida, a interpretação aparece por cima.',
-    apunta_hoja: 'Aponte a câmera para a folha impressa colada na rocha. Aproxime-se até a folha ocupar pelo menos um quarto da tela.',
+    apunta_hoja: 'Aponte para a rocha com a folha colada, com um enquadramento parecido com uma destas fotos. Na primeira vez o app posiciona a camada em relação à folha sozinho; depois basta ver a folha.',
+    apunta_hoja_corto: 'Aponte para a folha para ajustar a camada.',
     encontrado: '✓ Rocha reconhecida', encontrado_hoja: '✓ Folha reconhecida',
+    encontrado_roca_hoja: '✓ Rocha reconhecida. Se a folha também aparecer, o app se calibra sozinho.',
+    falta_calib: 'Folha reconhecida, falta calibrar: afaste-se até a rocha também aparecer, enquadrada como nas fotos, ou use “Ajustar à mão”.',
+    calib_auto: '✓ Calibrado com a rocha: agora basta ver a folha', recalib: '🔄 Calibrar com a rocha', ajustar: '✋ Ajustar à mão',
+    recalib_ayuda: 'Enquadre a folha e a rocha juntas, como nas fotos, e fique parado por alguns segundos.',
     prueba: 'Não está no local? Toque em uma foto para vê-la em tela cheia e aponte outro celular para ela.',
     prueba_hoja: 'Imprima a folha em <a href="ar/hoja-ra.pdf">ar/hoja-ra.pdf</a> e cole-a bem plana na face da rocha.',
     no_hay: 'Este geossítio ainda não tem realidade aumentada.', sin_camara: 'Não foi possível abrir a câmera deste aparelho.',
@@ -165,7 +181,7 @@ const TXT_RA = {
     carteles: '🏷️ Placas', toca: 'Toque em um ícone para saber mais.', curiosos: '🤓 Para curiosos', cerrar: 'Fechar', escuchar: '🔊 Ouvir', pausa: '⏸ Pausar',
     modo_roca: 'Rocha', modo_hoja: 'Folha', fijar: '📌 Congelar imagem', soltar: '▶ Seguir câmera',
     estab: 'Estabilidade', agil: 'Ágil', media: 'Média', firme: 'Firme',
-    calibrar: '🎯 Calibrar', guardar: '✓ Salvar', cancelar: 'Cancelar', reiniciar: 'Reiniciar', copiar: 'Copiar valores',
+    calibrar: '🎯 Calibrar', guardar: '✓ Salvar', cancelar: 'Cancelar', reiniciar: 'Apagar calibração', copiar: 'Copiar valores',
     calib_ayuda: 'Imagem congelada. Arraste a camada com um dedo; faça pinça ou gire com dois até coincidir com a rocha. Depois, Salvar.',
     calib_ok: 'Calibração salva neste celular', copiado: 'Valores copiados: envie-os para fixá-los no app',
     elige_capa: 'Camada a mostrar:'
@@ -215,25 +231,27 @@ const o = objetivos[n];
 if (!o) { fallo(t('no_hay')); throw new Error('sin objetivos'); }
 
 // ---------- calibración de la hoja impresa ----------
-// Posición de la capa en unidades del ancho de la hoja (la hoja mide 1 × 1, centrada en 0,0; y hacia arriba):
-// centro (x, y), ancho s y giro r (radianes). Lo guardado en el teléfono manda sobre ar/calibracion.json.
+// La capa se ubica respecto de la hoja con una matriz 4×4 (en coordenadas de la hoja, que mide 1 × 1 y
+// está centrada en 0,0). Se calcula sola la primera vez que la cámara ve a la vez la hoja y la roca con un
+// encuadre parecido a alguna de las fotos: la roca dice dónde va la capa y la hoja guarda esa posición.
+// Después basta con ver la hoja. También se puede ajustar a mano. Lo guardado en el teléfono manda sobre
+// ar/calibracion.json (ahí se pueden dejar fijas las calibraciones copiadas desde terreno).
 const CALIB_BASE = await fetch('ar/calibracion.json').then(r => r.json()).catch(() => ({}));
-// por defecto la capa queda centrada en la hoja, 3 veces más ancha, para que se vea al empezar a calibrar
-const calibDefecto = par => ({ par, x: 0, y: 0, s: 3, r: 0 });
 const calibs = leer('geoparquemet:ra-calib', {});
-let calib = calibs[n] || CALIB_BASE[n] || calibDefecto(0);
-if (!o.pares[calib.par]) calib = calibDefecto(0);
-
-// miniaturas: en modo roca muestran qué encuadre buscar (al tocar se ven en grande);
-// en modo hoja eligen qué capa se dibuja sobre la roca
-const htmlMinis = sel => o.pares.map((p, i) => `<button data-i="${i}" class="${i === sel ? 'activo' : ''}"><img src="${p.obj}" alt=""></button>`).join('');
-if (HOJA) {
-  $('#miniaturas').innerHTML = '';
-  $('#miniaturas').hidden = true;
-} else {
-  $('#miniaturas').innerHTML = htmlMinis(-1);
-  $('#miniaturas').onclick = e => { const b = e.target.closest('button'); if (!b) return; const f = $('#foto-prueba'); f.querySelector('img').src = o.pares[+b.dataset.i].obj; f.hidden = false; };
+const calibValida = c => !!c && !!o.pares[c.par] && Array.isArray(c.m) && c.m.length === 16;
+let calib = calibValida(calibs[n]) ? calibs[n] : calibValida(CALIB_BASE[n]) ? CALIB_BASE[n] : null;
+const calibM = new THREE.Matrix4();
+if (calib) calibM.fromArray(calib.m);
+function guardarCalib(c) {
+  calib = c;
+  if (c) { calibM.fromArray(c.m); calibs[n] = c; } else delete calibs[n];
+  guardar('geoparquemet:ra-calib', calibs);
+  claveFuente = null;            // vuelve a elegir qué seguir en el próximo cuadro
 }
+
+// miniaturas: muestran qué encuadre buscar; al tocar una se ve en grande (sirve para probar desde otra pantalla)
+$('#miniaturas').innerHTML = o.pares.map((p, i) => `<button data-i="${i}"><img src="${p.obj}" alt=""></button>`).join('');
+$('#miniaturas').onclick = e => { const b = e.target.closest('button'); if (!b) return; const f = $('#foto-prueba'); f.querySelector('img').src = o.pares[+b.dataset.i].obj; f.hidden = false; };
 $('#foto-prueba button').onclick = () => $('#foto-prueba').hidden = true;
 
 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { fallo(t('sin_camara')); throw new Error('sin cámara'); }
@@ -257,20 +275,25 @@ $('#estab').onclick = e => {
   $('#estab').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
 };
 
+// En modo hoja se carga un .mind con las fotos de la roca y, al final, la hoja (tools/compilar_marcador.mjs),
+// y se siguen hasta dos objetivos a la vez: así se pueden ver juntas la hoja y la roca.
+const IDX_HOJA = o.pares.length;
 const mind = new MindARThree({
-  container: $('#escena'), imageTargetSrc: HOJA ? 'ar/marcador.mind' : o.mind, maxTrack: 1,
+  container: $('#escena'), imageTargetSrc: HOJA ? `ar/g${n}_hoja.mind` : o.mind, maxTrack: HOJA ? 2 : 1,
   uiLoading: 'no', uiScanning: 'no', uiError: 'no',
   filterMinCF: 1, filterBeta: 0,               // el suavizado lo hace esta página
   warmupTolerance: 3, missTolerance: 12,       // aparece antes y no se apaga por un par de cuadros perdidos
 });
 const { renderer, scene, camera } = mind;
+window.__ra = { mind };          // para diagnosticar desde la consola
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-// "soporte" lleva la pose suavizada del objetivo que se está viendo; la capa cuelga de él
+// "soporte" lleva la pose suavizada del objetivo que se está siguiendo; la capa cuelga de él
 const soporte = new THREE.Group();
 soporte.matrixAutoUpdate = false; soporte.visible = false;
 scene.add(soporte);
-const calibGrupo = new THREE.Group();     // solo se mueve en modo hoja
+const calibGrupo = new THREE.Group();     // identidad al seguir la roca; la calibración al seguir la hoja
+calibGrupo.matrixAutoUpdate = false;
 soporte.add(calibGrupo);
 
 const cargador = new THREE.TextureLoader();
@@ -287,39 +310,42 @@ const planos = o.pares.map(p => {
   return plano;
 });
 
-let activo = -1;            // índice del par que se está mostrando
+let activo = -1;            // índice del par cuya capa se está mostrando (-1: ninguna)
 let congelado = false, calibrando = false, abierto = null;
-const anclas = (HOJA ? [0] : o.pares.map((_, i) => i)).map(i => mind.addAnchor(i));
-
-function mostrarPar(i) {
-  activo = i;
-  planos.forEach((pl, j) => pl.visible = j === i);
-}
-function aplicarCalib() {
-  if (!HOJA) return;
-  calibGrupo.position.set(calib.x, calib.y, 0);
-  calibGrupo.rotation.set(0, 0, calib.r);
-  calibGrupo.scale.setScalar(calib.s);
-}
-aplicarCalib();
-
-function perder() {
-  activo = -1; soporte.visible = false;
-  $('#buscando').hidden = false; $('#viendo').hidden = true; $('#ficha').hidden = true;
-  abierto = null; voz.pause(); capaCarteles.hidden = true;
-}
-anclas.forEach((ancla, i) => {
-  ancla.onTargetFound = () => {
-    if (congelado) return;
-    mostrarPar(HOJA ? calib.par : i);
-    reiniciarSuavizado = true;
-    $('#buscando').hidden = true; $('#viendo').hidden = !!abierto;
-    if (!HOJA) document.querySelectorAll('#miniaturas button').forEach((b, j) => b.classList.toggle('activo', j === i));
-    if (navigator.vibrate) try { navigator.vibrate(60); } catch { }
-  };
-  ancla.onTargetLost = () => { if (!congelado) perder(); };   // con la imagen fijada no se pierde nada
-});
+const anclasRoca = o.pares.map((_, i) => mind.addAnchor(i));
+const anclaHoja = HOJA ? mind.addAnchor(IDX_HOJA) : null;
 $('#opacidad').oninput = e => materiales.forEach(m => m.opacity = e.target.value / 100);
+
+// Qué se sigue en este cuadro: la hoja (si ya está calibrada), si no la roca, y si solo se ve la hoja
+// sin calibrar se avisa qué falta.
+function elegirFuente() {
+  if (anclaHoja && anclaHoja.group.visible && calib) return { tipo: 'hoja', ancla: anclaHoja, par: calib.par };
+  const i = anclasRoca.findIndex(a => a.group.visible);
+  if (i >= 0) return { tipo: 'roca', ancla: anclasRoca[i], par: i };
+  if (anclaHoja && anclaHoja.group.visible) return { tipo: 'sincalib', ancla: anclaHoja, par: -1 };
+  return null;
+}
+let fuente = null, claveFuente = '';
+function cambiarFuente(f) {
+  const antes = fuente;
+  fuente = f; reiniciarSuavizado = true;
+  activo = f ? f.par : -1;
+  planos.forEach((pl, j) => pl.visible = j === activo);
+  if (f && f.tipo === 'hoja') calibGrupo.matrix.copy(calibM); else calibGrupo.matrix.identity();
+  calibGrupo.matrixWorldNeedsUpdate = true;
+  document.querySelectorAll('#miniaturas button').forEach((b, j) => b.classList.toggle('activo', j === activo));
+  if (!f) {
+    soporte.visible = false;
+    $('#buscando').hidden = false; $('#viendo').hidden = true; $('#ficha').hidden = true;
+    abierto = null; voz.pause(); capaCarteles.hidden = true;
+    return;
+  }
+  $('#buscando').hidden = true; $('#viendo').hidden = !!abierto || calibrando;
+  const ok = $('#txt-encontrado');
+  ok.textContent = t(f.tipo === 'hoja' ? 'encontrado_hoja' : f.tipo === 'sincalib' ? 'falta_calib' : HOJA ? 'encontrado_roca_hoja' : 'encontrado');
+  ok.className = f.tipo === 'sincalib' ? 'aviso-calib' : 'ok';
+  if (!antes && navigator.vibrate) try { navigator.vibrate(60); } catch { }
+}
 
 const pObj = new THREE.Vector3(), qObj = new THREE.Quaternion(), sObj = new THREE.Vector3();
 const pSua = new THREE.Vector3(), qSua = new THREE.Quaternion(), sSua = new THREE.Vector3();
@@ -328,9 +354,13 @@ function suavizar() {
   const ahora = performance.now(), dt = Math.min((ahora - tPrevio) / 1000, .1);
   tPrevio = ahora;
   if (congelado) return;
-  const ancla = anclas.find(a => a.group.visible);
-  if (!ancla || activo < 0) { soporte.visible = false; return; }
-  ancla.group.matrix.decompose(pObj, qObj, sObj);
+  if (HOJA) reservarHoja();
+  const f = elegirFuente();
+  const clave = f ? f.tipo + f.par : '';
+  if (clave !== claveFuente) { claveFuente = clave; cambiarFuente(f); }
+  autoCalibrar();
+  if (!f) return;
+  f.ancla.group.matrix.decompose(pObj, qObj, sObj);
   if (reiniciarSuavizado) {
     pSua.copy(pObj); qSua.copy(qObj); sSua.copy(sObj); reiniciarSuavizado = false;
   } else {
@@ -343,7 +373,48 @@ function suavizar() {
     pSua.lerp(pObj, a); qSua.slerp(qObj, a); sSua.lerp(sObj, a);
   }
   soporte.matrix.compose(pSua, qSua, sSua);
+  soporte.matrixWorldNeedsUpdate = true;
   soporte.visible = true;
+}
+
+// Con dos objetivos a la vez, las fotos de la roca (que se traslapan) podían ocupar los dos lugares y la
+// hoja nunca se buscaba. Si ya se sigue una roca y falta la hoja, el detector busca solo la hoja.
+function reservarHoja() {
+  const c = mind.controller, st = c && c.trackingStates;
+  if (!st || !st[IDX_HOJA]) return;
+  const roca = st.some((x, i) => i !== IDX_HOJA && x.isTracking);
+  c.interestedTargetIndex = roca && !st[IDX_HOJA].isTracking ? IDX_HOJA : -1;
+}
+
+// ---------- calibración automática ----------
+// Mientras se vean la hoja y la roca a la vez, se junta la posición de la roca vista desde la hoja
+// durante algo más de un segundo y se promedia; eso queda como calibración.
+let autoPendiente = HOJA && !calib;
+const muestras = [];
+const relTmp = new THREE.Matrix4(), invHoja = new THREE.Matrix4();
+function autoCalibrar() {
+  if (!autoPendiente || calibrando) return;
+  const i = anclasRoca.findIndex(a => a.group.visible);
+  if (i < 0 || !anclaHoja.group.visible) { muestras.length = 0; return; }
+  if (muestras.length && muestras[0].i !== i) muestras.length = 0;
+  invHoja.copy(anclaHoja.group.matrix).invert();
+  relTmp.multiplyMatrices(invHoja, anclasRoca[i].group.matrix);
+  const p = new THREE.Vector3(), q = new THREE.Quaternion(), e = new THREE.Vector3();
+  relTmp.decompose(p, q, e);
+  muestras.push({ i, p, q, e, t: performance.now() });
+  if (muestras.length < 30 || muestras[muestras.length - 1].t - muestras[0].t < 1200) return;
+  // promedio: posición y escala por media; rotación sumando cuaterniones con el mismo signo
+  const P = new THREE.Vector3(), E = new THREE.Vector3(), Q = new THREE.Quaternion(0, 0, 0, 0), q0 = muestras[0].q;
+  for (const m of muestras) {
+    P.add(m.p); E.add(m.e);
+    const sg = q0.dot(m.q) < 0 ? -1 : 1;
+    Q.set(Q.x + sg * m.q.x, Q.y + sg * m.q.y, Q.z + sg * m.q.z, Q.w + sg * m.q.w);
+  }
+  P.divideScalar(muestras.length); E.divideScalar(muestras.length); Q.normalize();
+  guardarCalib({ par: i, m: new THREE.Matrix4().compose(P, Q, E).toArray(), auto: true });
+  autoPendiente = false; muestras.length = 0;
+  if (navigator.vibrate) try { navigator.vibrate([60, 60, 120]); } catch { }
+  avisar(t('calib_auto'));
 }
 
 // ---------- fijar la imagen ----------
@@ -354,11 +425,7 @@ function fijar(si) {
   btnFijar.textContent = t(si ? 'soltar' : 'fijar');
   const v = mind.video;
   if (v) { if (si) v.pause(); else v.play().catch(() => { }); }
-  if (!si) {
-    reiniciarSuavizado = true;
-    // si el objetivo se perdió mientras estaba fijada, se vuelve a buscar
-    if (!anclas.some(a => a.group.visible)) perder();
-  }
+  if (!si) { reiniciarSuavizado = true; claveFuente = null; }   // se vuelve a elegir qué seguir
 }
 btnFijar.onclick = () => fijar(!congelado);
 
@@ -454,51 +521,43 @@ function ubicarCarteles() {
   }
 }
 
-// ---------- modo hoja: elegir capa y calibrar ----------
+// ---------- modo hoja: recalibrar con la roca o ajustar a mano ----------
 if (HOJA) {
-  const minis = $('#capas-hoja');
-  minis.hidden = o.pares.length < 2;
-  minis.innerHTML = htmlMinis(calib.par);
-  minis.onclick = e => {
-    const b = e.target.closest('button'); if (!b) return;
-    const i = +b.dataset.i;
-    if (i === calib.par) return;
-    // al cambiar de capa se conserva el ancho y el centro, con la proporción de la nueva foto
-    calib = { ...calib, par: i };
-    calibs[n] = calib; guardar('geoparquemet:ra-calib', calibs);
-    minis.querySelectorAll('button').forEach(x => x.classList.toggle('activo', x === b));
-    if (activo >= 0) mostrarPar(i);
-  };
-  const bc = $('#btn-calibrar');
-  bc.hidden = false; bc.textContent = t('calibrar');
+  const bc = $('#btn-calibrar'), br = $('#btn-recalib');
+  bc.hidden = false; bc.textContent = t('ajustar');
+  br.hidden = false; br.textContent = t('recalib');
   $('#calib-guardar').textContent = t('guardar');
   $('#calib-cancelar').textContent = t('cancelar');
   $('#calib-reiniciar').textContent = t('reiniciar');
   $('#calib-copiar').textContent = t('copiar');
   $('#calib-ayuda').textContent = t('calib_ayuda');
+  br.onclick = () => { autoPendiente = true; muestras.length = 0; avisar(t('recalib_ayuda')); };
   let respaldo = null;
   const salir = () => {
     calibrando = false;
     $('#gestos').hidden = true; $('#calib-ayuda').hidden = true; $('#calibrando').hidden = true;
-    $('#viendo').hidden = activo < 0; $('#fila-estab').hidden = false;
+    $('#viendo').hidden = activo < 0 && !fuente; $('#fila-estab').hidden = false;
   };
   bc.onclick = () => {
-    if (activo < 0) return;
-    respaldo = { ...calib };
-    fijar(true);                 // se calibra con la imagen quieta
+    if (!anclaHoja.group.visible && !(fuente && fuente.tipo === 'hoja')) { avisar(t('apunta_hoja_corto')); return; }
+    respaldo = calib;
+    // sin calibración se parte con la capa centrada en la hoja y tres veces más ancha
+    if (!calib) guardarCalib({ par: 0, m: new THREE.Matrix4().makeScale(3, 3, 3).toArray() });
+    claveFuente = null; suavizar();          // pasa a seguir la hoja con la calibración actual
+    fijar(true);                             // se ajusta con la imagen quieta
     calibrando = true;
     $('#gestos').hidden = false; $('#calib-ayuda').hidden = false; $('#calibrando').hidden = false;
     $('#viendo').hidden = true; $('#fila-estab').hidden = true;
   };
   $('#calib-guardar').onclick = () => {
-    calibs[n] = calib; guardar('geoparquemet:ra-calib', calibs);
-    salir(); avisar(t('calib_ok'));
+    guardarCalib({ par: calib.par, m: calibM.toArray() });
+    autoPendiente = false; salir(); fijar(false); avisar(t('calib_ok'));
   };
-  $('#calib-cancelar').onclick = () => { calib = respaldo; aplicarCalib(); salir(); };
-  $('#calib-reiniciar').onclick = () => { calib = calibDefecto(calib.par); aplicarCalib(); };
+  $('#calib-cancelar').onclick = () => { guardarCalib(respaldo); salir(); fijar(false); };
+  $('#calib-reiniciar').onclick = () => { guardarCalib(null); autoPendiente = true; salir(); fijar(false); avisar(t('recalib_ayuda')); };
   $('#calib-copiar').onclick = () => {
-    const r4 = x => Math.round(x * 1e4) / 1e4;
-    const texto = JSON.stringify({ [n]: { par: calib.par, x: r4(calib.x), y: r4(calib.y), s: r4(calib.s), r: r4(calib.r) } });
+    if (!calib) return;
+    const texto = JSON.stringify({ [n]: { par: calib.par, m: calib.m.map(x => Math.round(x * 1e5) / 1e5) } });
     (navigator.clipboard ? navigator.clipboard.writeText(texto) : Promise.reject()).then(() => avisar(t('copiado')), () => prompt(t('copiar'), texto));
   };
 
@@ -519,6 +578,7 @@ if (HOJA) {
   };
   const dedos = new Map();
   const zona = $('#gestos');
+  const T = new THREE.Matrix4(), R = new THREE.Matrix4(), S = new THREE.Matrix4(), T2 = new THREE.Matrix4();
   zona.addEventListener('pointerdown', e => { zona.setPointerCapture(e.pointerId); dedos.set(e.pointerId, enHoja(e.clientX, e.clientY)); });
   const soltar = e => dedos.delete(e.pointerId);
   zona.addEventListener('pointerup', soltar); zona.addEventListener('pointercancel', soltar);
@@ -527,7 +587,7 @@ if (HOJA) {
     const ahora = enHoja(e.clientX, e.clientY), antes = dedos.get(e.pointerId);
     if (!ahora || !antes) { dedos.set(e.pointerId, ahora); return; }
     if (dedos.size === 1) {
-      calib.x += ahora[0] - antes[0]; calib.y += ahora[1] - antes[1];
+      calibM.premultiply(T.makeTranslation(ahora[0] - antes[0], ahora[1] - antes[1], 0));
     } else {
       const otro = [...dedos.entries()].find(([id]) => id !== e.pointerId)[1];
       if (!otro) { dedos.set(e.pointerId, ahora); return; }
@@ -536,12 +596,12 @@ if (HOJA) {
       const f = Math.hypot(...vB) / Math.max(Math.hypot(...vA), 1e-6);
       const d = Math.atan2(vB[1], vB[0]) - Math.atan2(vA[1], vA[0]);
       const mA = [(antes[0] + otro[0]) / 2, (antes[1] + otro[1]) / 2], mB = [(ahora[0] + otro[0]) / 2, (ahora[1] + otro[1]) / 2];
-      const cx = calib.x - mA[0], cy = calib.y - mA[1], cs = Math.cos(d), sn = Math.sin(d);
-      calib.x = mB[0] + f * (cs * cx - sn * cy); calib.y = mB[1] + f * (sn * cx + cs * cy);
-      calib.s = Math.min(Math.max(calib.s * f, .2), 40); calib.r += d;
+      calibM.premultiply(T2.makeTranslation(-mA[0], -mA[1], 0))
+        .premultiply(S.makeScale(f, f, f)).premultiply(R.makeRotationZ(d))
+        .premultiply(T.makeTranslation(mB[0], mB[1], 0));
     }
     dedos.set(e.pointerId, ahora);
-    aplicarCalib();
+    calibGrupo.matrix.copy(calibM); calibGrupo.matrixWorldNeedsUpdate = true;
   });
 }
 
@@ -551,8 +611,27 @@ function avisar(texto) {
   document.body.appendChild(a); setTimeout(() => a.remove(), 2600);
 }
 
+// Respaldo del seguimiento: MindAR detecta el objetivo comparando puntos (tolera luz, estación y distancia
+// distintas) y después lo sigue cuadro a cuadro comparando parches de imagen, que fallan apenas la roca no
+// se ve igual que en la foto. En terreno pasaba justo eso: la roca se detectaba en todos los cuadros y el
+// seguimiento se perdía en todos, y la capa aparecía y desaparecía. Cuando el seguimiento falla, se vuelve
+// a detectar ese mismo objetivo en el mismo cuadro y se usa esa posición; el suavizado absorbe el temblor.
+function respaldoSeguimiento(c) {
+  const seguir = c._trackAndUpdate.bind(c);
+  c._trackAndUpdate = async (entrada, pose, i) => {
+    const r = await seguir(entrada, pose, i);
+    if (r !== null) return r;
+    try {
+      const d = await c._detectAndMatch(entrada, [i]);
+      if (d.targetIndex === i && d.modelViewTransform) return d.modelViewTransform;
+    } catch (e) { /* si falla la detección se da por perdido, como antes */ }
+    return null;
+  };
+}
+
 try {
   await mind.start();
+  respaldoSeguimiento(mind.controller);
   $('#cargando').hidden = true;
   renderer.setAnimationLoop(() => {
     suavizar();

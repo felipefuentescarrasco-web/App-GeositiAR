@@ -155,7 +155,7 @@ const I18N = (() => {
     'Accesibilidad': ['Accessibility', 'Acessibilidade'],
     'Texto': ['Text', 'Texto'],
     'Uso sin conexión': ['Offline use', 'Uso sem conexão'],
-    'En el cerro la señal es irregular. Descarga el contenido antes de salir: ocupa unos 95 MB con fotos, modelos 3D y panorámicas.': ['Signal on the hill is patchy. Download the content before you go: it takes about 95 MB with photos, 3D models and panoramas.', 'No morro o sinal é irregular. Baixe o conteúdo antes de sair: ocupa uns 95 MB com fotos, modelos 3D e panorâmicas.'],
+    'En el cerro la señal es irregular. Descarga el contenido antes de salir: ocupa unos 120 MB con fotos, modelos 3D y panorámicas.': ['Signal on the hill is patchy. Download the content before you go: it takes about 120 MB with photos, 3D models and panoramas.', 'No morro o sinal é irregular. Baixe o conteúdo antes de sair: ocupa uns 120 MB com fotos, modelos 3D e panorâmicas.'],
     'Tu recorrido': ['Your visit', 'Seu percurso'],
     'Los geositios visitados se guardan solo en este teléfono. Nada se envía a ningún servidor.': ['Visited geosites are saved only on this phone. Nothing is sent to any server.', 'Os geossítios visitados ficam salvos só neste celular. Nada é enviado a nenhum servidor.'],
     'Borrar mi progreso': ['Clear my progress', 'Apagar meu progresso'],

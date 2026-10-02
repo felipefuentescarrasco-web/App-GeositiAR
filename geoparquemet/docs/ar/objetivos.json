@@ -1,0 +1,644 @@
+{
+ "1": {
+  "mind": "ar/g1.mind",
+  "pares": [
+   {
+    "k": 1,
+    "obj": "ar/g1_1_obj.jpg",
+    "capa": "ar/g1_1_capa.webp",
+    "w": 750,
+    "h": 1000,
+    "cobertura": 0.04,
+    "carteles": {
+     "amarillo": [
+      0.9257,
+      0.2679
+     ],
+     "roca": [
+      0.3,
+      0.58
+     ]
+    }
+   },
+   {
+    "k": 2,
+    "obj": "ar/g1_2_obj.jpg",
+    "capa": "ar/g1_2_capa.webp",
+    "w": 750,
+    "h": 1000,
+    "cobertura": 0.107,
+    "carteles": {
+     "grietas": [
+      0.883,
+      0.5914
+     ],
+     "cuna": [
+      0.7918,
+      0.7948
+     ],
+     "amarillo": [
+      0.6886,
+      0.2921
+     ],
+     "roca": [
+      0.5371,
+      0.6986
+     ]
+    }
+   },
+   {
+    "k": 3,
+    "obj": "ar/g1_3_obj.jpg",
+    "capa": "ar/g1_3_capa.webp",
+    "w": 750,
+    "h": 1000,
+    "cobertura": 0.099,
+    "carteles": {
+     "grietas": [
+      0.584,
+      0.5165
+     ],
+     "cuna": [
+      0.3923,
+      0.7124
+     ],
+     "amarillo": [
+      0.539,
+      0.2279
+     ],
+     "roca": [
+      0.699,
+      0.6843
+     ]
+    }
+   },
+   {
+    "k": 4,
+    "obj": "ar/g1_4_obj.jpg",
+    "capa": "ar/g1_4_capa.webp",
+    "w": 750,
+    "h": 1000,
+    "cobertura": 0.126,
+    "carteles": {
+     "grietas": [
+      0.6628,
+      0.5159
+     ],
+     "cuna": [
+      0.4677,
+      0.7264
+     ],
+     "amarillo": [
+      0.56,
+      0.2064
+     ],
+     "roca": [
+      0.699,
+      0.6957
+     ]
+    }
+   },
+   {
+    "k": 5,
+    "obj": "ar/g1_5_obj.jpg",
+    "capa": "ar/g1_5_capa.webp",
+    "w": 750,
+    "h": 1000,
+    "cobertura": 0.119,
+    "carteles": {
+     "grietas": [
+      0.7791,
+      0.4356
+     ],
+     "cuna": [
+      0.6148,
+      0.6202
+     ],
+     "caida": [
+      0.6802,
+      0.8908
+     ],
+     "amarillo": [
+      0.6657,
+      0.1293
+     ],
+     "roca": [
+      0.4095,
+      0.5836
+     ]
+    }
+   },
+   {
+    "k": 6,
+    "obj": "ar/g1_6_obj.jpg",
+    "capa": "ar/g1_6_capa.webp",
+    "w": 750,
+    "h": 1000,
+    "cobertura": 0.09,
+    "carteles": {
+     "grietas": [
+      0.6006,
+      0.4639
+     ],
+     "cuna": [
+      0.4232,
+      0.637
+     ],
+     "caida": [
+      0.453,
+      0.8919
+     ],
+     "amarillo": [
+      0.5724,
+      0.1807
+     ],
+     "roca": [
+      0.699,
+      0.6157
+     ]
+    }
+   },
+   {
+    "k": 7,
+    "obj": "ar/g1_7_obj.jpg",
+    "capa": "ar/g1_7_capa.webp",
+    "w": 750,
+    "h": 1000,
+    "cobertura": 0.037,
+    "carteles": {
+     "grietas": [
+      0.593,
+      0.5447
+     ],
+     "cuna": [
+      0.5026,
+      0.6426
+     ],
+     "caida": [
+      0.5307,
+      0.7755
+     ],
+     "amarillo": [
+      0.5629,
+      0.3679
+     ],
+     "roca": [
+      0.699,
+      0.63
+     ]
+    }
+   },
+   {
+    "k": 8,
+    "obj": "ar/g1_8_obj.jpg",
+    "capa": "ar/g1_8_capa.webp",
+    "w": 750,
+    "h": 1000,
+    "cobertura": 0.047,
+    "carteles": {
+     "grietas": [
+      0.6253,
+      0.5051
+     ],
+     "cuna": [
+      0.5359,
+      0.6089
+     ],
+     "caida": [
+      0.5724,
+      0.752
+     ],
+     "amarillo": [
+      0.561,
+      0.3129
+     ],
+     "roca": [
+      0.699,
+      0.5929
+     ]
+    }
+   },
+   {
+    "k": 9,
+    "obj": "ar/g1_9_obj.jpg",
+    "capa": "ar/g1_9_capa.webp",
+    "w": 750,
+    "h": 1000,
+    "cobertura": 0.047,
+    "carteles": {
+     "grietas": [
+      0.5975,
+      0.5249
+     ],
+     "cuna": [
+      0.5112,
+      0.6256
+     ],
+     "caida": [
+      0.5414,
+      0.7689
+     ],
+     "amarillo": [
+      0.5343,
+      0.33
+     ],
+     "roca": [
+      0.699,
+      0.6157
+     ]
+    }
+   },
+   {
+    "k": 10,
+    "obj": "ar/g1_10_obj.jpg",
+    "capa": "ar/g1_10_capa.webp",
+    "w": 750,
+    "h": 1000,
+    "cobertura": 0.038,
+    "carteles": {
+     "grietas": [
+      0.6421,
+      0.5374
+     ],
+     "cuna": [
+      0.592,
+      0.6327
+     ],
+     "caida": [
+      0.6266,
+      0.763
+     ],
+     "amarillo": [
+      0.5562,
+      0.3529
+     ],
+     "roca": [
+      0.3,
+      0.58
+     ]
+    }
+   },
+   {
+    "k": 11,
+    "obj": "ar/g1_11_obj.jpg",
+    "capa": "ar/g1_11_capa.webp",
+    "w": 750,
+    "h": 1000,
+    "cobertura": 0.029,
+    "carteles": {
+     "grietas": [
+      0.672,
+      0.5562
+     ],
+     "cuna": [
+      0.6431,
+      0.6395
+     ],
+     "caida": [
+      0.6704,
+      0.7524
+     ],
+     "amarillo": [
+      0.5895,
+      0.39
+     ],
+     "roca": [
+      0.3,
+      0.5871
+     ]
+    }
+   }
+  ]
+ },
+ "6": {
+  "mind": "ar/g6.mind",
+  "pares": [
+   {
+    "k": 1,
+    "obj": "ar/g6_1_obj.jpg",
+    "capa": "ar/g6_1_capa.webp",
+    "w": 666,
+    "h": 1000,
+    "cobertura": 0.775,
+    "carteles": {
+     "volcanica": [
+      0.3,
+      0.25
+     ],
+     "intrusiva": [
+      0.55,
+      0.72
+     ],
+     "contacto": [
+      0.5,
+      0.54
+     ]
+    }
+   },
+   {
+    "k": 2,
+    "obj": "ar/g6_2_obj.jpg",
+    "capa": "ar/g6_2_capa.webp",
+    "w": 666,
+    "h": 1000,
+    "cobertura": 0.627,
+    "carteles": {
+     "volcanica": [
+      0.35,
+      0.3
+     ],
+     "intrusiva": [
+      0.62,
+      0.7
+     ],
+     "contacto": [
+      0.55,
+      0.52
+     ]
+    }
+   },
+   {
+    "k": 3,
+    "obj": "ar/g6_3_obj.jpg",
+    "capa": "ar/g6_3_capa.webp",
+    "w": 666,
+    "h": 1000,
+    "cobertura": 0.765,
+    "carteles": {
+     "volcanica": [
+      0.3,
+      0.25
+     ],
+     "intrusiva": [
+      0.6,
+      0.62
+     ],
+     "contacto": [
+      0.4,
+      0.43
+     ]
+    }
+   }
+  ]
+ },
+ "2": {
+  "mind": "ar/g2.mind",
+  "pares": [
+   {
+    "k": 1,
+    "obj": "ar/g2_1_obj.jpg",
+    "capa": "ar/g2_1_capa.webp",
+    "w": 1000,
+    "h": 750,
+    "cobertura": 0.973,
+    "carteles": {
+     "dique": [
+      0.45,
+      0.42
+     ],
+     "volcanica": [
+      0.2,
+      0.14
+     ],
+     "contacto": [
+      0.28,
+      0.36
+     ]
+    }
+   },
+   {
+    "k": 2,
+    "obj": "ar/g2_2_obj.jpg",
+    "capa": "ar/g2_2_capa.webp",
+    "w": 1000,
+    "h": 1000,
+    "cobertura": 0.274,
+    "carteles": {
+     "dique": [
+      0.78,
+      0.5
+     ],
+     "volcanica": [
+      0.3,
+      0.28
+     ]
+    }
+   },
+   {
+    "k": 3,
+    "obj": "ar/g2_3_obj.jpg",
+    "capa": "ar/g2_3_capa.webp",
+    "w": 741,
+    "h": 1000,
+    "cobertura": 0.298,
+    "origen": "DSC_0080.JPG (desde foto 1)",
+    "carteles": {
+     "dique": [
+      0.8755,
+      0.3007
+     ],
+     "volcanica": [
+      0.6347,
+      0.1335
+     ],
+     "contacto": [
+      0.7033,
+      0.2694
+     ]
+    }
+   },
+   {
+    "k": 4,
+    "obj": "ar/g2_4_obj.jpg",
+    "capa": "ar/g2_4_capa.webp",
+    "w": 580,
+    "h": 1000,
+    "cobertura": 0.249,
+    "origen": "DSC_0079.JPG (desde foto 1)",
+    "carteles": {
+     "dique": [
+      0.7723,
+      0.434
+     ],
+     "volcanica": [
+      0.5376,
+      0.3023
+     ],
+     "contacto": [
+      0.6076,
+      0.4004
+     ]
+    }
+   }
+  ]
+ },
+ "3": {
+  "mind": "ar/g3.mind",
+  "pares": [
+   {
+    "k": 1,
+    "obj": "ar/g3_1_obj.jpg",
+    "capa": "ar/g3_1_capa.webp",
+    "w": 1000,
+    "h": 828,
+    "cobertura": 0.381,
+    "carteles": {
+     "suelo": [
+      0.4,
+      0.15
+     ],
+     "roca": [
+      0.3,
+      0.72
+     ],
+     "fracturas": [
+      0.18,
+      0.55
+     ],
+     "raices": [
+      0.55,
+      0.55
+     ],
+     "relleno": [
+      0.33,
+      0.455
+     ]
+    }
+   },
+   {
+    "k": 2,
+    "obj": "ar/g3_2_obj.jpg",
+    "capa": "ar/g3_2_capa.webp",
+    "w": 1000,
+    "h": 748,
+    "cobertura": 0.096,
+    "carteles": {
+     "roca": [
+      0.2,
+      0.62
+     ],
+     "fracturas": [
+      0.2,
+      0.19
+     ],
+     "raices": [
+      0.63,
+      0.85
+     ],
+     "relleno": [
+      0.46,
+      0.45
+     ]
+    }
+   },
+   {
+    "k": 3,
+    "obj": "ar/g3_3_obj.jpg",
+    "capa": "ar/g3_3_capa.webp",
+    "w": 999,
+    "h": 902,
+    "cobertura": 0.031,
+    "origen": "DSC_0114.JPG (desde foto 2)",
+    "carteles": {
+     "roca": [
+      0.3631,
+      0.522
+     ],
+     "fracturas": [
+      0.3814,
+      0.3234
+     ],
+     "raices": [
+      0.5996,
+      0.6672
+     ],
+     "relleno": [
+      0.5185,
+      0.4584
+     ]
+    }
+   },
+   {
+    "k": 4,
+    "obj": "ar/g3_4_obj.jpg",
+    "capa": "ar/g3_4_capa.webp",
+    "w": 1000,
+    "h": 993,
+    "cobertura": 0.027,
+    "origen": "DSC_0110.JPG (desde foto 2)",
+    "carteles": {
+     "roca": [
+      0.3367,
+      0.5557
+     ],
+     "fracturas": [
+      0.396,
+      0.3389
+     ],
+     "raices": [
+      0.6269,
+      0.6833
+     ],
+     "relleno": [
+      0.5539,
+      0.4839
+     ]
+    }
+   },
+   {
+    "k": 5,
+    "obj": "ar/g3_5_obj.jpg",
+    "capa": "ar/g3_5_capa.webp",
+    "w": 1000,
+    "h": 945,
+    "cobertura": 0.029,
+    "origen": "DSC_0115.JPG (desde foto 2)",
+    "carteles": {
+     "roca": [
+      0.3402,
+      0.4605
+     ],
+     "fracturas": [
+      0.3642,
+      0.2858
+     ],
+     "raices": [
+      0.567,
+      0.5963
+     ],
+     "relleno": [
+      0.4827,
+      0.3992
+     ]
+    }
+   },
+   {
+    "k": 6,
+    "obj": "ar/g3_6_obj.jpg",
+    "capa": "ar/g3_6_capa.webp",
+    "w": 908,
+    "h": 1000,
+    "cobertura": 0.032,
+    "origen": "DSC_0112.JPG (desde foto 2)",
+    "carteles": {
+     "roca": [
+      0.2684,
+      0.5316
+     ],
+     "fracturas": [
+      0.3863,
+      0.3196
+     ],
+     "raices": [
+      0.5795,
+      0.7023
+     ],
+     "relleno": [
+      0.5248,
+      0.4726
+     ]
+    }
+   }
+  ]
+ }
+}

@@ -130,13 +130,13 @@ const App = (() => {
 
   /* ------------------------------------------------- descarga sin conexión */
 
-  /* Las rutas propias llevan ?v=9, igual que en index.html, para que la copia
+  /* Las rutas propias llevan ?v=10, igual que en index.html, para que la copia
      guardada corresponda exactamente a la que pide la página. */
   const ARCHIVOS_BASE = [
-    'index.html', 'manifest.webmanifest', 'css/app.css?v=9',
-    'js/datos.js?v=9', 'js/util.js?v=9', 'js/cortina.js?v=9', 'js/visor3d.js?v=9',
-    'js/pano.js?v=9', 'js/mapa.js?v=9', 'js/corte.js?v=9', 'js/escaner.js?v=9',
-    'js/vistas.js?v=9', 'js/app.js?v=9',
+    'index.html', 'manifest.webmanifest', 'css/app.css?v=10',
+    'js/datos.js?v=10', 'js/i18n-datos.js?v=10', 'js/i18n.js?v=10', 'js/util.js?v=10', 'js/cortina.js?v=10', 'js/visor3d.js?v=10',
+    'js/pano.js?v=10', 'js/mapa.js?v=10', 'js/corte.js?v=10', 'js/escaner.js?v=10',
+    'js/vistas.js?v=10', 'js/app.js?v=10',
     'js/vendor/three.min.js', 'js/vendor/GLTFLoader.js', 'js/vendor/OrbitControls.js',
     'js/vendor/jsqr.js',
     'assets/icons/icono-192.png', 'assets/icons/icono-512.png',

@@ -80,6 +80,19 @@ const Vistas = (() => {
 
   /* -------------------------------------------------------------- inicio */
 
+  /* Selector de idioma (js/i18n.js). Cambiar de idioma recarga la app. */
+  function selectorIdioma(compacto) {
+    return U.el('div', { clase: 'controles-3d', 'data-sin-traducir': true,
+      role: 'group', 'aria-label': 'Idioma' },
+      Object.keys(I18N.IDIOMAS).map(k => {
+        const i = I18N.IDIOMAS[k];
+        return U.el('button', {
+          clase: 'chip', type: 'button', lang: k, 'aria-pressed': String(k === I18N.idioma),
+          'aria-label': i.nombre, onclick: () => { if (k !== I18N.idioma) I18N.cambiar(k); }
+        }, [compacto ? i.bandera + ' ' + k.toUpperCase() : i.bandera + ' ' + i.nombre]);
+      }));
+  }
+
   function inicio() {
     const cercano = U.el('div');
 
@@ -88,7 +101,8 @@ const Vistas = (() => {
         U.el('h1', { texto: 'GeoParquemet' }),
         U.el('p', { clase: 'lema',
           texto: 'Geotours por el cerro San Cristóbal. Escanea el código QR del ' +
-                 'geositio y mira la geología que tienes delante.' })
+                 'geositio y mira la geología que tienes delante.' }),
+        selectorIdioma(true)
       ]),
       U.el('div', { clase: 'contenido' }, [
         U.el('div', { clase: 'acciones-inicio' }, [
@@ -237,9 +251,9 @@ const Vistas = (() => {
     btnVoz.addEventListener('click', () => {
       if (U.hablando()) { U.detenerVoz(); btnVoz.textContent = 'Escuchar'; return; }
       const texto = [
-        'Geositio ' + g.num + '. ' + g.nombre + '.',
+        I18N.t('Geositio ' + g.num) + '. ' + g.nombre + '.',
         g.gancho,
-        'Qué observar. ' + (g.claves || []).join(' '),
+        I18N.t('Qué observar.') + ' ' + (g.claves || []).join(' '),
         g.observa || ''
       ].join(' ');
       U.leerEnVoz(texto);
@@ -588,8 +602,11 @@ const Vistas = (() => {
     function pintar(filtro) {
       lista.innerHTML = '';
       const f = U.normaliza(filtro || '');
-      Object.keys(GLOSARIO).sort().forEach(k => {
-        if (f && U.normaliza(k).indexOf(f) < 0 && U.normaliza(GLOSARIO[k]).indexOf(f) < 0) return;
+      Object.keys(GLOSARIO)
+        .sort((a, b) => U.tituloTermino(a).localeCompare(U.tituloTermino(b), I18N.idioma))
+        .forEach(k => {
+        if (f && U.normaliza(U.tituloTermino(k)).indexOf(f) < 0 && U.normaliza(k).indexOf(f) < 0 &&
+            U.normaliza(GLOSARIO[k]).indexOf(f) < 0) return;
         lista.appendChild(U.el('div', { clase: 'glosario-item' }, [
           U.el('b', { texto: U.tituloTermino(k) }),
           U.el('span', { clase: 'pequeno', texto: GLOSARIO[k] })
@@ -701,6 +718,9 @@ const Vistas = (() => {
 
     return U.el('div', { clase: 'contenido' }, [
       U.el('h1', { texto: 'Ajustes' }),
+
+      U.el('h2', { style: 'margin-top:18px', texto: 'Idioma' }),
+      selectorIdioma(false),
 
       U.el('h2', { style: 'margin-top:18px', texto: 'Accesibilidad' }),
       U.el('div', { clase: 'control-corte' }, [

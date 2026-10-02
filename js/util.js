@@ -202,12 +202,15 @@ const U = (() => {
 
   /* Convierte los términos del glosario del texto en palabras pulsables. */
   function conGlosario(texto, terminos) {
-    const cont = el('span');
+    /* El texto ya viene traducido: que js/i18n.js no lo vuelva a revisar palabra por palabra. */
+    const cont = el('span', { 'data-sin-traducir': true });
     if (!terminos || !terminos.length) { cont.textContent = texto; return cont; }
     const mapa = {};
     terminos.forEach(t => {
       if (!GLOSARIO[t]) return;
       mapa[normaliza(t)] = t;
+      /* en inglés y portugués el término se reconoce por su palabra traducida */
+      I18N.alias(t).forEach(a => { mapa[normaliza(a)] = t; });
     });
     const palabras = texto.split(/(\s+)/);
     let usados = {};
@@ -254,11 +257,13 @@ const U = (() => {
     if (!('speechSynthesis' in window)) { aviso('Este teléfono no puede leer en voz alta'); return false; }
     detenerVoz();
     const u = new SpeechSynthesisUtterance(texto);
-    u.lang = 'es-CL';
+    const lang = I18N.voz;                       /* es-CL, en-US o pt-BR */
+    u.lang = lang;
     u.rate = 0.98;
     const voces = speechSynthesis.getVoices();
-    const es = voces.find(v => /es[-_]CL/i.test(v.lang)) || voces.find(v => /^es/i.test(v.lang));
-    if (es) u.voice = es;
+    const re = new RegExp('^' + lang.replace('-', '[-_]'), 'i');
+    const voz = voces.find(v => re.test(v.lang)) || voces.find(v => v.lang.slice(0, 2) === lang.slice(0, 2));
+    if (voz) u.voice = voz;
     vozActual = u;
     speechSynthesis.speak(u);
     return u;

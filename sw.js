@@ -8,7 +8,7 @@
    Las teselas del mapa se guardan aparte, a medida que se navega, para que el
    tramo ya recorrido siga viéndose sin señal. */
 
-const VERSION = 'v8';
+const VERSION = 'v9';
 const CACHE_ESQUELETO = 'geoparquemet-esqueleto-' + VERSION;
 const CACHE_CONTENIDO = 'geoparquemet-contenido';
 const CACHE_TESELAS = 'geoparquemet-teselas';
@@ -18,21 +18,27 @@ const ESQUELETO = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './css/app.css?v=8',
-  './js/datos.js?v=8',
-  './js/util.js?v=8',
-  './js/cortina.js?v=8',
-  './js/visor3d.js?v=8',
-  './js/pano.js?v=8',
-  './js/mapa.js?v=8',
-  './js/corte.js?v=8',
-  './js/escaner.js?v=8',
-  './js/vistas.js?v=8',
-  './js/app.js?v=8',
+  './css/app.css?v=9',
+  './js/datos.js?v=9',
+  './js/util.js?v=9',
+  './js/cortina.js?v=9',
+  './js/visor3d.js?v=9',
+  './js/pano.js?v=9',
+  './js/mapa.js?v=9',
+  './js/corte.js?v=9',
+  './js/escaner.js?v=9',
+  './js/vistas.js?v=9',
+  './js/app.js?v=9',
   './js/vendor/three.min.js',
   './js/vendor/GLTFLoader.js',
   './js/vendor/OrbitControls.js',
   './js/vendor/jsqr.js',
+  './ar.html',
+  './js/vendor/mindar/mindar-image-three.prod.js',
+  './js/vendor/mindar/controller-mGt1s8dJ.js',
+  './js/vendor/mindar/ui-fBadYuor.js',
+  './js/vendor/three-mod/three.module.min.js',
+  './js/vendor/three-mod/addons/renderers/CSS3DRenderer.js',
   './assets/icons/icono-192.png',
   './assets/icons/icono-512.png'
 ];
@@ -61,7 +67,9 @@ function esTesela(url) {
 }
 
 function esContenido(url) {
-  return /\/assets\/(fotos|3d|360)\//.test(url.pathname);
+  /* Los .json de ar/ quedan fuera: son livianos y conviene que se actualicen. */
+  return /\/assets\/(fotos|3d|360)\//.test(url.pathname) ||
+    /\/ar\/.+\.(mind|jpg|webp|png|mp3|pdf)$/.test(url.pathname);
 }
 
 async function recortarCache(nombre, maximo) {

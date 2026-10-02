@@ -130,20 +130,28 @@ const App = (() => {
 
   /* ------------------------------------------------- descarga sin conexión */
 
-  /* Las rutas propias llevan ?v=8, igual que en index.html, para que la copia
+  /* Las rutas propias llevan ?v=9, igual que en index.html, para que la copia
      guardada corresponda exactamente a la que pide la página. */
   const ARCHIVOS_BASE = [
-    'index.html', 'manifest.webmanifest', 'css/app.css?v=8',
-    'js/datos.js?v=8', 'js/util.js?v=8', 'js/cortina.js?v=8', 'js/visor3d.js?v=8',
-    'js/pano.js?v=8', 'js/mapa.js?v=8', 'js/corte.js?v=8', 'js/escaner.js?v=8',
-    'js/vistas.js?v=8', 'js/app.js?v=8',
+    'index.html', 'manifest.webmanifest', 'css/app.css?v=9',
+    'js/datos.js?v=9', 'js/util.js?v=9', 'js/cortina.js?v=9', 'js/visor3d.js?v=9',
+    'js/pano.js?v=9', 'js/mapa.js?v=9', 'js/corte.js?v=9', 'js/escaner.js?v=9',
+    'js/vistas.js?v=9', 'js/app.js?v=9',
     'js/vendor/three.min.js', 'js/vendor/GLTFLoader.js', 'js/vendor/OrbitControls.js',
     'js/vendor/jsqr.js',
-    'assets/icons/icono-192.png', 'assets/icons/icono-512.png'
+    'assets/icons/icono-192.png', 'assets/icons/icono-512.png',
+    'ar.html', 'js/vendor/mindar/mindar-image-three.prod.js',
+    'js/vendor/mindar/controller-mGt1s8dJ.js', 'js/vendor/mindar/ui-fBadYuor.js',
+    'js/vendor/three-mod/three.module.min.js',
+    'js/vendor/three-mod/addons/renderers/CSS3DRenderer.js',
+    'ar/objetivos.json', 'ar/carteles.json', 'ar/calibracion.json', 'ar/marcador.mind'
   ];
 
+  /* Realidad aumentada: objetivos, capas y audios de los carteles en los tres idiomas. */
+  const ARCHIVOS_RA = ["ar/audio/en/g1_amarillo.mp3", "ar/audio/en/g1_caida.mp3", "ar/audio/en/g1_cuna.mp3", "ar/audio/en/g1_grietas.mp3", "ar/audio/en/g1_roca.mp3", "ar/audio/en/g2_contacto.mp3", "ar/audio/en/g2_dique.mp3", "ar/audio/en/g2_volcanica.mp3", "ar/audio/en/g3_fracturas.mp3", "ar/audio/en/g3_raices.mp3", "ar/audio/en/g3_relleno.mp3", "ar/audio/en/g3_roca.mp3", "ar/audio/en/g3_suelo.mp3", "ar/audio/en/g6_contacto.mp3", "ar/audio/en/g6_intrusiva.mp3", "ar/audio/en/g6_volcanica.mp3", "ar/audio/es/g1_amarillo.mp3", "ar/audio/es/g1_caida.mp3", "ar/audio/es/g1_cuna.mp3", "ar/audio/es/g1_grietas.mp3", "ar/audio/es/g1_roca.mp3", "ar/audio/es/g2_contacto.mp3", "ar/audio/es/g2_dique.mp3", "ar/audio/es/g2_volcanica.mp3", "ar/audio/es/g3_fracturas.mp3", "ar/audio/es/g3_raices.mp3", "ar/audio/es/g3_relleno.mp3", "ar/audio/es/g3_roca.mp3", "ar/audio/es/g3_suelo.mp3", "ar/audio/es/g6_contacto.mp3", "ar/audio/es/g6_intrusiva.mp3", "ar/audio/es/g6_volcanica.mp3", "ar/audio/pt/g1_amarillo.mp3", "ar/audio/pt/g1_caida.mp3", "ar/audio/pt/g1_cuna.mp3", "ar/audio/pt/g1_grietas.mp3", "ar/audio/pt/g1_roca.mp3", "ar/audio/pt/g2_contacto.mp3", "ar/audio/pt/g2_dique.mp3", "ar/audio/pt/g2_volcanica.mp3", "ar/audio/pt/g3_fracturas.mp3", "ar/audio/pt/g3_raices.mp3", "ar/audio/pt/g3_relleno.mp3", "ar/audio/pt/g3_roca.mp3", "ar/audio/pt/g3_suelo.mp3", "ar/audio/pt/g6_contacto.mp3", "ar/audio/pt/g6_intrusiva.mp3", "ar/audio/pt/g6_volcanica.mp3", "ar/g1.mind", "ar/g1_10_capa.webp", "ar/g1_10_obj.jpg", "ar/g1_11_capa.webp", "ar/g1_11_obj.jpg", "ar/g1_1_capa.webp", "ar/g1_1_obj.jpg", "ar/g1_2_capa.webp", "ar/g1_2_obj.jpg", "ar/g1_3_capa.webp", "ar/g1_3_obj.jpg", "ar/g1_4_capa.webp", "ar/g1_4_obj.jpg", "ar/g1_5_capa.webp", "ar/g1_5_obj.jpg", "ar/g1_6_capa.webp", "ar/g1_6_obj.jpg", "ar/g1_7_capa.webp", "ar/g1_7_obj.jpg", "ar/g1_8_capa.webp", "ar/g1_8_obj.jpg", "ar/g1_9_capa.webp", "ar/g1_9_obj.jpg", "ar/g2.mind", "ar/g2_1_capa.webp", "ar/g2_1_obj.jpg", "ar/g2_2_capa.webp", "ar/g2_2_obj.jpg", "ar/g2_3_capa.webp", "ar/g2_3_obj.jpg", "ar/g2_4_capa.webp", "ar/g2_4_obj.jpg", "ar/g3.mind", "ar/g3_1_capa.webp", "ar/g3_1_obj.jpg", "ar/g3_2_capa.webp", "ar/g3_2_obj.jpg", "ar/g3_3_capa.webp", "ar/g3_3_obj.jpg", "ar/g3_4_capa.webp", "ar/g3_4_obj.jpg", "ar/g3_5_capa.webp", "ar/g3_5_obj.jpg", "ar/g3_6_capa.webp", "ar/g3_6_obj.jpg", "ar/g6.mind", "ar/g6_1_capa.webp", "ar/g6_1_obj.jpg", "ar/g6_2_capa.webp", "ar/g6_2_obj.jpg", "ar/g6_3_capa.webp", "ar/g6_3_obj.jpg"];
+
   function listaCompleta() {
-    const lista = ARCHIVOS_BASE.slice();
+    const lista = ARCHIVOS_BASE.concat(ARCHIVOS_RA);
     GEOSITIOS.forEach(g => {
       (g.fotos || []).forEach(f => {
         lista.push('assets/fotos/' + f.base, 'assets/fotos/' + f.interp,

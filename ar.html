@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GeoParquemet · RA</title>
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="assets/icons/icono-192.png">
+<!-- Realidad aumentada de los geositios.
+     Basada en la RA de Carlos Venegas (geoparquemet/docs/ar.html): MindAR reconoce el afloramiento
+     con la foto original y superpone la interpretación, con carteles anclados a la roca.
+     Agregados en esta versión:
+       - suavizado propio de la pose (posición + rotación, sin deformar la capa) con tres niveles;
+       - botón para fijar la imagen y mirar la interpretación sin que tiemble;
+       - modo "hoja impresa" (?m=1): se pega en la roca una hoja con un patrón (ar/marcador.png),
+         que MindAR sigue mucho mejor que la roca, y la capa se calibra una vez respecto de la hoja. -->
+<style>
+  :root { --lava: #c1622f; --lava-claro: #e08a4f; --papel: #f4f1ea; --roca: #1c2b26; }
+  html, body { margin: 0; height: 100%; background: #000; color: #fff; font: 15px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+  #escena { position: fixed; inset: 0; }
+  #escena video { object-fit: cover; }
+  .barra { position: fixed; top: 0; left: 0; right: 0; z-index: 10; display: flex; align-items: center; gap: 8px; padding: calc(10px + env(safe-area-inset-top)) 10px 10px; background: linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,0)); }
+  .barra button, .barra a { border: 0; background: rgba(255,255,255,.18); color: #fff; border-radius: 10px; padding: 8px 11px; font: inherit; font-size: .9rem; font-weight: 700; text-decoration: none; }
+  .barra b { flex: 1; font-size: .92rem; text-shadow: 0 1px 3px #000; min-width: 0; }
+  .barra .modo { display: flex; background: rgba(255,255,255,.14); border-radius: 10px; padding: 2px; }
+  .barra .modo a { background: none; padding: 6px 9px; font-size: .8rem; }
+  .barra .modo a[aria-current="true"] { background: var(--lava); }
+  .panel { position: fixed; left: 10px; right: 10px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 10; background: rgba(20,28,24,.9); border-radius: 16px; padding: 12px 14px; max-width: 560px; margin: 0 auto; backdrop-filter: blur(6px); max-height: 55vh; overflow-y: auto; }
+  .panel p { margin: 0 0 8px; }
+  .miniaturas { display: flex; gap: 8px; overflow-x: auto; }
+  .miniaturas button { flex: none; border: 2px solid rgba(255,255,255,.35); border-radius: 10px; padding: 0; background: none; width: 72px; height: 96px; overflow: hidden; }
+  .miniaturas button.activo { border-color: var(--lava-claro); border-width: 3px; }
+  .miniaturas img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .deslizador { display: flex; align-items: center; gap: 10px; font-size: .82rem; }
+  .deslizador input { flex: 1; accent-color: var(--lava); height: 28px; }
+  .ok { color: #7ee07e; font-weight: 700; }
+  .aviso { font-size: .8rem; opacity: .8; margin-top: 8px; }
+  .aviso a { color: #ffc766; }
+  .fila { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 8px; font-size: .8rem; }
+  .fila button, .btn { border: 0; border-radius: 999px; padding: 7px 12px; font: inherit; font-size: .82rem; font-weight: 700; background: var(--lava); color: #fff; }
+  .fila button.sec, .btn.sec { background: rgba(255,255,255,.18); color: #fff; }
+  .fila button[aria-pressed="false"] { background: rgba(255,255,255,.18); color: #fff; }
+  .fila button[aria-pressed="true"].fijar { background: #ffc766; color: #111; }
+  .estab { display: inline-flex; background: rgba(255,255,255,.12); border-radius: 999px; padding: 2px; }
+  .estab button { background: none; padding: 5px 10px; }
+  .estab button[aria-pressed="true"] { background: var(--lava); }
+  #cargando { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; text-align: center; background: #000; padding: 20px; }
+  #cargando button { margin-top: 10px; }
+  #foto-prueba { position: fixed; inset: 0; z-index: 30; background: #000; display: grid; place-items: center; }
+  #foto-prueba img { max-width: 100%; max-height: 100%; }
+  #foto-prueba button { position: fixed; top: 14px; right: 14px; border: 0; border-radius: 999px; width: 44px; height: 44px; font-size: 1.2rem; }
+  /* calibración de la hoja impresa: la capa se arrastra y se pellizca */
+  #gestos { position: fixed; inset: 0; z-index: 6; touch-action: none; }
+  .calib-ayuda { position: fixed; top: calc(64px + env(safe-area-inset-top)); left: 10px; right: 10px; z-index: 11; text-align: center; font-size: .85rem; background: rgba(193,98,47,.92); border-radius: 12px; padding: 8px 10px; max-width: 520px; margin: 0 auto; }
+  /* carteles de divulgación: HTML sobre la cámara, anclados a la roca en cada cuadro */
+  #carteles { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
+  #carteles svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  #carteles line { stroke: #fff; stroke-width: 2; marker-end: url(#flecha); filter: drop-shadow(0 0 2px rgba(0,0,0,.9)); }
+  .punto { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 2px rgba(0,0,0,.35); animation: latido 1.6s ease-in-out infinite; }
+  @keyframes latido { 50% { transform: scale(1.35); } }
+  .cartel { position: absolute; pointer-events: auto; transform: translate(-50%, -50%); display: grid; place-items: center; width: 38px; height: 38px; padding: 0;
+    background: rgba(255,255,255,.96); border: 3px solid var(--c); border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,.5); animation: aparece .35s ease-out both; }
+  .cartel .ic { font-size: 1.15rem; line-height: 1; }
+  .cartel.activo { outline: 3px solid #ffc766; }
+  @keyframes aparece { from { transform: translate(-50%, -50%) scale(.6); opacity: 0; } }
+  #ficha h3 { margin: 0 0 6px; font-size: 1.05rem; display: flex; gap: 8px; align-items: center; }
+  #ficha h3 span { font-size: 1.5rem; }
+  #ficha .curioso { margin-top: 8px; padding: 8px 10px; border-radius: 10px; background: rgba(255,255,255,.1); font-size: .88rem; }
+  #ficha .curioso b { display: block; margin-bottom: 2px; color: #ffc766; }
+  #ficha .oir { margin: 0 0 8px; }
+  #ficha .oir.sonando { background: #ffc766; color: #111; }
+  #ficha .cerrar { float: right; border: 0; border-radius: 999px; width: 34px; height: 34px; margin: -4px -4px 0 8px; font-size: 1rem; background: rgba(255,255,255,.2); color: #fff; }
+  [hidden] { display: none !important; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "./js/vendor/three-mod/three.module.min.js", "three/addons/": "./js/vendor/three-mod/addons/" } }
+</script>
+</head>
+<body>
+<div id="escena"></div>
+<div id="carteles" hidden><svg><defs><marker id="flecha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#fff"/></marker></defs></svg></div>
+<div id="gestos" hidden></div>
+<div class="barra">
+  <button id="volver" aria-label="←">←</button><b id="titulo"></b>
+  <div class="modo" role="group"><a id="modo-roca" href="#"></a><a id="modo-hoja" href="#"></a></div>
+</div>
+<div class="calib-ayuda" id="calib-ayuda" hidden></div>
+<div class="panel">
+  <div id="buscando">
+    <p id="txt-apunta"></p>
+    <div class="miniaturas" id="miniaturas"></div>
+    <p class="aviso" id="txt-prueba"></p>
+  </div>
+  <div id="viendo" hidden>
+    <p class="ok" id="txt-encontrado"></p>
+    <div class="deslizador"><span id="txt-roca"></span><input type="range" id="opacidad" min="0" max="100" value="85"><span id="txt-interp"></span></div>
+    <div class="fila">
+      <button id="btn-fijar" class="fijar" aria-pressed="false"></button>
+      <button id="btn-carteles" aria-pressed="true" hidden></button>
+      <button id="btn-calibrar" class="sec" hidden></button>
+    </div>
+    <div class="miniaturas" id="capas-hoja" style="margin-top:8px" hidden></div>
+    <p class="aviso" id="txt-toca" hidden></p>
+  </div>
+  <div id="calibrando" hidden>
+    <div class="fila" style="margin-top:0">
+      <button id="calib-guardar"></button>
+      <button id="calib-cancelar" class="sec"></button>
+      <button id="calib-reiniciar" class="sec"></button>
+      <button id="calib-copiar" class="sec"></button>
+    </div>
+  </div>
+  <div id="ficha" hidden></div>
+  <div class="fila" id="fila-estab"><span id="txt-estab"></span><span class="estab" id="estab"></span></div>
+</div>
+<div id="cargando"><div><p id="txt-cargando">…</p><p id="error" hidden></p></div></div>
+<div id="foto-prueba" hidden><img alt=""><button aria-label="✕">✕</button></div>
+
+<script>
+// Textos de la RA en los tres idiomas (los de Carlos, más los del modo hoja y el suavizado).
+const TXT_RA = {
+  es: {
+    titulo: 'Geositio {n} · RA', cargando: 'Preparando la cámara…', roca: 'Roca', interp: 'Interpretación',
+    apunta: 'Apunta la cámara a la roca con un encuadre parecido a esta foto. Cuando la reconozca, verás la interpretación encima.',
+    apunta_hoja: 'Apunta la cámara a la hoja impresa pegada en la roca. Acércate hasta que la hoja ocupe al menos un cuarto de la pantalla.',
+    encontrado: '✓ Roca reconocida', encontrado_hoja: '✓ Hoja reconocida',
+    prueba: '¿No estás en el lugar? Toca una foto para verla en grande y apunta otro teléfono hacia ella.',
+    prueba_hoja: 'Imprime la hoja desde <a href="ar/hoja-ra.pdf">ar/hoja-ra.pdf</a> y pégala plana sobre la cara de la roca.',
+    no_hay: 'Este geositio todavía no tiene realidad aumentada.', sin_camara: 'No se pudo abrir la cámara de este dispositivo.',
+    permiso: 'Permite el acceso a la cámara para usar la realidad aumentada.',
+    carteles: '🏷️ Carteles', toca: 'Toca un ícono para saber más.', curiosos: '🤓 Para curiosos', cerrar: 'Cerrar', escuchar: '🔊 Escuchar', pausa: '⏸ Pausa',
+    modo_roca: 'Roca', modo_hoja: 'Hoja', fijar: '📌 Fijar imagen', soltar: '▶ Seguir cámara',
+    estab: 'Estabilidad', agil: 'Ágil', media: 'Media', firme: 'Firme',
+    calibrar: '🎯 Calibrar', guardar: '✓ Guardar', cancelar: 'Cancelar', reiniciar: 'Reiniciar', copiar: 'Copiar valores',
+    calib_ayuda: 'Imagen fijada. Arrastra la capa con un dedo; pellizca o gira con dos para que calce con la roca. Después, Guardar.',
+    calib_ok: 'Calibración guardada en este teléfono', copiado: 'Valores copiados: envíalos para dejarlos fijos en la app',
+    elige_capa: 'Capa a mostrar:'
+  },
+  en: {
+    titulo: 'Geosite {n} · AR', cargando: 'Starting the camera…', roca: 'Rock', interp: 'Interpretation',
+    apunta: 'Point the camera at the rock with a framing similar to this photo. Once it is recognized, the interpretation appears on top.',
+    apunta_hoja: 'Point the camera at the printed sheet stuck on the rock. Get close until the sheet fills at least a quarter of the screen.',
+    encontrado: '✓ Rock recognized', encontrado_hoja: '✓ Sheet recognized',
+    prueba: 'Not on site? Tap a photo to view it full screen and point another phone at it.',
+    prueba_hoja: 'Print the sheet from <a href="ar/hoja-ra.pdf">ar/hoja-ra.pdf</a> and stick it flat on the rock face.',
+    no_hay: 'This geosite does not have augmented reality yet.', sin_camara: 'The camera on this device could not be opened.',
+    permiso: 'Allow camera access to use augmented reality.',
+    carteles: '🏷️ Labels', toca: 'Tap an icon to learn more.', curiosos: '🤓 For the curious', cerrar: 'Close', escuchar: '🔊 Listen', pausa: '⏸ Pause',
+    modo_roca: 'Rock', modo_hoja: 'Sheet', fijar: '📌 Freeze image', soltar: '▶ Follow camera',
+    estab: 'Stability', agil: 'Quick', media: 'Medium', firme: 'Steady',
+    calibrar: '🎯 Calibrate', guardar: '✓ Save', cancelar: 'Cancel', reiniciar: 'Reset', copiar: 'Copy values',
+    calib_ayuda: 'Image frozen. Drag the layer with one finger; pinch or twist with two until it matches the rock. Then Save.',
+    calib_ok: 'Calibration saved on this phone', copiado: 'Values copied: send them so they can be fixed in the app',
+    elige_capa: 'Layer to show:'
+  },
+  pt: {
+    titulo: 'Geossítio {n} · RA', cargando: 'Preparando a câmera…', roca: 'Rocha', interp: 'Interpretação',
+    apunta: 'Aponte a câmera para a rocha com um enquadramento parecido com esta foto. Quando ela for reconhecida, a interpretação aparece por cima.',
+    apunta_hoja: 'Aponte a câmera para a folha impressa colada na rocha. Aproxime-se até a folha ocupar pelo menos um quarto da tela.',
+    encontrado: '✓ Rocha reconhecida', encontrado_hoja: '✓ Folha reconhecida',
+    prueba: 'Não está no local? Toque em uma foto para vê-la em tela cheia e aponte outro celular para ela.',
+    prueba_hoja: 'Imprima a folha em <a href="ar/hoja-ra.pdf">ar/hoja-ra.pdf</a> e cole-a bem plana na face da rocha.',
+    no_hay: 'Este geossítio ainda não tem realidade aumentada.', sin_camara: 'Não foi possível abrir a câmera deste aparelho.',
+    permiso: 'Permita o acesso à câmera para usar a realidade aumentada.',
+    carteles: '🏷️ Placas', toca: 'Toque em um ícone para saber mais.', curiosos: '🤓 Para curiosos', cerrar: 'Fechar', escuchar: '🔊 Ouvir', pausa: '⏸ Pausar',
+    modo_roca: 'Rocha', modo_hoja: 'Folha', fijar: '📌 Congelar imagem', soltar: '▶ Seguir câmera',
+    estab: 'Estabilidade', agil: 'Ágil', media: 'Média', firme: 'Firme',
+    calibrar: '🎯 Calibrar', guardar: '✓ Salvar', cancelar: 'Cancelar', reiniciar: 'Reiniciar', copiar: 'Copiar valores',
+    calib_ayuda: 'Imagem congelada. Arraste a camada com um dedo; faça pinça ou gire com dois até coincidir com a rocha. Depois, Salvar.',
+    calib_ok: 'Calibração salva neste celular', copiado: 'Valores copiados: envie-os para fixá-los no app',
+    elige_capa: 'Camada a mostrar:'
+  }
+};
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { MindARThree } from './js/vendor/mindar/mindar-image-three.prod.js';
+
+const $ = s => document.querySelector(s);
+const leer = (k, def) => { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? def; } catch { return def; } };
+const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { } };
+
+let LANG = leer('geoparquemet:idioma', 'es');
+if (!TXT_RA[LANG]) LANG = 'es';
+const t = (k, v) => { let s = TXT_RA[LANG][k] ?? TXT_RA.es[k] ?? k; if (v) s = s.replace(/\{(\w+)\}/g, (_, x) => v[x] ?? ''); return s; };
+document.documentElement.lang = LANG;
+
+const params = new URLSearchParams(location.search);
+const n = params.get('g') || '1';
+const HOJA = params.get('m') === '1';
+const idApp = 'GPM' + String(n).padStart(2, '0');
+const volver = () => { location.href = './index.html#/g/' + idApp; };
+$('#volver').onclick = volver;
+$('#titulo').textContent = t('titulo', { n });
+const enlaceModo = (el, hoja) => { el.textContent = t(hoja ? 'modo_hoja' : 'modo_roca'); el.href = `ar.html?g=${n}${hoja ? '&m=1' : ''}`; el.setAttribute('aria-current', String(hoja === HOJA)); };
+enlaceModo($('#modo-roca'), false); enlaceModo($('#modo-hoja'), true);
+$('#txt-apunta').textContent = t(HOJA ? 'apunta_hoja' : 'apunta');
+$('#txt-encontrado').textContent = t(HOJA ? 'encontrado_hoja' : 'encontrado');
+$('#txt-roca').textContent = t('roca');
+$('#txt-interp').textContent = t('interp');
+$('#txt-cargando').textContent = t('cargando');
+$('#txt-prueba').innerHTML = t(HOJA ? 'prueba_hoja' : 'prueba');
+$('#btn-fijar').textContent = t('fijar');
+$('#txt-estab').textContent = t('estab');
+
+const fallo = msg => {
+  $('#cargando').hidden = false; $('#txt-cargando').hidden = true;
+  const e = $('#error'); e.hidden = false; e.textContent = msg;
+  const b = Object.assign(document.createElement('button'), { className: 'btn', textContent: '←' });
+  b.onclick = volver; e.after(b);
+};
+
+const objetivos = await fetch('ar/objetivos.json').then(r => r.json()).catch(() => ({}));
+const o = objetivos[n];
+if (!o) { fallo(t('no_hay')); throw new Error('sin objetivos'); }
+
+// ---------- calibración de la hoja impresa ----------
+// Posición de la capa en unidades del ancho de la hoja (la hoja mide 1 × 1, centrada en 0,0; y hacia arriba):
+// centro (x, y), ancho s y giro r (radianes). Lo guardado en el teléfono manda sobre ar/calibracion.json.
+const CALIB_BASE = await fetch('ar/calibracion.json').then(r => r.json()).catch(() => ({}));
+// por defecto la capa queda centrada en la hoja, 3 veces más ancha, para que se vea al empezar a calibrar
+const calibDefecto = par => ({ par, x: 0, y: 0, s: 3, r: 0 });
+const calibs = leer('geoparquemet:ra-calib', {});
+let calib = calibs[n] || CALIB_BASE[n] || calibDefecto(0);
+if (!o.pares[calib.par]) calib = calibDefecto(0);
+
+// miniaturas: en modo roca muestran qué encuadre buscar (al tocar se ven en grande);
+// en modo hoja eligen qué capa se dibuja sobre la roca
+const htmlMinis = sel => o.pares.map((p, i) => `<button data-i="${i}" class="${i === sel ? 'activo' : ''}"><img src="${p.obj}" alt=""></button>`).join('');
+if (HOJA) {
+  $('#miniaturas').innerHTML = '';
+  $('#miniaturas').hidden = true;
+} else {
+  $('#miniaturas').innerHTML = htmlMinis(-1);
+  $('#miniaturas').onclick = e => { const b = e.target.closest('button'); if (!b) return; const f = $('#foto-prueba'); f.querySelector('img').src = o.pares[+b.dataset.i].obj; f.hidden = false; };
+}
+$('#foto-prueba button').onclick = () => $('#foto-prueba').hidden = true;
+
+if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { fallo(t('sin_camara')); throw new Error('sin cámara'); }
+
+// ---------- suavizado ----------
+// El filtro de MindAR suaviza cada número de la matriz por separado: con mucho suavizado la capa se
+// deforma y se arrastra detrás del movimiento. Aquí se le deja casi sin filtro y se suaviza la pose
+// completa (posición + rotación) con un tiempo de respuesta que se acorta cuando el movimiento es real
+// y se alarga cuando es solo temblor de la mano.
+const NIVELES = {
+  agil: { lento: .06, rapido: .02, umbralPos: .02, umbralAng: .03 },
+  media: { lento: .2, rapido: .05, umbralPos: .03, umbralAng: .05 },
+  firme: { lento: .5, rapido: .08, umbralPos: .05, umbralAng: .09 }
+};
+let nivel = leer('geoparquemet:ra-estabilidad', 'media');
+if (!NIVELES[nivel]) nivel = 'media';
+$('#estab').innerHTML = Object.keys(NIVELES).map(k => `<button data-k="${k}" aria-pressed="${k === nivel}">${t(k)}</button>`).join('');
+$('#estab').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  nivel = b.dataset.k; guardar('geoparquemet:ra-estabilidad', nivel);
+  $('#estab').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+};
+
+const mind = new MindARThree({
+  container: $('#escena'), imageTargetSrc: HOJA ? 'ar/marcador.mind' : o.mind, maxTrack: 1,
+  uiLoading: 'no', uiScanning: 'no', uiError: 'no',
+  filterMinCF: 1, filterBeta: 0,               // el suavizado lo hace esta página
+  warmupTolerance: 3, missTolerance: 12,       // aparece antes y no se apaga por un par de cuadros perdidos
+});
+const { renderer, scene, camera } = mind;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+// "soporte" lleva la pose suavizada del objetivo que se está viendo; la capa cuelga de él
+const soporte = new THREE.Group();
+soporte.matrixAutoUpdate = false; soporte.visible = false;
+scene.add(soporte);
+const calibGrupo = new THREE.Group();     // solo se mueve en modo hoja
+soporte.add(calibGrupo);
+
+const cargador = new THREE.TextureLoader();
+const materiales = [];
+const planos = o.pares.map(p => {
+  const tex = cargador.load(p.capa);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: .85, depthWrite: false });
+  materiales.push(mat);
+  // MindAR mide el objetivo con ancho 1: el plano tiene la proporción de la foto
+  const plano = new THREE.Mesh(new THREE.PlaneGeometry(1, p.h / p.w), mat);
+  plano.visible = false;
+  calibGrupo.add(plano);
+  return plano;
+});
+
+let activo = -1;            // índice del par que se está mostrando
+let congelado = false, calibrando = false, abierto = null;
+const anclas = (HOJA ? [0] : o.pares.map((_, i) => i)).map(i => mind.addAnchor(i));
+
+function mostrarPar(i) {
+  activo = i;
+  planos.forEach((pl, j) => pl.visible = j === i);
+}
+function aplicarCalib() {
+  if (!HOJA) return;
+  calibGrupo.position.set(calib.x, calib.y, 0);
+  calibGrupo.rotation.set(0, 0, calib.r);
+  calibGrupo.scale.setScalar(calib.s);
+}
+aplicarCalib();
+
+function perder() {
+  activo = -1; soporte.visible = false;
+  $('#buscando').hidden = false; $('#viendo').hidden = true; $('#ficha').hidden = true;
+  abierto = null; voz.pause(); capaCarteles.hidden = true;
+}
+anclas.forEach((ancla, i) => {
+  ancla.onTargetFound = () => {
+    if (congelado) return;
+    mostrarPar(HOJA ? calib.par : i);
+    reiniciarSuavizado = true;
+    $('#buscando').hidden = true; $('#viendo').hidden = !!abierto;
+    if (!HOJA) document.querySelectorAll('#miniaturas button').forEach((b, j) => b.classList.toggle('activo', j === i));
+    if (navigator.vibrate) try { navigator.vibrate(60); } catch { }
+  };
+  ancla.onTargetLost = () => { if (!congelado) perder(); };   // con la imagen fijada no se pierde nada
+});
+$('#opacidad').oninput = e => materiales.forEach(m => m.opacity = e.target.value / 100);
+
+const pObj = new THREE.Vector3(), qObj = new THREE.Quaternion(), sObj = new THREE.Vector3();
+const pSua = new THREE.Vector3(), qSua = new THREE.Quaternion(), sSua = new THREE.Vector3();
+let reiniciarSuavizado = true, tPrevio = performance.now();
+function suavizar() {
+  const ahora = performance.now(), dt = Math.min((ahora - tPrevio) / 1000, .1);
+  tPrevio = ahora;
+  if (congelado) return;
+  const ancla = anclas.find(a => a.group.visible);
+  if (!ancla || activo < 0) { soporte.visible = false; return; }
+  ancla.group.matrix.decompose(pObj, qObj, sObj);
+  if (reiniciarSuavizado) {
+    pSua.copy(pObj); qSua.copy(qObj); sSua.copy(sObj); reiniciarSuavizado = false;
+  } else {
+    const N = NIVELES[nivel];
+    const errPos = pSua.distanceTo(pObj) / Math.max(pObj.length(), 1e-6);
+    const errAng = qSua.angleTo(qObj);
+    const k = Math.min(1, Math.max(errPos / N.umbralPos, errAng / N.umbralAng));
+    const tau = N.lento * (1 - k) + N.rapido * k;
+    const a = 1 - Math.exp(-dt / tau);
+    pSua.lerp(pObj, a); qSua.slerp(qObj, a); sSua.lerp(sObj, a);
+  }
+  soporte.matrix.compose(pSua, qSua, sSua);
+  soporte.visible = true;
+}
+
+// ---------- fijar la imagen ----------
+const btnFijar = $('#btn-fijar');
+function fijar(si) {
+  congelado = si;
+  btnFijar.setAttribute('aria-pressed', String(si));
+  btnFijar.textContent = t(si ? 'soltar' : 'fijar');
+  const v = mind.video;
+  if (v) { if (si) v.pause(); else v.play().catch(() => { }); }
+  if (!si) {
+    reiniciarSuavizado = true;
+    // si el objetivo se perdió mientras estaba fijada, se vuelve a buscar
+    if (!anclas.some(a => a.group.visible)) perder();
+  }
+}
+btnFijar.onclick = () => fijar(!congelado);
+
+// ---------- carteles de divulgación ----------
+// ar/carteles.json trae los textos; cada par de objetivos.json trae dónde apunta cada cartel en su foto (x, y de 0 a 1).
+const CARTELES = (await fetch('ar/carteles.json').then(r => r.json()).catch(() => ({})))[n] || [];
+const capaCarteles = $('#carteles'), svg = capaCarteles.querySelector('svg');
+let visibles = leer('geoparquemet:carteles', true);
+const voz = new Audio();   // audio corto de cada cartel: ar/audio/<idioma>/g<N>_<id>.mp3
+voz.preload = 'auto';
+const tx = v => (v && (v[LANG] || v.es)) || '';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const elementos = CARTELES.map(c => {
+  const punto = Object.assign(document.createElement('div'), { className: 'punto' });
+  punto.style.background = c.color2 ? `linear-gradient(90deg, ${c.color} 50%, ${c.color2} 50%)` : c.color;
+  const b = document.createElement('button');
+  b.className = 'cartel'; b.style.setProperty('--c', c.color);
+  b.innerHTML = `<span class="ic">${c.icono}</span>`; b.setAttribute('aria-label', tx(c.titulo)); b.title = tx(c.titulo);
+  b.onclick = () => abrir(c, b);
+  const linea = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  svg.appendChild(linea); capaCarteles.append(punto, b);
+  return { c, punto, b, linea };
+});
+function abrir(c, b) {
+  abierto = c.id;
+  elementos.forEach(e => e.b.classList.toggle('activo', e.b === b));
+  const f = $('#ficha');
+  f.innerHTML = `<button class="cerrar" aria-label="${esc(t('cerrar'))}">✕</button><h3><span>${c.icono}</span>${esc(tx(c.titulo))}</h3>`
+    + `<button class="btn oir"></button><p>${esc(tx(c.texto))}</p><div class="curioso"><b>${esc(t('curiosos'))}</b>${esc(tx(c.curioso))}</div>`;
+  f.querySelector('.cerrar').onclick = cerrar;
+  const oir = f.querySelector('.oir');
+  const pintarOir = () => { const on = !voz.paused && !voz.ended; oir.textContent = t(on ? 'pausa' : 'escuchar'); oir.classList.toggle('sonando', on); };
+  voz.onplay = voz.onpause = voz.onended = pintarOir;
+  oir.onclick = () => { if (voz.paused || voz.ended) { if (voz.ended) voz.currentTime = 0; voz.play().catch(() => { }); } else voz.pause(); };
+  voz.src = `ar/audio/${LANG}/g${n}_${c.id}.mp3`;
+  voz.play().catch(() => { });   // el toque en el cartel permite reproducir
+  pintarOir();
+  f.hidden = false; $('#viendo').hidden = true;
+}
+function cerrar() {
+  abierto = null; $('#ficha').hidden = true; voz.pause();
+  elementos.forEach(e => e.b.classList.remove('activo'));
+  if (activo >= 0) $('#viendo').hidden = false;
+}
+if (CARTELES.length) {
+  const boton = $('#btn-carteles');
+  boton.hidden = false;
+  boton.textContent = t('carteles');
+  $('#txt-toca').textContent = t('toca');
+  const pintar = () => { boton.setAttribute('aria-pressed', String(visibles)); $('#txt-toca').hidden = !visibles; if (!visibles) capaCarteles.hidden = true; };
+  boton.onclick = () => { visibles = !visibles; guardar('geoparquemet:carteles', visibles); pintar(); };
+  pintar();
+}
+const v3 = new THREE.Vector3();
+// punto de la foto de la capa (x, y de 0 a 1) → píxeles de pantalla, con la pose suavizada
+function aPantalla(p, x, y, rect) {
+  v3.set(x - .5, (.5 - y) * p.h / p.w, 0).applyMatrix4(planos[activo].matrixWorld).project(camera);
+  return [rect.left + (v3.x + 1) / 2 * rect.width, rect.top + (1 - v3.y) / 2 * rect.height];
+}
+function ubicarCarteles() {
+  const p = o.pares[activo], pos = p && p.carteles;
+  if (!visibles || !pos || !soporte.visible || calibrando) { capaCarteles.hidden = true; return; }
+  capaCarteles.hidden = false;
+  const rect = renderer.domElement.getBoundingClientRect();
+  const alto = innerHeight - $('.panel').getBoundingClientRect().height - 24;   // no tapar el panel de abajo
+  for (const e of elementos) {
+    const q = pos[e.c.id];
+    e.punto.hidden = e.b.hidden = !q; e.linea.style.display = q ? '' : 'none';
+    if (!q) continue;
+    const [ax, ay] = aPantalla(p, q[0], q[1], rect);
+    let [lx, ly] = aPantalla(p, q[0] + e.c.dx, q[1] + e.c.dy, rect);
+    const m = 38 / 2 + 6, mh = 38 / 2 + 6;
+    lx = Math.min(Math.max(lx, m), innerWidth - m); ly = Math.min(Math.max(ly, mh + 60), alto - mh);
+    e.ax = ax; e.ay = ay; e.lx = lx; e.ly = ly; e.w = e.h = 38;
+  }
+  // si dos carteles se tapan, se separan en vertical (el de más abajo baja, o sube si no cabe)
+  const vivos = elementos.filter(e => !e.b.hidden).sort((a, b) => a.ly - b.ly);
+  for (let pasada = 0; pasada < 3; pasada++)
+    for (let i = 0; i < vivos.length; i++) for (let j = i + 1; j < vivos.length; j++) {
+      const a = vivos[i], b = vivos[j];
+      const sepY = (a.h + b.h) / 2 + 6 - Math.abs(b.ly - a.ly);
+      if (Math.abs(b.lx - a.lx) < (a.w + b.w) / 2 + 6 && sepY > 0) {
+        if (b.ly + sepY + b.h / 2 < alto) b.ly += sepY; else a.ly -= sepY;
+      }
+    }
+  for (const e of vivos) {
+    e.punto.style.left = e.ax + 'px'; e.punto.style.top = e.ay + 'px';
+    e.b.style.left = e.lx + 'px'; e.b.style.top = e.ly + 'px';
+    const dx = e.ax - e.lx, dy = e.ay - e.ly, d = Math.hypot(dx, dy) || 1;   // insignia → roca; la flecha termina en el punto
+    e.linea.style.display = d > 30 ? '' : 'none';
+    e.linea.setAttribute('x1', e.lx + dx / d * 20); e.linea.setAttribute('y1', e.ly + dy / d * 20);
+    e.linea.setAttribute('x2', e.ax - dx / d * 9); e.linea.setAttribute('y2', e.ay - dy / d * 9);
+  }
+}
+
+// ---------- modo hoja: elegir capa y calibrar ----------
+if (HOJA) {
+  const minis = $('#capas-hoja');
+  minis.hidden = o.pares.length < 2;
+  minis.innerHTML = htmlMinis(calib.par);
+  minis.onclick = e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const i = +b.dataset.i;
+    if (i === calib.par) return;
+    // al cambiar de capa se conserva el ancho y el centro, con la proporción de la nueva foto
+    calib = { ...calib, par: i };
+    calibs[n] = calib; guardar('geoparquemet:ra-calib', calibs);
+    minis.querySelectorAll('button').forEach(x => x.classList.toggle('activo', x === b));
+    if (activo >= 0) mostrarPar(i);
+  };
+  const bc = $('#btn-calibrar');
+  bc.hidden = false; bc.textContent = t('calibrar');
+  $('#calib-guardar').textContent = t('guardar');
+  $('#calib-cancelar').textContent = t('cancelar');
+  $('#calib-reiniciar').textContent = t('reiniciar');
+  $('#calib-copiar').textContent = t('copiar');
+  $('#calib-ayuda').textContent = t('calib_ayuda');
+  let respaldo = null;
+  const salir = () => {
+    calibrando = false;
+    $('#gestos').hidden = true; $('#calib-ayuda').hidden = true; $('#calibrando').hidden = true;
+    $('#viendo').hidden = activo < 0; $('#fila-estab').hidden = false;
+  };
+  bc.onclick = () => {
+    if (activo < 0) return;
+    respaldo = { ...calib };
+    fijar(true);                 // se calibra con la imagen quieta
+    calibrando = true;
+    $('#gestos').hidden = false; $('#calib-ayuda').hidden = false; $('#calibrando').hidden = false;
+    $('#viendo').hidden = true; $('#fila-estab').hidden = true;
+  };
+  $('#calib-guardar').onclick = () => {
+    calibs[n] = calib; guardar('geoparquemet:ra-calib', calibs);
+    salir(); avisar(t('calib_ok'));
+  };
+  $('#calib-cancelar').onclick = () => { calib = respaldo; aplicarCalib(); salir(); };
+  $('#calib-reiniciar').onclick = () => { calib = calibDefecto(calib.par); aplicarCalib(); };
+  $('#calib-copiar').onclick = () => {
+    const r4 = x => Math.round(x * 1e4) / 1e4;
+    const texto = JSON.stringify({ [n]: { par: calib.par, x: r4(calib.x), y: r4(calib.y), s: r4(calib.s), r: r4(calib.r) } });
+    (navigator.clipboard ? navigator.clipboard.writeText(texto) : Promise.reject()).then(() => avisar(t('copiado')), () => prompt(t('copiar'), texto));
+  };
+
+  // gestos: el dedo se proyecta sobre el plano de la hoja, así el arrastre sigue a la roca aunque la hoja esté inclinada
+  const ray = new THREE.Raycaster(), plano3 = new THREE.Plane(), normal = new THREE.Vector3(), centro = new THREE.Vector3(), inv = new THREE.Matrix4();
+  const enHoja = (cx, cy) => {
+    const r = renderer.domElement.getBoundingClientRect();
+    ray.setFromCamera(new THREE.Vector2((cx - r.left) / r.width * 2 - 1, -((cy - r.top) / r.height) * 2 + 1), camera);
+    soporte.updateMatrixWorld(true);
+    normal.set(0, 0, 1).transformDirection(soporte.matrixWorld);
+    centro.setFromMatrixPosition(soporte.matrixWorld);
+    plano3.setFromNormalAndCoplanarPoint(normal, centro);
+    const hit = ray.ray.intersectPlane(plano3, new THREE.Vector3());
+    if (!hit) return null;
+    inv.copy(soporte.matrixWorld).invert();
+    hit.applyMatrix4(inv);
+    return [hit.x, hit.y];
+  };
+  const dedos = new Map();
+  const zona = $('#gestos');
+  zona.addEventListener('pointerdown', e => { zona.setPointerCapture(e.pointerId); dedos.set(e.pointerId, enHoja(e.clientX, e.clientY)); });
+  const soltar = e => dedos.delete(e.pointerId);
+  zona.addEventListener('pointerup', soltar); zona.addEventListener('pointercancel', soltar);
+  zona.addEventListener('pointermove', e => {
+    if (!dedos.has(e.pointerId)) return;
+    const ahora = enHoja(e.clientX, e.clientY), antes = dedos.get(e.pointerId);
+    if (!ahora || !antes) { dedos.set(e.pointerId, ahora); return; }
+    if (dedos.size === 1) {
+      calib.x += ahora[0] - antes[0]; calib.y += ahora[1] - antes[1];
+    } else {
+      const otro = [...dedos.entries()].find(([id]) => id !== e.pointerId)[1];
+      if (!otro) { dedos.set(e.pointerId, ahora); return; }
+      // pellizco y giro alrededor del punto medio entre los dos dedos
+      const vA = [antes[0] - otro[0], antes[1] - otro[1]], vB = [ahora[0] - otro[0], ahora[1] - otro[1]];
+      const f = Math.hypot(...vB) / Math.max(Math.hypot(...vA), 1e-6);
+      const d = Math.atan2(vB[1], vB[0]) - Math.atan2(vA[1], vA[0]);
+      const mA = [(antes[0] + otro[0]) / 2, (antes[1] + otro[1]) / 2], mB = [(ahora[0] + otro[0]) / 2, (ahora[1] + otro[1]) / 2];
+      const cx = calib.x - mA[0], cy = calib.y - mA[1], cs = Math.cos(d), sn = Math.sin(d);
+      calib.x = mB[0] + f * (cs * cx - sn * cy); calib.y = mB[1] + f * (sn * cx + cs * cy);
+      calib.s = Math.min(Math.max(calib.s * f, .2), 40); calib.r += d;
+    }
+    dedos.set(e.pointerId, ahora);
+    aplicarCalib();
+  });
+}
+
+function avisar(texto) {
+  const a = Object.assign(document.createElement('div'), { textContent: texto });
+  a.style.cssText = 'position:fixed;left:50%;top:calc(70px + env(safe-area-inset-top));transform:translateX(-50%);z-index:40;background:#111;color:#fff;padding:9px 14px;border-radius:12px;font-size:.88rem;max-width:90vw;text-align:center';
+  document.body.appendChild(a); setTimeout(() => a.remove(), 2600);
+}
+
+try {
+  await mind.start();
+  $('#cargando').hidden = true;
+  renderer.setAnimationLoop(() => {
+    suavizar();
+    renderer.render(scene, camera);
+    if (activo >= 0 && elementos.length) ubicarCarteles();
+  });
+} catch (e) {
+  console.error(e);
+  fallo(/NotAllowed|Permission/i.test(String(e)) ? t('permiso') : t('sin_camara'));
+}
+addEventListener('pagehide', () => { try { mind.stop(); } catch { } });
+</script>
+</body>
+</html>

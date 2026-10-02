@@ -313,7 +313,8 @@ const Vistas = (() => {
       U.el('div', { clase: 'contenido', style: 'padding-bottom:0' }, [
         U.el('p', { clase: 'gancho', texto: g.gancho }),
         U.el('div', { clase: 'controles-3d' }, [btnVisita, btnVoz, btnLlegar]),
-        distancia
+        distancia,
+        bloqueRA(g)
       ]),
       barraPestanas,
       contenedorPaneles,
@@ -334,6 +335,25 @@ const Vistas = (() => {
 
     elegir(secciones[0].id);
     return vista;
+  }
+
+  /* Realidad aumentada (ar.html): la interpretación dibujada sobre la roca, con la cámara.
+     "Sobre la roca" reconoce el afloramiento con las fotos de terreno; "Con hoja impresa"
+     sigue la hoja de ar/hoja-ra.pdf pegada en la roca, que se sostiene más firme. */
+  const GEOSITIOS_RA = [1, 2, 3, 6];
+  function bloqueRA(g) {
+    if (!GEOSITIOS_RA.includes(g.num)) return null;
+    return U.el('div', { style: 'margin-top:14px' }, [
+      U.el('div', { clase: 'grid-2' }, [
+        U.el('a', { clase: 'boton', href: 'ar.html?g=' + g.num, texto: '📷 RA sobre la roca' }),
+        U.el('a', { clase: 'boton secundario', href: 'ar.html?g=' + g.num + '&m=1',
+          texto: '📄 RA con hoja impresa' })
+      ]),
+      U.el('p', { clase: 'pequeno tenue', style: 'margin:6px 0 0' }, [
+        'La hoja impresa se ancla mejor. ',
+        U.el('a', { href: 'ar/hoja-ra.pdf', target: '_blank', rel: 'noopener', texto: 'Descargar la hoja (PDF)' })
+      ])
+    ]);
   }
 
   function vecinos(g) {
@@ -691,7 +711,7 @@ const Vistas = (() => {
       U.el('h2', { style: 'margin-top:22px', texto: 'Uso sin conexión' }),
       U.el('p', { clase: 'pequeno tenue',
         texto: 'En el cerro la señal es irregular. Descarga el contenido antes de salir: ' +
-               'ocupa unos 60 MB con fotos, modelos 3D y panorámicas.' }),
+               'ocupa unos 95 MB con fotos, modelos 3D y panorámicas.' }),
       btnDescarga, estadoDescarga,
 
       U.el('h2', { style: 'margin-top:22px', texto: 'Tu recorrido' }),

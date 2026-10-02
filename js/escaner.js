@@ -22,6 +22,16 @@ const Escaner = (() => {
     return jsqrListo;
   }
 
+  /* QR de la hoja impresa de RA: "GEOPARQUEMET-RA-G1" o una URL a ar.html?g=1&m=1.
+     Devuelve el número del geositio o null. */
+  function codigoRA(texto) {
+    const t = String(texto || '');
+    let m = t.match(/GEOPARQUEMET-RA-G(\d{1,2})/i);
+    if (m) return m[1];
+    m = t.match(/ar\.html\?(?:.*&)?g=(\d{1,2})/);
+    return m ? m[1] : null;
+  }
+
   /* Acepta la URL completa del QR, el código del geositio o solo el número. */
   function interpretar(texto) {
     if (!texto) return null;
@@ -79,6 +89,14 @@ const Escaner = (() => {
     }
 
     function encontrado(texto) {
+      /* La hoja impresa de realidad aumentada abre directamente la RA en modo hoja. */
+      const ra = codigoRA(texto);
+      if (ra) {
+        U.vibrar(60);
+        cerrar();
+        location.href = 'ar.html?g=' + ra + '&m=1';
+        return true;
+      }
       const g = interpretar(texto);
       if (!g) {
         instruccion.textContent = 'Ese código no corresponde a un geositio de GeoParquemet';

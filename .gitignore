@@ -16,3 +16,4 @@ __pycache__/
 Thumbs.db
 .DS_Store
 .netlify/
+tools/_prueba_marcador/

@@ -43,7 +43,7 @@ def pagina(n, base, marca):
     d.text((tx, yq + int(8 * MM)), NOMBRES.get(n, ''), fill='#1c2b26', font=fuente(int(4 * MM), True))
     lineas = [
         '1. Pega la hoja PLANA sobre la cara de la roca (sin arrugas).',
-        '2. Escanea el QR con la app (Escanear) o abre la RA en modo "Hoja".',
+        '2. Escanea el QR con la cámara del teléfono o con la app (Escanear).',
         '3. Acércate hasta que la hoja ocupe 1/4 de la pantalla.',
         '4. La primera vez: Calibrar, ajustar la capa a la roca y Guardar.',
     ]

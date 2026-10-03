@@ -8,33 +8,37 @@
    Las teselas del mapa se guardan aparte, a medida que se navega, para que el
    tramo ya recorrido siga viéndose sin señal. */
 
-const VERSION = 'v12';
+const VERSION = 'v13';
 const CACHE_ESQUELETO = 'geoparquemet-esqueleto-' + VERSION;
 const CACHE_CONTENIDO = 'geoparquemet-contenido';
 const CACHE_TESELAS = 'geoparquemet-teselas';
-const MAX_TESELAS = 400;
+/* Teselas del recorrido bajadas con "Descargar todo": no se recortan. */
+const CACHE_TESELAS_RUTA = 'geoparquemet-teselas-ruta';
+const MAX_TESELAS = 1500;
 
 const ESQUELETO = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './css/app.css?v=12',
-  './js/datos.js?v=12',
-  './js/i18n-datos.js?v=12',
-  './js/i18n.js?v=12',
-  './js/util.js?v=12',
-  './js/cortina.js?v=12',
-  './js/visor3d.js?v=12',
-  './js/pano.js?v=12',
-  './js/mapa.js?v=12',
-  './js/corte.js?v=12',
-  './js/escaner.js?v=12',
-  './js/vistas.js?v=12',
-  './js/app.js?v=12',
+  './css/app.css?v=13',
+  './js/datos.js?v=13',
+  './js/i18n-datos.js?v=13',
+  './js/i18n.js?v=13',
+  './js/util.js?v=13',
+  './js/cortina.js?v=13',
+  './js/visor3d.js?v=13',
+  './js/pano.js?v=13',
+  './js/mapa.js?v=13',
+  './js/corte.js?v=13',
+  './js/escaner.js?v=13',
+  './js/vistas.js?v=13',
+  './js/app.js?v=13',
   './js/vendor/three.min.js',
   './js/vendor/GLTFLoader.js',
   './js/vendor/OrbitControls.js',
   './js/vendor/jsqr.js',
+  './js/vendor/leaflet/leaflet.js',
+  './js/vendor/leaflet/leaflet.css',
   './ar.html',
   './js/vendor/mindar/mindar-image-three.prod.js',
   './js/vendor/mindar/controller-mGt1s8dJ.js',
@@ -57,15 +61,17 @@ self.addEventListener('activate', ev => {
   ev.waitUntil(
     caches.keys()
       .then(claves => Promise.all(claves.map(k => {
-        const conservar = k === CACHE_ESQUELETO || k === CACHE_CONTENIDO || k === CACHE_TESELAS;
+        const conservar = k === CACHE_ESQUELETO || k === CACHE_CONTENIDO || k === CACHE_TESELAS ||
+          k === CACHE_TESELAS_RUTA;
         return conservar ? null : caches.delete(k);
       })))
       .then(() => self.clients.claim())
   );
 });
 
+/* Fondos del mapa: calles (OpenStreetMap), satélite (Esri) y topográfico (OpenTopoMap). */
 function esTesela(url) {
-  return /tile\.openstreetmap\.org/.test(url.hostname);
+  return /(^|\.)tile\.openstreetmap\.org$|^server\.arcgisonline\.com$|(^|\.)tile\.opentopomap\.org$/.test(url.hostname);
 }
 
 function esContenido(url) {
@@ -90,7 +96,8 @@ self.addEventListener('fetch', ev => {
   if (esTesela(url)) {
     ev.respondWith(
       caches.open(CACHE_TESELAS).then(cache =>
-        cache.match(req).then(hit => {
+        /* se busca en todas las cachés: también en las teselas del recorrido */
+        caches.match(req).then(hit => {
           const red = fetch(req).then(res => {
             if (res && (res.ok || res.type === 'opaque')) {
               cache.put(req, res.clone());

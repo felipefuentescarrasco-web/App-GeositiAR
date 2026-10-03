@@ -155,7 +155,7 @@ const I18N = (() => {
     'Accesibilidad': ['Accessibility', 'Acessibilidade'],
     'Texto': ['Text', 'Texto'],
     'Uso sin conexión': ['Offline use', 'Uso sem conexão'],
-    'En el cerro la señal es irregular. Descarga el contenido antes de salir: ocupa unos 120 MB con fotos, modelos 3D y panorámicas.': ['Signal on the hill is patchy. Download the content before you go: it takes about 120 MB with photos, 3D models and panoramas.', 'No morro o sinal é irregular. Baixe o conteúdo antes de sair: ocupa uns 120 MB com fotos, modelos 3D e panorâmicas.'],
+    'En el cerro la señal es irregular. Descarga el contenido antes de salir: ocupa unos 135 MB con fotos, modelos 3D y panorámicas.': ['Signal on the hill is patchy. Download the content before you go: it takes about 135 MB with photos, 3D models and panoramas.', 'No morro o sinal é irregular. Baixe o conteúdo antes de sair: ocupa uns 135 MB com fotos, modelos 3D e panorâmicas.'],
     'Tu recorrido': ['Your visit', 'Seu percurso'],
     'Los geositios visitados se guardan solo en este teléfono. Nada se envía a ningún servidor.': ['Visited geosites are saved only on this phone. Nothing is sent to any server.', 'Os geossítios visitados ficam salvos só neste celular. Nada é enviado a nenhum servidor.'],
     'Borrar mi progreso': ['Clear my progress', 'Apagar meu progresso'],
@@ -219,6 +219,13 @@ const I18N = (() => {
     'Permiso denegado': ['Permission denied', 'Permissão negada'],
     'No se pudo usar el sensor': ['The sensor could not be used', 'Não foi possível usar o sensor'],
     'Idioma': ['Language', 'Idioma'],
+    'Satélite': ['Satellite', 'Satélite'],
+    'Calles': ['Streets', 'Ruas'],
+    'Topográfico': ['Topographic', 'Topográfico'],
+    'Geología': ['Geology', 'Geologia'],
+    'trazado aproximado': ['approximate route', 'traçado aproximado'],
+    'trazado por caminos de OpenStreetMap': ['route along OpenStreetMap paths', 'traçado pelos caminhos do OpenStreetMap'],
+    'Intrusivo Hipabisal': ['Hypabyssal intrusion', 'Intrusivo hipabissal'],
     'Qué observar.': ['What to look for.', 'O que observar.']
   };
 

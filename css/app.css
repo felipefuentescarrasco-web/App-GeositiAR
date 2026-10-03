@@ -321,7 +321,23 @@ input[type="range"] { accent-color: var(--lava); height: 30px; }
 
 /* --------------------------------------------------------------------- mapa */
 
-.lienzo-mapa { display: block; width: 100%; height: 100%; touch-action: none; background: #16211d; }
+.lienzo-mapa { display: block; width: 100%; height: 100%; background: #16211d; }
+/* los controles propios van sobre las capas de Leaflet (que usan z-index hasta 1000) */
+.mapa-controles, .mapa-ficha, .mapa-leyenda { z-index: 1001; }
+.marca-mapa span {
+  display: grid; place-items: center; border-radius: 50%; border: 2px solid #f4f1ea;
+  color: #fff; font: 700 12px/1 system-ui, sans-serif; box-shadow: 0 0 0 3px rgba(0,0,0,.4);
+}
+.marca-mapa.sel span { font-size: 15px; }
+.leaflet-container { font: inherit; }
+/* la regla global de svg (íconos) aplastaba el lienzo SVG de Leaflet donde van rutas y geología */
+.leaflet-container svg { width: auto; height: auto; stroke-width: initial; }
+.leaflet-control-layers { background: rgba(28,43,38,.94); color: var(--papel); border: 1px solid var(--borde) !important; border-radius: var(--r-ch) !important; }
+.leaflet-control-layers-expanded { padding: 8px 12px; font-size: .85rem; }
+.leaflet-control-layers label { margin: 4px 0; }
+.leaflet-control-layers-separator { border-top-color: var(--borde); }
+.leaflet-popup-content-wrapper, .leaflet-popup-tip { background: var(--roca-2); color: var(--papel); }
+.leaflet-control-attribution { font-size: 9px; }
 .envoltura-mapa { position: relative; width: 100%; height: calc(100vh - var(--alto-sup) - var(--alto-inf) - env(safe-area-inset-top)); }
 .mapa-controles { position: absolute; right: 12px; bottom: 12px; display: grid; gap: 8px; }
 .mapa-boton {

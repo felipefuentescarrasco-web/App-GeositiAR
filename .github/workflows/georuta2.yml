@@ -1,0 +1,28 @@
+# Calcula el trazado de la Georuta 2 por los caminos de OpenStreetMap (tools/georuta2.py) y lo deja
+# en la misma rama. Corre a mano (Actions → Georuta 2 → Run workflow) o cuando cambia el script.
+name: Georuta 2
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - tools/georuta2.py
+      - .github/workflows/georuta2.yml
+permissions:
+  contents: write
+jobs:
+  trazado:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install matplotlib
+      - run: python tools/georuta2.py
+      - name: Guardar el trazado en la rama
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898333+github-actions[bot]@users.noreply.github.com"
+          git add -f assets/geo/georuta2.geojson tools/_georuta2/control.png
+          git diff --cached --quiet || git commit -m "Georuta 2: trazado calculado por caminos de OpenStreetMap"
+          git push

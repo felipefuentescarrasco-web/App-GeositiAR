@@ -47,7 +47,12 @@ const Mapa = (() => {
     const archivo = r.id === 'r1' ? 'assets/geo/georuta1.geojson' : 'assets/geo/georuta2.geojson';
     return fetch(archivo)
       .then(res => { if (!res.ok) throw new Error('sin archivo'); return res.json(); })
-      .then(gj => ({ puntos: lineaDe(gj), oficial: true }))
+      .then(gj => {
+        /* el trazado calculado por tools/georuta2.py lo dice en "fuente": se rotula como tal */
+        const f = gj.features ? gj.features[0] : gj;
+        const calculado = /OpenStreetMap/.test((f.properties && f.properties.fuente) || '');
+        return { puntos: lineaDe(gj), oficial: !calculado };
+      })
       .catch(() => r.id === 'r2' ? trazadoOSM(r) : null)
       .then(t => t || { puntos: rutaEnOrden(r.id).map(g => [g.lat, g.lon]), oficial: false, recta: true });
   }

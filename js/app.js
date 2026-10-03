@@ -130,13 +130,13 @@ const App = (() => {
 
   /* ------------------------------------------------- descarga sin conexión */
 
-  /* Las rutas propias llevan ?v=13, igual que en index.html, para que la copia
+  /* Las rutas propias llevan ?v=14, igual que en index.html, para que la copia
      guardada corresponda exactamente a la que pide la página. */
   const ARCHIVOS_BASE = [
-    'index.html', 'manifest.webmanifest', 'css/app.css?v=13',
-    'js/datos.js?v=13', 'js/i18n-datos.js?v=13', 'js/i18n.js?v=13', 'js/util.js?v=13', 'js/cortina.js?v=13', 'js/visor3d.js?v=13',
-    'js/pano.js?v=13', 'js/mapa.js?v=13', 'js/corte.js?v=13', 'js/escaner.js?v=13',
-    'js/vistas.js?v=13', 'js/app.js?v=13',
+    'index.html', 'manifest.webmanifest', 'css/app.css?v=14',
+    'js/datos.js?v=14', 'js/i18n-datos.js?v=14', 'js/i18n.js?v=14', 'js/util.js?v=14', 'js/cortina.js?v=14', 'js/visor3d.js?v=14',
+    'js/pano.js?v=14', 'js/mapa.js?v=14', 'js/corte.js?v=14', 'js/escaner.js?v=14',
+    'js/vistas.js?v=14', 'js/app.js?v=14',
     'js/vendor/three.min.js', 'js/vendor/GLTFLoader.js', 'js/vendor/OrbitControls.js',
     'js/vendor/jsqr.js',
     'assets/icons/icono-192.png', 'assets/icons/icono-512.png',
@@ -146,7 +146,7 @@ const App = (() => {
     'js/vendor/three-mod/addons/renderers/CSS3DRenderer.js',
     'ar/objetivos.json', 'ar/carteles.json', 'ar/calibracion.json', 'ar/marcador.mind',
     'js/vendor/leaflet/leaflet.js', 'js/vendor/leaflet/leaflet.css',
-    'assets/geo/georuta1.geojson', 'assets/geo/geologia.geojson'
+    'assets/geo/georuta1.geojson', 'assets/geo/georuta2.geojson', 'assets/geo/geologia.geojson'
   ];
 
   /* Realidad aumentada: objetivos, capas y audios de los carteles en los tres idiomas. */
@@ -178,7 +178,6 @@ const App = (() => {
     const lista = listaCompleta(), teselas = Mapa.teselasRecorrido();
     const total = lista.length + teselas.length;
     let hechos = 0;
-    Mapa.trazadoOSM();          /* deja calculado el trazado de la Georuta 2 */
     function bajar(nombreCache, urls) {
       return caches.open(nombreCache).then(cache => {
         /* de a tres para no ahogar la conexión del cerro */

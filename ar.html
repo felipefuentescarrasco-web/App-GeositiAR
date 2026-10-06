@@ -17,7 +17,9 @@
 <style>
   :root { --lava: #c1622f; --lava-claro: #e08a4f; --papel: #f4f1ea; --roca: #1c2b26; }
   html, body { margin: 0; height: 100%; background: #000; color: #fff; font: 15px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
-  #escena { position: fixed; inset: 0; }
+  /* #marco recorta: el estabilizador agranda y mueve #escena (cámara + capa juntas) */
+  #marco { position: fixed; inset: 0; overflow: hidden; contain: strict; }
+  #escena { position: absolute; inset: 0; transform-origin: 0 0; will-change: transform; }
   #escena video { object-fit: cover; }
   .barra { position: fixed; top: 0; left: 0; right: 0; z-index: 10; display: flex; align-items: center; gap: 8px; padding: calc(10px + env(safe-area-inset-top)) 10px 10px; background: linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,0)); }
   .barra button, .barra a { border: 0; background: rgba(255,255,255,.18); color: #fff; border-radius: 10px; padding: 8px 11px; font: inherit; font-size: .9rem; font-weight: 700; text-decoration: none; }
@@ -78,7 +80,7 @@
 </script>
 </head>
 <body>
-<div id="escena"></div>
+<div id="marco"><div id="escena"></div></div>
 <div id="carteles" hidden><svg><defs><marker id="flecha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#fff"/></marker></defs></svg></div>
 <div id="gestos" hidden></div>
 <div class="barra">
@@ -204,6 +206,8 @@ document.documentElement.lang = LANG;
 const params = new URLSearchParams(location.search);
 const n = params.get('g') || '1';
 const HOJA = params.get('m') === '1';
+// estabilizador tipo gimbal (idea y sincronización del video de un colega de Carlos); ?gimbal=0 lo apaga
+const GIMBAL = params.get('gimbal') !== '0';
 const idApp = 'GPM' + String(n).padStart(2, '0');
 const volver = () => { location.href = './index.html#/g/' + idApp; };
 $('#volver').onclick = volver;
@@ -290,6 +294,8 @@ const mind = new MindARThree({
 });
 const { renderer, scene, camera } = mind;
 window.__ra = { mind };          // para diagnosticar desde la consola
+// centro de la capa en pantalla, con el estabilizador incluido (para medir el temblor en las pruebas)
+window.__ra.pantalla = () => soporte.visible && activo >= 0 ? aPantalla(o.pares[activo], .5, .5, { width: escena.clientWidth, height: escena.clientHeight }) : null;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 // "soporte" lleva la pose suavizada del objetivo que se está siguiendo; la capa cuelga de él
@@ -340,6 +346,7 @@ function cambiarFuente(f) {
   document.querySelectorAll('#miniaturas button').forEach((b, j) => b.classList.toggle('activo', j === activo));
   if (!f) {
     soporte.visible = false;
+    if (GIMBAL) ponerG(zoomBase());
     $('#buscando').hidden = false; $('#viendo').hidden = true; $('#ficha').hidden = true;
     abierto = null; voz.pause(); capaCarteles.hidden = true;
     return;
@@ -436,9 +443,103 @@ function suavizar() {
     const a = 1 - Math.exp(-dt / tau);
     pSua.lerp(pMed, a); qSua.slerp(qMed, a); sSua.lerp(sMed, a);
   }
-  soporte.matrix.compose(pSua, qSua, sSua);
+  gimbalActivo = GIMBAL && !calibrando && poseSeguida(f.ancla.targetIndex);
+  if (gimbalActivo) {
+    // la capa va con la pose cruda (calza con el cuadro analizado, que es el que se muestra) y toda la
+    // escena se lleva hacia la pose suavizada: la roca queda quieta y la capa nunca se despega de ella
+    soporte.matrix.copy(f.ancla.group.matrix);
+    estabilizar(soporte.matrix, mSua.compose(pSua, qSua, sSua));
+  } else {
+    soporte.matrix.compose(pSua, qSua, sSua);
+    if (GIMBAL && !calibrando) ponerG(zoomBase());
+  }
   soporte.matrixWorldNeedsUpdate = true;
   soporte.visible = true;
+}
+
+// ---------- estabilizador (gimbal virtual) ----------
+// Se calcula la homografía que lleva las esquinas de la capa vistas con la pose cruda a las mismas esquinas con
+// la pose suavizada, y se aplica como transformación CSS a #escena (video + capa). Un zoom leve oculta los
+// bordes, y el desplazamiento se limita para que un movimiento rápido no deje ver el negro de afuera.
+// Solo sirve si la pose cruda es exacta en cada cuadro (el seguimiento fino de MindAR). Con la roca real casi
+// siempre se usa el respaldo por detección, cuya pose salta decenas de píxeles aunque la imagen esté quieta: ahí
+// compensar sacudiría la imagen. Por eso se activa solo tras 3 cuadros seguidos de seguimiento fino; si no, la
+// escena queda quieta (solo el zoom) y la capa usa la pose suavizada, como antes.
+const ZOOM = GIMBAL ? 1.08 : 1, TOPE = .06;
+let gimbalActivo = false;
+const rachaSeguida = {};                        // cuadros seguidos con seguimiento fino, por objetivo
+const poseSeguida = i => (rachaSeguida[i] || 0) >= 3;
+const mSua = new THREE.Matrix4(), mTmp = new THREE.Matrix4(), vE = new THREE.Vector3();
+let G = [1, 0, 0, 0, 1, 0, 0, 0, 1];            // transformación actual de #escena (3×3, por filas)
+const escena = $('#escena');
+function homografia(a, b) {                     // a[i] → b[i], 4 puntos; matriz 3×3 por filas
+  const A = [], B = [];
+  for (let i = 0; i < 4; i++) {
+    const [x, y] = a[i], [u, v] = b[i];
+    A.push([x, y, 1, 0, 0, 0, -u * x, -u * y]); B.push(u);
+    A.push([0, 0, 0, x, y, 1, -v * x, -v * y]); B.push(v);
+  }
+  for (let c = 0; c < 8; c++) {                 // eliminación de Gauss con pivoteo
+    let m = c; for (let r = c + 1; r < 8; r++) if (Math.abs(A[r][c]) > Math.abs(A[m][c])) m = r;
+    if (Math.abs(A[m][c]) < 1e-12) return null;
+    [A[c], A[m]] = [A[m], A[c]]; [B[c], B[m]] = [B[m], B[c]];
+    for (let r = 0; r < 8; r++) if (r !== c) { const f = A[r][c] / A[c][c]; for (let k = c; k < 8; k++) A[r][k] -= f * A[c][k]; B[r] -= f * B[c]; }
+  }
+  return [...B.map((v, i) => v / A[i][i]), 1];
+}
+const mult = (a, b) => [0, 1, 2].flatMap(i => [0, 1, 2].map(j => a[i * 3] * b[j] + a[i * 3 + 1] * b[3 + j] + a[i * 3 + 2] * b[6 + j]));
+function enG(x, y) { const w = G[6] * x + G[7] * y + G[8]; return [(G[0] * x + G[1] * y + G[2]) / w, (G[3] * x + G[4] * y + G[5]) / w]; }
+function ponerG(m) {
+  G = m;
+  escena.style.transform = `matrix3d(${m[0]},${m[3]},0,${m[6]},${m[1]},${m[4]},0,${m[7]},0,0,1,0,${m[2]},${m[5]},0,${m[8]})`;
+}
+function zoomBase() {
+  const W = escena.clientWidth, H = escena.clientHeight;
+  return [ZOOM, 0, W / 2 * (1 - ZOOM), 0, ZOOM, H / 2 * (1 - ZOOM), 0, 0, 1];
+}
+function aEscena(m, x, y) {                     // punto local de la capa → px de #escena
+  const W = escena.clientWidth, H = escena.clientHeight;
+  vE.set(x, y, 0).applyMatrix4(mTmp.multiplyMatrices(m, calibGrupo.matrix)).project(camera);
+  return [(vE.x + 1) / 2 * W, (1 - vE.y) / 2 * H];
+}
+function estabilizar(crudo, suave) {
+  const p = o.pares[activo];
+  if (!p) { ponerG(zoomBase()); return; }
+  const h = p.h / p.w / 2, esq = [[-.5, h], [.5, h], [.5, -h], [-.5, -h]];
+  const a = esq.map(([x, y]) => aEscena(crudo, x, y));
+  let b = esq.map(([x, y]) => aEscena(suave, x, y));
+  const W = escena.clientWidth, d = Math.max(...a.map((q, i) => Math.hypot(b[i][0] - q[0], b[i][1] - q[1])));
+  if (d > TOPE * W) { const k = TOPE * W / d; b = a.map((q, i) => [q[0] + (b[i][0] - q[0]) * k, q[1] + (b[i][1] - q[1]) * k]); }
+  const Hm = homografia(a, b);
+  ponerG(Hm ? mult(zoomBase(), Hm) : zoomBase());
+}
+function gimbalNeutro() { ponerG([1, 0, 0, 0, 1, 0, 0, 0, 1]); }
+
+// ---------- video sincronizado con la pose ----------
+// MindAR entrega la pose unos 50 ms después del cuadro que se ve: la capa llega siempre tarde. Con un objetivo a
+// la vista se muestra en su lugar EL MISMO cuadro que analizó MindAR (copiado a un lienzo justo cuando lo lee),
+// así capa y roca coinciden en cada cuadro. (Idea y código del colega, adaptados.)
+function sincronizarVideo() {
+  const v = mind.video, ctl = mind.controller, carga = ctl.inputLoader, leerCuadro = carga.loadInput.bind(carga), aviso = ctl.onUpdate;
+  const cuadros = [0, 1].map(() => {
+    const c = document.createElement('canvas'); c.hidden = true;
+    Object.assign(c.style, { position: 'absolute', zIndex: -2 });
+    v.after(c); return c;
+  });
+  let sig = 0;
+  carga.loadInput = x => {
+    const c = cuadros[sig];
+    if (c.width !== v.videoWidth || c.height !== v.videoHeight) { c.width = v.videoWidth; c.height = v.videoHeight; }
+    c.getContext('2d', { alpha: false }).drawImage(v, 0, 0);
+    return leerCuadro(x);
+  };
+  ctl.onUpdate = d => {
+    aviso(d);
+    if (d.type !== 'processDone' || congelado) return;
+    const ver = gimbalActivo, c = cuadros[sig], otro = cuadros[sig ^ 1];   // sin gimbal se ve el video en vivo
+    if (ver) for (const k of ['left', 'top', 'width', 'height']) c.style[k] = v.style[k];
+    c.hidden = !ver; otro.hidden = true; sig ^= 1;
+  };
 }
 
 // Con dos objetivos a la vez, las fotos de la roca (que se traslapan) podían ocupar los dos lugares y la
@@ -562,16 +663,17 @@ if (CARTELES.length) {
   pintar();
 }
 const v3 = new THREE.Vector3();
-// punto de la foto de la capa (x, y de 0 a 1) → píxeles de pantalla, con la pose suavizada
+// punto de la foto de la capa (x, y de 0 a 1) → píxeles de #escena con la pose de la capa → pantalla, con la
+// misma transformación del estabilizador que mueve la imagen y la capa
 function aPantalla(p, x, y, rect) {
   v3.set(x - .5, (.5 - y) * p.h / p.w, 0).applyMatrix4(planos[activo].matrixWorld).project(camera);
-  return [rect.left + (v3.x + 1) / 2 * rect.width, rect.top + (1 - v3.y) / 2 * rect.height];
+  return enG((v3.x + 1) / 2 * rect.width, (1 - v3.y) / 2 * rect.height);
 }
 function ubicarCarteles() {
   const p = o.pares[activo], pos = p && p.carteles;
   if (!visibles || !pos || !soporte.visible || calibrando) { capaCarteles.hidden = true; return; }
   capaCarteles.hidden = false;
-  const rect = renderer.domElement.getBoundingClientRect();
+  const rect = { width: escena.clientWidth, height: escena.clientHeight };   // sin la transformación del estabilizador
   const alto = innerHeight - $('.panel').getBoundingClientRect().height - 24;   // no tapar el panel de abajo
   for (const e of elementos) {
     const q = pos[e.c.id];
@@ -628,6 +730,7 @@ if (HOJA) {
     claveFuente = null; suavizar();          // pasa a seguir la hoja con la calibración actual
     fijar(true);                             // se ajusta con la imagen quieta
     calibrando = true;
+    if (GIMBAL) { gimbalNeutro(); soporte.matrix.copy(anclaHoja.group.visible ? anclaHoja.group.matrix : soporte.matrix); soporte.matrixWorldNeedsUpdate = true; }
     $('#gestos').hidden = false; $('#calib-ayuda').hidden = false; $('#calibrando').hidden = false;
     $('#viendo').hidden = true; $('#fila-estab').hidden = true;
   };
@@ -702,7 +805,8 @@ function respaldoSeguimiento(c) {
   const seguir = c._trackAndUpdate.bind(c);
   c._trackAndUpdate = async (entrada, pose, i) => {
     const r = await seguir(entrada, pose, i);
-    if (r !== null) return r;
+    if (r !== null) { rachaSeguida[i] = (rachaSeguida[i] || 0) + 1; return r; }
+    rachaSeguida[i] = 0;
     try {
       const d = await c._detectAndMatch(entrada, [i]);
       if (d.targetIndex === i && d.modelViewTransform) return d.modelViewTransform;
@@ -714,6 +818,7 @@ function respaldoSeguimiento(c) {
 try {
   await mind.start();
   respaldoSeguimiento(mind.controller);
+  if (GIMBAL) { sincronizarVideo(); ponerG(zoomBase()); }
   $('#cargando').hidden = true;
   renderer.setAnimationLoop(() => {
     suavizar();

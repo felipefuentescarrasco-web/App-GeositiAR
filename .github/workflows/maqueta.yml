@@ -1,0 +1,33 @@
+# Baja de Google Drive las fotos y videos de la maqueta (carpeta en tools/maqueta/carpeta-drive.txt,
+# compartida como "cualquier persona con el enlace"), saca los cuadros nítidos y los deja en la rama
+# datos-maqueta para la fotogrametría. Corre cuando cambia el archivo de la carpeta o el script.
+name: Maqueta
+on:
+  push:
+    paths:
+      - tools/maqueta/carpeta-drive.txt
+      - tools/maqueta/cuadros.py
+permissions:
+  contents: write
+jobs:
+  cuadros:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install gdown opencv-python-headless
+      - name: Bajar la carpeta de Drive
+        run: gdown --folder "https://drive.google.com/drive/folders/$(cat tools/maqueta/carpeta-drive.txt)" -O "$RUNNER_TEMP/maqueta" --remaining-ok
+      - run: ls -la "$RUNNER_TEMP/maqueta"
+      - run: python tools/maqueta/cuadros.py "$RUNNER_TEMP/maqueta" "$RUNNER_TEMP/cuadros"
+      - name: Guardar los cuadros en la rama datos-maqueta
+        run: |
+          cd "$RUNNER_TEMP/cuadros"
+          git init -q -b datos-maqueta
+          git config user.name "github-actions[bot]"
+          git config user.email "41898333+github-actions[bot]@users.noreply.github.com"
+          git add -A && git commit -qm "Cuadros de la maqueta para fotogrametría ($(ls *.jpg | wc -l) imágenes)"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" datos-maqueta

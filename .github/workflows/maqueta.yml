@@ -10,6 +10,10 @@ on:
       - .github/workflows/maqueta.yml
 permissions:
   contents: write
+# dos ejecuciones seguidas chocaban al guardar la rama: la nueva cancela la anterior
+concurrency:
+  group: maqueta
+  cancel-in-progress: true
 jobs:
   cuadros:
     runs-on: ubuntu-latest

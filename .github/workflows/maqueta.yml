@@ -21,7 +21,7 @@ jobs:
       - run: pip install gdown opencv-python-headless
       - run: sudo apt-get install -y -qq ffmpeg >/dev/null
       - name: Bajar la carpeta de Drive
-        run: gdown --folder "https://drive.google.com/drive/folders/$(cat tools/maqueta/carpeta-drive.txt)" -O "$RUNNER_TEMP/maqueta"
+        run: gdown --folder "https://drive.google.com/drive/folders/$(head -1 tools/maqueta/carpeta-drive.txt)" -O "$RUNNER_TEMP/maqueta"
       - run: ls -la "$RUNNER_TEMP/maqueta"
       - run: python tools/maqueta/cuadros.py "$RUNNER_TEMP/maqueta" "$RUNNER_TEMP/cuadros"
       - name: Guardar los cuadros en la rama datos-maqueta

@@ -7,6 +7,7 @@ on:
     paths:
       - tools/maqueta/carpeta-drive.txt
       - tools/maqueta/cuadros.py
+      - .github/workflows/maqueta.yml
 permissions:
   contents: write
 jobs:

@@ -445,6 +445,52 @@ const PUNTOS = [
       'claro. Taludes inestables: obsérvala desde el camino.' }
 ];
 
+/* Paradas especiales de las georutas que no son geositios del inventario: tienen ficha propia
+   (#/p/<id>) y aparecen en la ruta después del geositio indicado en "despues". No cuentan en el
+   progreso de los doce geositios ni tienen número. */
+const PARADAS = [
+  {
+    id: 'PAR01', tipo: 'maqueta', ruta: 'r1', despues: 'GPM01',
+    nombre: 'Maqueta táctil Parquemet',
+    subtitulo: 'El cerro en relieve, para verlo también con las manos',
+    lat: -33.427617, lon: -70.637852,
+    gancho: 'Todo el Parque Metropolitano en una mesa: el relieve del cerro San Cristóbal ' +
+      'modelado en 3D, con textos en braille y capas de información que se pueden recorrer con ' +
+      'la vista o con los dedos.',
+    descripcion: 'Maqueta en relieve del Parque Metropolitano de Santiago, con adaptación táctil ' +
+      'para personas ciegas o con baja visión. Reúne en un mismo modelo varias capas de ' +
+      'información del parque: su geología, la ubicación de los geositios y las georutas, y ' +
+      'datos del parque como infraestructura, rutas de trekking y de bicicleta, vegetación, ' +
+      'flora, fauna y sistemas hídricos.',
+    capas: [
+      'Mapa geológico',
+      'Geositios y georutas',
+      'Infraestructura del parque',
+      'Rutas de trekking y de bicicleta',
+      'Vegetación, flora y fauna',
+      'Sistemas hídricos'
+    ],
+    claves: [
+      'Recorre con la mano las curvas de nivel: donde se juntan, la ladera es más empinada.',
+      'Ubica el geositio 1, que acabas de visitar, y sigue con el dedo la Georuta 1 hasta Tupahue.',
+      'Compara el relieve de la cumbre con el del resto del cerro: la roca intrusiva, más dura, forma las partes más altas.'
+    ],
+    observa: 'Antes de subir, busca en la maqueta los geositios que vas a visitar: así se ve de ' +
+      'una vez cómo se reparten por el cerro.',
+    fotos: [
+      { archivo: 'PAR01_1.jpg', titulo: 'La maqueta completa',
+        leyenda: 'Vista a lo largo de la maqueta, con el relieve del cerro San Cristóbal al fondo.' },
+      { archivo: 'PAR01_2.jpg', titulo: 'Relieve y textos en braille',
+        leyenda: 'Las curvas de nivel se sienten con los dedos; los rótulos del borde están en braille.' },
+      { archivo: 'PAR01_3.jpg', titulo: 'Detalle desde arriba',
+        leyenda: 'Calles, caminos y curvas de nivel en el sector del cerro.' }
+    ],
+    modelo: { archivo: 'maqueta.glb', titulo: 'Maqueta táctil Parquemet',
+      nota: 'Modelo hecho por fotogrametría con videos tomados alrededor de la maqueta. Gíralo ' +
+        'y acércalo para recorrer el relieve y los rótulos del borde.' }
+  }
+];
+
 const RUTAS = [
   {
     id: 'r1', nombre: 'Georuta 1 · Pío Nono – Tupahue',

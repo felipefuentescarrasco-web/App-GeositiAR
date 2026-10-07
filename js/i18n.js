@@ -219,6 +219,11 @@ const I18N = (() => {
     'Permiso denegado': ['Permission denied', 'Permissão negada'],
     'No se pudo usar el sensor': ['The sensor could not be used', 'Não foi possível usar o sensor'],
     'Idioma': ['Language', 'Idioma'],
+    'Parada especial': ['Special stop', 'Parada especial'],
+    'Parada': ['Stop', 'Parada'],
+    'Capas de información': ['Information layers', 'Camadas de informação'],
+    'Qué buscar en la maqueta': ['What to look for on the model', 'O que procurar na maquete'],
+    'Fotografías': ['Photographs', 'Fotografias'],
     'Satélite': ['Satellite', 'Satélite'],
     'Calles': ['Streets', 'Ruas'],
     'Topográfico': ['Topographic', 'Topográfico'],
@@ -334,7 +339,7 @@ const I18N = (() => {
         });
       }
     };
-    [UNIDADES, GEOSITIOS, PUNTOS, RUTAS, GLOSARIO, HISTORIA].forEach(recorrer);
+    [UNIDADES, GEOSITIOS, PUNTOS, RUTAS, GLOSARIO, HISTORIA, PARADAS].forEach(recorrer);
     const nombres = GLOSARIO_NOMBRES[idioma] || {};
     Object.keys(nombres).forEach(k => { TITULOS_GLOSARIO[k] = nombres[k][0]; });
   }

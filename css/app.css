@@ -456,3 +456,11 @@ input[type="range"] { accent-color: var(--lava); height: 30px; }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* paradas especiales (maqueta táctil) */
+.etiqueta.parada { background: #7b6bb0; color: #fff; }
+.tarjeta-parada .num { background: #7b6bb0; font-size: .7rem; }
+.foto-parada { margin: 0 0 14px; }
+.foto-parada img { width: 100%; border-radius: var(--r-md); display: block; }
+.foto-parada figcaption { font-size: .82rem; color: var(--papel-tenue); margin-top: 6px; }
+.marca-mapa span { font-size: 11px; }

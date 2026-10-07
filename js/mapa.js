@@ -141,12 +141,12 @@ const Mapa = (() => {
     const marcadores = [];
     let seleccionado = null;
     function icono(p, sel) {
-      const esG = p.tipo === 'geositio';
-      const color = esG ? (U.visitado(p.dato.id) ? '#4f9d7e' : '#c1622f') : '#d8c08a';
-      const tam = sel ? 34 : esG ? 28 : 18;
+      const esG = p.tipo === 'geositio', esP = p.tipo === 'parada';
+      const color = esG ? (U.visitado(p.dato.id) ? '#4f9d7e' : '#c1622f') : esP ? '#7b6bb0' : '#d8c08a';
+      const tam = sel ? 34 : esG || esP ? 28 : 18;
       return L.divIcon({
         className: 'marca-mapa' + (sel ? ' sel' : ''),
-        html: '<span style="background:' + color + ';width:' + tam + 'px;height:' + tam + 'px">' + (esG ? p.dato.num : '') + '</span>',
+        html: '<span style="background:' + color + ';width:' + tam + 'px;height:' + tam + 'px">' + (esG ? p.dato.num : esP ? '3D' : '') + '</span>',
         iconSize: [tam, tam], iconAnchor: [tam / 2, tam / 2]
       });
     }

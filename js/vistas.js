@@ -38,6 +38,18 @@ const Vistas = (() => {
     return cont;
   }
 
+  function tarjetaParada(p) {
+    return U.el('a', { clase: 'tarjeta tarjeta-geositio tarjeta-parada', href: '#/p/' + p.id }, [
+      U.el('div', { clase: 'miniatura', style: 'background-image:url(assets/fotos/t_' + p.fotos[0].archivo + ')' },
+        [U.el('span', { clase: 'num', texto: '3D' })]),
+      U.el('div', { clase: 'texto' }, [
+        U.el('h3', { texto: p.nombre }),
+        U.el('p', { clase: 'pequeno tenue', style: 'margin:0', texto: p.subtitulo }),
+        U.el('div', { clase: 'meta' }, [U.el('span', { clase: 'etiqueta parada', texto: 'Parada especial' })])
+      ])
+    ]);
+  }
+
   function bloqueProgreso() {
     const total = GEOSITIOS.length;
     const hechos = GEOSITIOS.filter(g => U.visitado(g.id)).length;
@@ -206,7 +218,7 @@ const Vistas = (() => {
                  'senderos ni golpees las rocas de los geositios: son patrimonio de todos.' })
       ]),
       U.el('h2', { style: 'margin-top:20px', texto: 'Paradas' }),
-      U.el('div', {}, geos.map(g => tarjetaGeositio(g))),
+      U.el('div', {}, [].concat(...geos.map(g => [tarjetaGeositio(g)].concat(U.paradasTras(g.id).map(tarjetaParada))))),
       U.el('a', { clase: 'boton ancho', href: '#/mapa?ruta=' + r.id },
         [U.icono('mapa'), 'Ver la ruta en el mapa'])
     ]);
@@ -339,7 +351,10 @@ const Vistas = (() => {
             ? U.el('a', { clase: 'boton secundario', href: '#/g/' + otros.anterior.id,
                 texto: '← Geositio ' + otros.anterior.num })
             : U.el('span'),
-          otros.siguiente
+          U.paradasTras(g.id).length
+            ? U.el('a', { clase: 'boton secundario', href: '#/p/' + U.paradasTras(g.id)[0].id,
+                texto: U.paradasTras(g.id)[0].nombre + ' →' })
+            : otros.siguiente
             ? U.el('a', { clase: 'boton secundario', href: '#/g/' + otros.siguiente.id,
                 texto: 'Geositio ' + otros.siguiente.num + ' →' })
             : U.el('span')
@@ -366,6 +381,64 @@ const Vistas = (() => {
       U.el('p', { clase: 'pequeno tenue', style: 'margin:6px 0 0' }, [
         'La hoja impresa se ancla mejor. ',
         U.el('a', { href: 'ar/hoja-ra.pdf', target: '_blank', rel: 'noopener', texto: 'Descargar la hoja (PDF)' })
+      ])
+    ]);
+  }
+
+  /* ------------------------------------------------------------- parada */
+
+  function parada(id) {
+    const p = U.parada(id);
+    if (!p) return noEncontrado();
+    const r = U.ruta(p.ruta);
+    const antes = U.geositio(p.despues);
+    const lista = r ? r.geositios : [];
+    const despues = U.geositio(lista[lista.indexOf(p.despues) + 1]);
+
+    const distancia = U.el('span', { clase: 'pequeno tenue' });
+    alSalir(U.seguirPosicion(pos => {
+      if (!pos) return;
+      const d = U.distancia(pos, p);
+      distancia.textContent = 'Estás a ' + U.formatoDistancia(d) + ' · ' +
+        (d < 40 ? 'ya llegaste' : 'hacia el ' + U.cardinal(U.rumbo(pos, p)));
+    }));
+
+    return U.el('div', {}, [
+      U.el('header', { clase: 'cabecera-geositio', style: 'background-image:url(assets/fotos/' + p.fotos[0].archivo + ')' }, [
+        U.el('div', { clase: 'titulo' }, [
+          U.el('span', { clase: 'numero', texto: r ? 'Parada especial · ' + r.nombre.split(' · ')[0] : 'Parada especial' }),
+          U.el('h1', { texto: p.nombre }),
+          U.el('p', { clase: 'sub', style: 'margin:4px 0 0', texto: p.subtitulo })
+        ])
+      ]),
+      U.el('div', { clase: 'contenido' }, [
+        U.el('p', { clase: 'gancho', texto: p.gancho }),
+        U.el('div', { clase: 'controles-3d' }, [
+          U.el('a', { clase: 'chip', href: 'https://www.google.com/maps/dir/?api=1&destination=' + p.lat + ',' + p.lon,
+            target: '_blank', rel: 'noopener', texto: 'Cómo llegar' })
+        ]),
+        distancia,
+        U.el('p', { style: 'margin-top:14px', texto: p.descripcion }),
+        U.el('h2', { texto: 'Capas de información' }),
+        U.el('ul', { clase: 'claves' }, p.capas.map(c => U.el('li', { texto: c }))),
+        U.el('h2', { texto: 'Qué buscar en la maqueta' }),
+        U.el('ul', { clase: 'claves' }, p.claves.map(c => U.el('li', { texto: c }))),
+        p.observa ? U.el('div', { clase: 'aviso-caja' }, [
+          U.el('div', { clase: 'pequeno tenue', texto: 'Pista de campo' }),
+          U.el('p', { style: 'margin:4px 0 0', texto: p.observa })
+        ]) : null,
+        U.el('h2', { texto: 'Modelo 3D' }),
+        Visor3D.bloque(p.modelo),
+        U.el('h2', { texto: 'Fotografías' }),
+        ...p.fotos.map(f => U.el('figure', { clase: 'foto-parada' }, [
+          U.el('img', { src: 'assets/fotos/' + f.archivo, alt: f.titulo, loading: 'lazy' }),
+          U.el('figcaption', {}, [U.el('b', { texto: f.titulo }), ' ', f.leyenda])
+        ])),
+        U.el('hr', { clase: 'sep' }),
+        U.el('div', { clase: 'grid-2' }, [
+          antes ? U.el('a', { clase: 'boton secundario', href: '#/g/' + antes.id, texto: '← Geositio ' + antes.num }) : U.el('span'),
+          despues ? U.el('a', { clase: 'boton secundario', href: '#/g/' + despues.id, texto: 'Geositio ' + despues.num + ' →' }) : U.el('span')
+        ])
       ])
     ]);
   }
@@ -499,7 +572,13 @@ const Vistas = (() => {
         alSeleccionar: p => {
           ficha.innerHTML = '';
           if (!p) return;
-          if (p.tipo === 'geositio') {
+          if (p.tipo === 'parada') {
+            ficha.appendChild(U.el('div', { clase: 'mapa-ficha' }, [
+              U.el('div', { clase: 'pequeno tenue', texto: 'Parada especial' }),
+              U.el('h3', { style: 'margin:2px 0 8px', texto: p.dato.nombre }),
+              U.el('a', { clase: 'boton ancho', href: '#/p/' + p.dato.id, texto: 'Abrir ficha' })
+            ]));
+          } else if (p.tipo === 'geositio') {
             const g = p.dato;
             ficha.appendChild(U.el('div', { clase: 'mapa-ficha' }, [
               U.el('div', { clase: 'pequeno tenue', texto: 'Geositio ' + g.num }),
@@ -517,6 +596,7 @@ const Vistas = (() => {
 
       GEOSITIOS.forEach(g => m.agregar(g.lat, g.lon, 'geositio', g));
       PUNTOS.forEach(p => m.agregar(p.lat, p.lon, p.tipo, p));
+      PARADAS.forEach(p => m.agregar(p.lat, p.lon, 'parada', p));
 
       const idRuta = parametros && parametros.ruta;
       const foco = idRuta ? U.geositiosDeRuta(idRuta) : GEOSITIOS;
@@ -525,7 +605,8 @@ const Vistas = (() => {
       contenedor.appendChild(U.el('div', { clase: 'mapa-leyenda' }, [
         U.el('div', {}, [U.el('i', { style: 'background:#c1622f' }), 'Geositio por visitar']),
         U.el('div', {}, [U.el('i', { style: 'background:#4f9d7e' }), 'Geositio visitado']),
-        U.el('div', {}, [U.el('i', { style: 'background:#d8c08a' }), 'Mirador / cantera'])
+        U.el('div', {}, [U.el('i', { style: 'background:#d8c08a' }), 'Mirador / cantera']),
+        U.el('div', {}, [U.el('i', { style: 'background:#7b6bb0' }), 'Parada especial'])
       ]));
 
       const btnUbicar = U.el('button', {
@@ -773,7 +854,7 @@ const Vistas = (() => {
   }
 
   return {
-    inicio, rutas, ruta, geositio, mapa, historia, corteGeologico,
+    inicio, rutas, ruta, geositio, parada, mapa, historia, corteGeologico,
     glosario, mas, unidades, ajustes, noEncontrado,
     limpiar, alSalir
   };

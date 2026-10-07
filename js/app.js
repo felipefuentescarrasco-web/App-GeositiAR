@@ -53,6 +53,11 @@ const App = (() => {
         };
       }
 
+      case 'p': {
+        const p = U.parada(segmentos[1]);
+        return { vista: Vistas.parada(segmentos[1]), titulo: p ? 'Parada' : 'Parada', transparente: true, nav: null };
+      }
+
       case 'mapa':
         return { vista: Vistas.mapa(parametros), titulo: 'Mapa', raiz: true, nav: 'mapa',
                  sinDesplazamiento: true };
@@ -130,13 +135,13 @@ const App = (() => {
 
   /* ------------------------------------------------- descarga sin conexión */
 
-  /* Las rutas propias llevan ?v=15, igual que en index.html, para que la copia
+  /* Las rutas propias llevan ?v=16, igual que en index.html, para que la copia
      guardada corresponda exactamente a la que pide la página. */
   const ARCHIVOS_BASE = [
-    'index.html', 'manifest.webmanifest', 'css/app.css?v=15',
-    'js/datos.js?v=15', 'js/i18n-datos.js?v=15', 'js/i18n.js?v=15', 'js/util.js?v=15', 'js/cortina.js?v=15', 'js/visor3d.js?v=15',
-    'js/pano.js?v=15', 'js/mapa.js?v=15', 'js/corte.js?v=15', 'js/escaner.js?v=15',
-    'js/vistas.js?v=15', 'js/app.js?v=15',
+    'index.html', 'manifest.webmanifest', 'css/app.css?v=16',
+    'js/datos.js?v=16', 'js/i18n-datos.js?v=16', 'js/i18n.js?v=16', 'js/util.js?v=16', 'js/cortina.js?v=16', 'js/visor3d.js?v=16',
+    'js/pano.js?v=16', 'js/mapa.js?v=16', 'js/corte.js?v=16', 'js/escaner.js?v=16',
+    'js/vistas.js?v=16', 'js/app.js?v=16',
     'js/vendor/three.min.js', 'js/vendor/GLTFLoader.js', 'js/vendor/OrbitControls.js',
     'js/vendor/jsqr.js',
     'assets/icons/icono-192.png', 'assets/icons/icono-512.png',
@@ -164,6 +169,10 @@ const App = (() => {
                                 'assets/fotos/t_' + g.muestra.interp);
       if (g.modelo) lista.push('assets/3d/' + g.modelo.archivo);
       if (g.pano) lista.push('assets/360/' + g.pano.base, 'assets/360/' + g.pano.interp);
+    });
+    PARADAS.forEach(p => {
+      p.fotos.forEach(f => lista.push('assets/fotos/' + f.archivo, 'assets/fotos/t_' + f.archivo));
+      if (p.modelo) lista.push('assets/3d/' + p.modelo.archivo);
     });
     return Array.from(new Set(lista));
   }

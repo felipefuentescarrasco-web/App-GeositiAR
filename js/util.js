@@ -182,6 +182,10 @@ const U = (() => {
   const geositio = id => GEOSITIOS.find(g => g.id === id);
   const ruta = id => RUTAS.find(r => r.id === id);
 
+  const parada = id => PARADAS.find(p => p.id === id) || null;
+  /* paradas especiales que van después de un geositio en su ruta */
+  const paradasTras = idGeositio => PARADAS.filter(p => p.despues === idGeositio);
+
   function geositiosDeRuta(idRuta) {
     const r = ruta(idRuta);
     return r ? r.geositios.map(geositio).filter(Boolean) : [];
@@ -281,7 +285,7 @@ const U = (() => {
     leerEstado, guardarEstado, visitado, marcarVisitado, totalVisitados,
     distancia, rumbo, cardinal, formatoDistancia, seguirPosicion,
     aviso, modal, vibrar,
-    geositio, ruta, geositiosDeRuta, portada, miniatura,
+    geositio, ruta, geositiosDeRuta, portada, miniatura, parada, paradasTras,
     conGlosario, mostrarTermino, tituloTermino, normaliza,
     leerEnVoz, detenerVoz, hablando
   };

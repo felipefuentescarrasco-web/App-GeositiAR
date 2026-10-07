@@ -1,0 +1,17 @@
+{
+ "modelo_a_utm": [
+  [
+   1634.6084,
+   3946.2937,
+   349263.5054
+  ],
+  [
+   3946.6695,
+   -1634.764,
+   6302926.4944
+  ]
+ ],
+ "epsg": 31979,
+ "correlacion_dem": 0.784,
+ "dem": "DEM_Alos_Palsar_Parquemet_SIRGAS19S.tif"
+}

@@ -488,7 +488,26 @@ const PARADAS = [
     ],
     modelo: { archivo: 'maqueta.glb', titulo: 'Maqueta táctil Parquemet',
       nota: 'Modelo hecho por fotogrametría con videos tomados alrededor de la maqueta. Gíralo ' +
-        'y acércalo para recorrer el relieve y los rótulos del borde.' }
+        'y acércalo para recorrer el relieve y los rótulos del borde. Las capas se pegan sobre el ' +
+        'relieve: la maqueta se georreferenció calzándola con el modelo de elevación ALOS PALSAR.',
+      /* imágenes de tools/maqueta/5_capas.py, en el marco de la vista cenital del modelo */
+      capas: [
+        { archivo: 'maqueta_capas/georutas.png', nombre: 'Georutas', leyenda: [
+          ['#c1622f', 'Georuta 1'], ['#2f6f5e', 'Georuta 2'], ['#c1622f', 'Geositio'], ['#2f7fb5', 'Geomirador'], ['#7b6bb0', 'Geomaqueta']] },
+        { archivo: 'maqueta_capas/geologia.png', nombre: 'Geología', leyenda: [
+          ['#c98a5a', 'Formación Abanico'], ['#a0603f', 'Formación Abanico: lavas y brechas'], ['#c0504d', 'Intrusivo porfídico'],
+          ['#e3b36b', 'Depósitos coluviales'], ['#d98c5f', 'Remoción en masa'], ['#e8d9a6', 'Depósitos fluviales'],
+          ['#d9cf8e', 'Río Mapocho y sus depósitos'], ['#b3b3b3', 'Depósitos antrópicos']] },
+        { archivo: 'maqueta_capas/limite.png', nombre: 'Límite del parque', leyenda: [['#2f6f5e', 'Parque Metropolitano']] },
+        { archivo: 'maqueta_capas/senderos.png', nombre: 'Senderos', leyenda: [
+          ['#7a4a1e', 'Senderos'], ['#1f6fd1', 'Ciclovías'], ['#2aa0c8', 'Agua']] },
+        { archivo: 'maqueta_capas/bosques.png', nombre: 'Tipos de bosque', leyenda: [
+          ['#249c3c', 'Bosque esclerófilo nativo'], ['#e22022', 'Bosque exótico'], ['#f0e68c', 'Bosque mixto']] },
+        { archivo: 'maqueta_capas/conservacion.png', nombre: 'Conservación', leyenda: [
+          ['#e0242a', 'Alto valor ecológico (bosque esclerófilo)'], ['#2476be', 'Especies en categoría de conservación']] },
+        { archivo: 'maqueta_capas/rehabilitacion.png', nombre: 'Rehabilitación ambiental', leyenda: [
+          ['#4be1d2', 'Naturalización'], ['#965252', 'Enriquecimiento'], ['#e6c31e', 'Revegetación']] }
+      ] }
   }
 ];
 

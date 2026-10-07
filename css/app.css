@@ -310,6 +310,10 @@ main.sin-barras { padding: 0; }
 .controles-3d { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; align-items: center; }
 .control-corte { display: flex; align-items: center; gap: 10px; width: 100%; margin-top: 6px; }
 .control-corte input { flex: 1; }
+.titulo-capas { width: 100%; margin-top: 8px; }
+.capas-3d { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; }
+.leyenda-capas { display: flex; flex-wrap: wrap; gap: 4px 12px; width: 100%; font-size: .8rem; color: var(--papel); opacity: .9; }
+.leyenda-capas i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
 .chip {
   padding: 7px 13px; border-radius: 999px; border: 1px solid var(--borde);
   background: var(--roca-2); color: var(--papel-tenue); font: inherit; font-size: .82rem;

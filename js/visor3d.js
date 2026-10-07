@@ -63,7 +63,7 @@ const Visor3D = (() => {
       estado.hidden = false;
 
       cargarLibrerias()
-        .then(() => montar(lienzo, estado, controles, ruta, p => {
+        .then(() => montar(lienzo, estado, controles, ruta, modelo.capas, p => {
           txt.textContent = 'Cargando ' + Math.round(p) + ' %';
         }))
         .catch(err => {
@@ -75,7 +75,7 @@ const Visor3D = (() => {
     return cont;
   }
 
-  function montar(lienzo, estado, controles, ruta, alAvanzar) {
+  function montar(lienzo, estado, controles, ruta, capas, alAvanzar) {
     const escena = new THREE.Scene();
     escena.background = new THREE.Color(0x10171a);
 
@@ -299,6 +299,84 @@ const Visor3D = (() => {
       controles.appendChild(btnPantalla);
       controles.appendChild(filaCorte);
       controles.appendChild(filaTrans);
+      if (capas && capas.length) armarCapas();
+    }
+
+    /* Capas de información pegadas sobre el relieve (maqueta): una copia de la malla que comparte la
+       geometría, con coordenadas de textura sacadas de la vista cenital (x, z) del modelo. */
+    function armarCapas() {
+      const cargadorTex = new THREE.TextureLoader();
+      const piel = [];        // mallas superpuestas, una por malla del modelo
+      let opacidad = 0.85;
+      malla.traverse(o => {
+        if (!o.isMesh || o.userData.capa) return;
+        const g = o.geometry;
+        g.computeBoundingBox();
+        const b = g.boundingBox;
+        const zmax = Math.max(Math.abs(b.min.z), Math.abs(b.max.z));
+        const p = g.attributes.position, uv = new Float32Array(p.count * 2);
+        for (let i = 0; i < p.count; i++) {
+          uv[2 * i] = (p.getX(i) - b.min.x) / (b.max.x - b.min.x);
+          uv[2 * i + 1] = 1 - (p.getZ(i) + zmax) / (2 * zmax);
+        }
+        const g2 = new THREE.BufferGeometry();
+        g2.setAttribute('position', p);
+        if (g.attributes.normal) g2.setAttribute('normal', g.attributes.normal);
+        g2.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+        g2.setIndex(g.index);
+        const m = new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, opacity: opacidad,
+          polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2, side: THREE.DoubleSide });
+        const capa = new THREE.Mesh(g2, m);
+        capa.userData.capa = true;
+        capa.visible = false;
+        o.add(capa);
+        piel.push(capa);
+      });
+
+      const texturas = {};
+      let activa = null;
+      const leyenda = U.el('div', { clase: 'leyenda-capas' });
+      const fila = U.el('div', { clase: 'capas-3d' });
+      const rangoOp = U.el('input', { type: 'range', min: '20', max: '100', value: String(opacidad * 100),
+        'aria-label': 'Opacidad de la capa' });
+      const filaOp = U.el('div', { clase: 'control-corte', hidden: true }, [U.el('span', { clase: 'pequeno tenue', texto: 'Capa' }), rangoOp]);
+      rangoOp.addEventListener('input', () => {
+        opacidad = rangoOp.value / 100;
+        piel.forEach(c => { c.material.opacity = opacidad; });
+      });
+
+      function mostrar(c, chip) {
+        const misma = activa === c;
+        activa = misma ? null : c;
+        fila.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', 'false'));
+        leyenda.innerHTML = '';
+        filaOp.hidden = !activa;
+        if (!activa) { piel.forEach(m => { m.visible = false; }); return; }
+        chip.setAttribute('aria-pressed', 'true');
+        (c.leyenda || []).forEach(([col, txt]) => leyenda.appendChild(
+          U.el('span', {}, [U.el('i', { style: 'background:' + col }), txt])));
+        const poner = tex => {
+          if (activa !== c) return;
+          piel.forEach(m => { m.material.map = tex; m.material.needsUpdate = true; m.visible = true; });
+        };
+        if (texturas[c.archivo]) return poner(texturas[c.archivo]);
+        cargadorTex.load('assets/3d/' + c.archivo, tex => {
+          tex.encoding = THREE.sRGBEncoding;
+          tex.anisotropy = render.capabilities.getMaxAnisotropy();
+          texturas[c.archivo] = tex;
+          poner(tex);
+        }, undefined, () => U.aviso('No se pudo cargar la capa'));
+      }
+
+      capas.forEach(c => {
+        const chip = U.el('button', { clase: 'chip', type: 'button', 'aria-pressed': 'false', texto: c.nombre });
+        chip.addEventListener('click', () => mostrar(c, chip));
+        fila.appendChild(chip);
+      });
+      controles.appendChild(U.el('div', { clase: 'titulo-capas pequeno tenue', texto: 'Capas sobre la maqueta' }));
+      controles.appendChild(fila);
+      controles.appendChild(filaOp);
+      controles.appendChild(leyenda);
     }
 
     /* Al abandonar la vista hay que soltar la GPU: si no, el teléfono se calienta. */

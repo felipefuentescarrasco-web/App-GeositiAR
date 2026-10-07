@@ -1,0 +1,1048 @@
+== ./felipe.tif
+Driver: GTiff/GeoTIFF
+Files: ./felipe.tif
+Size is 9934, 7016
+Metadata:
+  TIFFTAG_RESOLUTIONUNIT=2 (pixels/inch)
+  TIFFTAG_XRESOLUTION=300
+  TIFFTAG_YRESOLUTION=300
+Image Structure Metadata:
+  INTERLEAVE=PIXEL
+Corner Coordinates:
+Upper Left  (    0.0,    0.0)
+Lower Left  (    0.0, 7016.0)
+Upper Right ( 9934.0,    0.0)
+Lower Right ( 9934.0, 7016.0)
+Center      ( 4967.0, 3508.0)
+Band 1 Block=9934x8 Type=Byte, ColorInterp=Red
+Band 2 Block=9934x8 Type=Byte, ColorInterp=Green
+Band 3 Block=9934x8 Type=Byte, ColorInterp=Blue
+== ./Tif/Tif/composite.tif
+Warning 1: ./Tif/Tif/composite.tif.ovr: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/composite.tif
+       ./Tif/Tif/composite.tif.ovr
+       ./Tif/Tif/composite.tif.aux.xml
+Size is 2310, 3009
+Coordinate System is:
+PROJCRS["WGS 84 / UTM zone 19S",
+    BASEGEOGCRS["WGS 84",
+        DATUM["World Geodetic System 1984",
+            ELLIPSOID["WGS 84",6378137,298.257223563,
+                LENGTHUNIT["metre",1]]],
+        PRIMEM["Greenwich",0,
+            ANGLEUNIT["degree",0.0174532925199433]],
+        ID["EPSG",4326]],
+    CONVERSION["UTM zone 19S",
+        METHOD["Transverse Mercator",
+            ID["EPSG",9807]],
+        PARAMETER["Latitude of natural origin",0,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8801]],
+        PARAMETER["Longitude of natural origin",-69,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8802]],
+        PARAMETER["Scale factor at natural origin",0.9996,
+            SCALEUNIT["unity",1],
+            ID["EPSG",8805]],
+        PARAMETER["False easting",500000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8806]],
+        PARAMETER["False northing",10000000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8807]]],
+    CS[Cartesian,2],
+        AXIS["(E)",east,
+            ORDER[1],
+            LENGTHUNIT["metre",1]],
+        AXIS["(N)",north,
+            ORDER[2],
+            LENGTHUNIT["metre",1]],
+    USAGE[
+        SCOPE["Navigation and medium accuracy spatial referencing."],
+        AREA["Between 72°W and 66°W, southern hemisphere between 80°S and equator, onshore and offshore. Argentina. Bolivia. Brazil. Chile. Colombia. Peru."],
+        BBOX[-80,-72,0,-66]],
+    ID["EPSG",32719]]
+Data axis to CRS axis mapping: 1,2
+Origin = (346128.000000000000000,6308049.000000000000000)
+Pixel Size = (3.000000000000000,-3.000000000000000)
+Metadata:
+  AREA_OR_POINT=Area
+Image Structure Metadata:
+  COMPRESSION=LZW
+  INTERLEAVE=BAND
+Corner Coordinates:
+Upper Left  (  346128.000, 6308049.000) ( 70d39'13.50"W, 33d21'20.81"S)
+Lower Left  (  346128.000, 6299022.000) ( 70d39'19.06"W, 33d26'13.80"S)
+Upper Right (  353058.000, 6308049.000) ( 70d34'45.46"W, 33d21'24.30"S)
+Lower Right (  353058.000, 6299022.000) ( 70d34'50.77"W, 33d26'17.30"S)
+Center      (  349593.000, 6303535.500) ( 70d37' 2.20"W, 33d23'49.07"S)
+Band 1 Block=256x256 Type=UInt16, ColorInterp=Gray
+  NoData Value=0
+  Overviews: 1155x1505, 578x753, 289x377, 145x189
+Band 2 Block=256x256 Type=UInt16, ColorInterp=Undefined
+  NoData Value=0
+  Overviews: 1155x1505, 578x753, 289x377, 145x189
+Band 3 Block=256x256 Type=UInt16, ColorInterp=Undefined
+  NoData Value=0
+  Overviews: 1155x1505, 578x753, 289x377, 145x189
+Band 4 Block=256x256 Type=UInt16, ColorInterp=Undefined
+  NoData Value=0
+  Overviews: 1155x1505, 578x753, 289x377, 145x189
+== ./Tif/Tif/Skysat3_Geoparquemet_22052020_utm19s.tif
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/Skysat3_Geoparquemet_22052020_utm19s.tif
+Size is 7784, 16092
+Coordinate System is:
+PROJCRS["WGS 84 / UTM zone 19S",
+    BASEGEOGCRS["WGS 84",
+        ENSEMBLE["World Geodetic System 1984 ensemble",
+            MEMBER["World Geodetic System 1984 (Transit)"],
+            MEMBER["World Geodetic System 1984 (G730)"],
+            MEMBER["World Geodetic System 1984 (G873)"],
+            MEMBER["World Geodetic System 1984 (G1150)"],
+            MEMBER["World Geodetic System 1984 (G1674)"],
+            MEMBER["World Geodetic System 1984 (G1762)"],
+            MEMBER["World Geodetic System 1984 (G2139)"],
+            ELLIPSOID["WGS 84",6378137,298.257223563,
+                LENGTHUNIT["metre",1]],
+            ENSEMBLEACCURACY[2.0]],
+        PRIMEM["Greenwich",0,
+            ANGLEUNIT["degree",0.0174532925199433]],
+        ID["EPSG",4326]],
+    CONVERSION["UTM zone 19S",
+        METHOD["Transverse Mercator",
+            ID["EPSG",9807]],
+        PARAMETER["Latitude of natural origin",0,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8801]],
+        PARAMETER["Longitude of natural origin",-69,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8802]],
+        PARAMETER["Scale factor at natural origin",0.9996,
+            SCALEUNIT["unity",1],
+            ID["EPSG",8805]],
+        PARAMETER["False easting",500000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8806]],
+        PARAMETER["False northing",10000000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8807]]],
+    CS[Cartesian,2],
+        AXIS["(E)",east,
+            ORDER[1],
+            LENGTHUNIT["metre",1]],
+        AXIS["(N)",north,
+            ORDER[2],
+            LENGTHUNIT["metre",1]],
+    USAGE[
+        SCOPE["Navigation and medium accuracy spatial referencing."],
+        AREA["Between 72°W and 66°W, southern hemisphere between 80°S and equator, onshore and offshore. Argentina. Bolivia. Brazil. Chile. Colombia. Peru."],
+        BBOX[-80,-72,0,-66]],
+    ID["EPSG",32719]]
+Data axis to CRS axis mapping: 1,2
+Origin = (345632.000000000000000,6314010.000000000000000)
+Pixel Size = (1.000000000000000,-1.000000000000000)
+Metadata:
+  AREA_OR_POINT=Area
+  TIFFTAG_XRESOLUTION=1
+  TIFFTAG_YRESOLUTION=1
+Image Structure Metadata:
+  INTERLEAVE=BAND
+Corner Coordinates:
+Upper Left  (  345632.000, 6314010.000) ( 70d39'29.02"W, 33d18' 7.07"S)
+Lower Left  (  345632.000, 6297918.000) ( 70d39'38.94"W, 33d26'49.38"S)
+Upper Right (  353416.000, 6314010.000) ( 70d34'28.13"W, 33d18'10.98"S)
+Lower Right (  353416.000, 6297918.000) ( 70d34'37.55"W, 33d26'53.31"S)
+Center      (  349524.000, 6305964.000) ( 70d37' 3.41"W, 33d22'30.21"S)
+Band 1 Block=7784x1 Type=Byte, ColorInterp=Red
+Band 2 Block=7784x1 Type=Byte, ColorInterp=Green
+Band 3 Block=7784x1 Type=Byte, ColorInterp=Blue
+== ./Tif/Tif/tif2.tif
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/tif2.tif
+       ./Tif/Tif/tif2.tif.ovr
+       ./Tif/Tif/tif2.tif.aux.xml
+Size is 3402, 2361
+Origin = (345586.603442732826807,6308453.334226962178946)
+Pixel Size = (3.811819000000008,-3.811819000000017)
+Metadata:
+  DataType=Generic
+Image Structure Metadata:
+  INTERLEAVE=PIXEL
+Corner Coordinates:
+Upper Left  (  345586.603, 6308453.334) 
+Lower Left  (  345586.603, 6299453.630) 
+Upper Right (  358554.412, 6308453.334) 
+Lower Right (  358554.412, 6299453.630) 
+Center      (  352070.508, 6303953.482) 
+Band 1 Block=128x128 Type=UInt16, ColorInterp=Gray
+  Min=0.000 Max=255.000 
+  Minimum=0.000, Maximum=255.000, Mean=241.841, StdDev=50.342
+  NoData Value=256
+  Overviews: 1701x1181, 851x591, 426x296, 213x148
+  Metadata:
+    RepresentationType=ATHEMATIC
+    STATISTICS_COVARIANCES=2534.305103999722,2467.775838257712,1788.279658616805
+    STATISTICS_MAXIMUM=255
+    STATISTICS_MEAN=241.84076810217
+    STATISTICS_MINIMUM=0
+    STATISTICS_SKIPFACTORX=1
+    STATISTICS_SKIPFACTORY=1
+    STATISTICS_STDDEV=50.341882205572
+Band 2 Block=128x128 Type=UInt16, ColorInterp=Undefined
+  Min=0.000 Max=255.000 
+  Minimum=0.000, Maximum=255.000, Mean=229.781, StdDev=64.867
+  NoData Value=256
+  Overviews: 1701x1181, 851x591, 426x296, 213x148
+  Metadata:
+    RepresentationType=ATHEMATIC
+    STATISTICS_COVARIANCES=2467.775838257712,4207.730521908954,3213.657024037872
+    STATISTICS_MAXIMUM=255
+    STATISTICS_MEAN=229.78105947247
+    STATISTICS_MINIMUM=0
+    STATISTICS_SKIPFACTORX=1
+    STATISTICS_SKIPFACTORY=1
+    STATISTICS_STDDEV=64.867021836284
+Band 3 Block=128x128 Type=UInt16, ColorInterp=Undefined
+  Min=0.000 Max=255.000 
+  Minimum=0.000, Maximum=255.000, Mean=176.920, StdDev=103.906
+  NoData Value=256
+  Overviews: 1701x1181, 851x591, 426x296, 213x148
+  Metadata:
+    RepresentationType=ATHEMATIC
+    STATISTICS_COVARIANCES=1788.279658616805,3213.657024037872,10796.40183134656
+    STATISTICS_MAXIMUM=255
+    STATISTICS_MEAN=176.92042988946
+    STATISTICS_MINIMUM=0
+    STATISTICS_SKIPFACTORX=1
+    STATISTICS_SKIPFACTORY=1
+    STATISTICS_STDDEV=103.90573531498
+== ./Tif/Tif/mapaGeologico-20-05-2020V1.tif
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/mapaGeologico-20-05-2020V1.tif
+Size is 9933, 14044
+Metadata:
+  TIFFTAG_RESOLUTIONUNIT=2 (pixels/inch)
+  TIFFTAG_XRESOLUTION=300
+  TIFFTAG_YRESOLUTION=300
+Image Structure Metadata:
+  INTERLEAVE=PIXEL
+Corner Coordinates:
+Upper Left  (    0.0,    0.0)
+Lower Left  (    0.0,14044.0)
+Upper Right ( 9933.0,    0.0)
+Lower Right ( 9933.0,14044.0)
+Center      ( 4966.5, 7022.0)
+Band 1 Block=9933x8 Type=Byte, ColorInterp=Red
+Band 2 Block=9933x8 Type=Byte, ColorInterp=Green
+Band 3 Block=9933x8 Type=Byte, ColorInterp=Blue
+== ./Tif/Tif/DEM_Alos_Palsar_Parquemet_SIRGAS19S.tif
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/DEM_Alos_Palsar_Parquemet_SIRGAS19S.tif
+       ./Tif/Tif/DEM_Alos_Palsar_Parquemet_SIRGAS19S.tif.ovr
+       ./Tif/Tif/DEM_Alos_Palsar_Parquemet_SIRGAS19S.tif.xml
+       ./Tif/Tif/DEM_Alos_Palsar_Parquemet_SIRGAS19S.tif.aux.xml
+Size is 554, 722
+Coordinate System is:
+PROJCRS["SIRGAS 1995 / UTM zone 19S",
+    BASEGEOGCRS["SIRGAS 1995",
+        DATUM["SIRGAS",
+            ELLIPSOID["GRS 1980",6378137,298.257222101,
+                LENGTHUNIT["metre",1,
+                    ID["EPSG",9001]]]],
+        PRIMEM["Greenwich",0,
+            ANGLEUNIT["degree",0.0174532925199433,
+                ID["EPSG",9122]]]],
+    CONVERSION["Transverse Mercator",
+        METHOD["Transverse Mercator",
+            ID["EPSG",9807]],
+        PARAMETER["Latitude of natural origin",0,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8801]],
+        PARAMETER["Longitude of natural origin",-69,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8802]],
+        PARAMETER["Scale factor at natural origin",0.9996,
+            SCALEUNIT["unity",1],
+            ID["EPSG",8805]],
+        PARAMETER["False easting",500000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8806]],
+        PARAMETER["False northing",10000000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8807]]],
+    CS[Cartesian,2],
+        AXIS["easting",east,
+            ORDER[1],
+            LENGTHUNIT["metre",1,
+                ID["EPSG",9001]]],
+        AXIS["northing",north,
+            ORDER[2],
+            LENGTHUNIT["metre",1,
+                ID["EPSG",9001]]]]
+Data axis to CRS axis mapping: 1,2
+Origin = (346131.969000761979260,6308049.250006403774023)
+Pixel Size = (12.500000000000000,-12.500000000000000)
+Metadata:
+  AREA_OR_POINT=Area
+  DataType=Generic
+Image Structure Metadata:
+  COMPRESSION=LZW
+  INTERLEAVE=BAND
+Corner Coordinates:
+Upper Left  (  346131.969, 6308049.250) ( 70d39'13.35"W, 33d21'20.80"S)
+Lower Left  (  346131.969, 6299024.250) ( 70d39'18.90"W, 33d26'13.73"S)
+Upper Right (  353056.969, 6308049.250) ( 70d34'45.50"W, 33d21'24.29"S)
+Lower Right (  353056.969, 6299024.250) ( 70d34'50.80"W, 33d26'17.23"S)
+Center      (  349594.469, 6303536.750) ( 70d37' 2.14"W, 33d23'49.03"S)
+Band 1 Block=128x128 Type=Int16, ColorInterp=Gray
+  Min=533.000 Max=1385.000 
+  Minimum=533.000, Maximum=1385.000, Mean=671.271, StdDev=137.078
+  NoData Value=32767
+  Overviews: 277x361, 139x181
+  Metadata:
+    SourceBandIndex=0
+    STATISTICS_COVARIANCES=18790.46404540626
+    STATISTICS_MAXIMUM=1385
+    STATISTICS_MEAN=671,27062311869
+    STATISTICS_MINIMUM=533
+    STATISTICS_SKIPFACTORX=1
+    STATISTICS_SKIPFACTORY=1
+    STATISTICS_STDDEV=137,07831354888
+== ./Tif/Tif/09APR03150526-M2AS_R2C1-052223060010_01_P0031.tif
+Warning 1: ./Tif/Tif/09APR03150526-M2AS_R2C1-052223060010_01_P0031.tif.ovr: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Warning 1: TIFFReadDirectory:Sum of Photometric type-related color channels and ExtraSamples doesn't match SamplesPerPixel. Defining non-color channels as ExtraSamples.
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/09APR03150526-M2AS_R2C1-052223060010_01_P0031.tif
+       ./Tif/Tif/09APR03150526-M2AS_R2C1-052223060010_01_P0031.tif.ovr
+       ./Tif/Tif/09APR03150526-M2AS_R2C1-052223060010_01_P0031.tif.aux.xml
+Size is 4096, 4096
+Coordinate System is:
+PROJCRS["WGS 84 / UTM zone 19S",
+    BASEGEOGCRS["WGS 84",
+        DATUM["World Geodetic System 1984",
+            ELLIPSOID["WGS 84",6378137,298.257223563,
+                LENGTHUNIT["metre",1]]],
+        PRIMEM["Greenwich",0,
+            ANGLEUNIT["degree",0.0174532925199433]],
+        ID["EPSG",4326]],
+    CONVERSION["Transverse Mercator",
+        METHOD["Transverse Mercator",
+            ID["EPSG",9807]],
+        PARAMETER["Latitude of natural origin",0,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8801]],
+        PARAMETER["Longitude of natural origin",-69,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8802]],
+        PARAMETER["Scale factor at natural origin",0.9996,
+            SCALEUNIT["unity",1],
+            ID["EPSG",8805]],
+        PARAMETER["False easting",500000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8806]],
+        PARAMETER["False northing",10000000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8807]]],
+    CS[Cartesian,2],
+        AXIS["easting",east,
+            ORDER[1],
+            LENGTHUNIT["metre",1]],
+        AXIS["northing",north,
+            ORDER[2],
+            LENGTHUNIT["metre",1]],
+    ID["EPSG",32719]]
+Data axis to CRS axis mapping: 1,2
+Origin = (337120.799999999988358,6308344.799999999813735)
+Pixel Size = (2.400000000000006,-2.400000000000091)
+Metadata:
+  AREA_OR_POINT=Area
+  DataType=Generic
+Image Structure Metadata:
+  INTERLEAVE=PIXEL
+Corner Coordinates:
+Upper Left  (  337120.800, 6308344.800) ( 70d45' 1.67"W, 33d21' 6.43"S)
+Lower Left  (  337120.800, 6298514.400) ( 70d45' 8.07"W, 33d26'25.48"S)
+Upper Right (  346951.200, 6308344.800) ( 70d38'41.48"W, 33d21'11.63"S)
+Lower Right (  346951.200, 6298514.400) ( 70d38'47.50"W, 33d26'30.70"S)
+Center      (  342036.000, 6303429.600) ( 70d41'54.68"W, 33d23'48.60"S)
+Band 1 Block=128x128 Type=UInt32, ColorInterp=Gray
+  NoData Value=65536
+  Overviews: 2048x2048, 1024x1024, 512x512, 256x256, 128x128
+  Metadata:
+    SourceBandIndex=0
+Band 2 Block=128x128 Type=UInt32, ColorInterp=Undefined
+  NoData Value=65536
+  Overviews: 2048x2048, 1024x1024, 512x512, 256x256, 128x128
+  Metadata:
+    SourceBandIndex=1
+Band 3 Block=128x128 Type=UInt32, ColorInterp=Undefined
+  NoData Value=65536
+  Overviews: 2048x2048, 1024x1024, 512x512, 256x256, 128x128
+  Metadata:
+    SourceBandIndex=2
+Band 4 Block=128x128 Type=UInt32, ColorInterp=Undefined
+  NoData Value=65536
+  Overviews: 2048x2048, 1024x1024, 512x512, 256x256, 128x128
+  Metadata:
+    SourceBandIndex=3
+== ./Tif/Tif/PS_geoparquemet_2.tif
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/PS_geoparquemet_2.tif
+       ./Tif/Tif/PS_geoparquemet_2.tif.ovr
+       ./Tif/Tif/PS_geoparquemet_2.tif.aux.xml
+Size is 2310, 3009
+Coordinate System is:
+PROJCRS["WGS 84 / UTM zone 19S",
+    BASEGEOGCRS["WGS 84",
+        ENSEMBLE["World Geodetic System 1984 ensemble",
+            MEMBER["World Geodetic System 1984 (Transit)"],
+            MEMBER["World Geodetic System 1984 (G730)"],
+            MEMBER["World Geodetic System 1984 (G873)"],
+            MEMBER["World Geodetic System 1984 (G1150)"],
+            MEMBER["World Geodetic System 1984 (G1674)"],
+            MEMBER["World Geodetic System 1984 (G1762)"],
+            MEMBER["World Geodetic System 1984 (G2139)"],
+            ELLIPSOID["WGS 84",6378137,298.257223563,
+                LENGTHUNIT["metre",1]],
+            ENSEMBLEACCURACY[2.0]],
+        PRIMEM["Greenwich",0,
+            ANGLEUNIT["degree",0.0174532925199433]],
+        ID["EPSG",4326]],
+    CONVERSION["UTM zone 19S",
+        METHOD["Transverse Mercator",
+            ID["EPSG",9807]],
+        PARAMETER["Latitude of natural origin",0,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8801]],
+        PARAMETER["Longitude of natural origin",-69,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8802]],
+        PARAMETER["Scale factor at natural origin",0.9996,
+            SCALEUNIT["unity",1],
+            ID["EPSG",8805]],
+        PARAMETER["False easting",500000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8806]],
+        PARAMETER["False northing",10000000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8807]]],
+    CS[Cartesian,2],
+        AXIS["(E)",east,
+            ORDER[1],
+            LENGTHUNIT["metre",1]],
+        AXIS["(N)",north,
+            ORDER[2],
+            LENGTHUNIT["metre",1]],
+    USAGE[
+        SCOPE["Navigation and medium accuracy spatial referencing."],
+        AREA["Between 72°W and 66°W, southern hemisphere between 80°S and equator, onshore and offshore. Argentina. Bolivia. Brazil. Chile. Colombia. Peru."],
+        BBOX[-80,-72,0,-66]],
+    ID["EPSG",32719]]
+Data axis to CRS axis mapping: 1,2
+Origin = (346128.000000000000000,6308049.000000000000000)
+Pixel Size = (3.000000000000000,-3.000000000000000)
+Metadata:
+  AREA_OR_POINT=Area
+  TIFFTAG_XRESOLUTION=1
+  TIFFTAG_YRESOLUTION=1
+Image Structure Metadata:
+  INTERLEAVE=BAND
+Corner Coordinates:
+Upper Left  (  346128.000, 6308049.000) ( 70d39'13.50"W, 33d21'20.81"S)
+Lower Left  (  346128.000, 6299022.000) ( 70d39'19.06"W, 33d26'13.80"S)
+Upper Right (  353058.000, 6308049.000) ( 70d34'45.46"W, 33d21'24.30"S)
+Lower Right (  353058.000, 6299022.000) ( 70d34'50.77"W, 33d26'17.30"S)
+Center      (  349593.000, 6303535.500) ( 70d37' 2.20"W, 33d23'49.07"S)
+Band 1 Block=2310x1 Type=Byte, ColorInterp=Red
+  Overviews: 1155x1505, 578x753, 289x377, 145x189
+Band 2 Block=2310x1 Type=Byte, ColorInterp=Green
+  Overviews: 1155x1505, 578x753, 289x377, 145x189
+Band 3 Block=2310x1 Type=Byte, ColorInterp=Blue
+  Overviews: 1155x1505, 578x753, 289x377, 145x189
+== ./Tif/Tif/MapaGeologico20_05_2020V2.tif
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/MapaGeologico20_05_2020V2.tif
+Size is 9933, 14044
+Metadata:
+  TIFFTAG_RESOLUTIONUNIT=2 (pixels/inch)
+  TIFFTAG_XRESOLUTION=300
+  TIFFTAG_YRESOLUTION=300
+Image Structure Metadata:
+  INTERLEAVE=PIXEL
+Corner Coordinates:
+Upper Left  (    0.0,    0.0)
+Lower Left  (    0.0,14044.0)
+Upper Right ( 9933.0,    0.0)
+Lower Right ( 9933.0,14044.0)
+Center      ( 4966.5, 7022.0)
+Band 1 Block=9933x8 Type=Byte, ColorInterp=Red
+Band 2 Block=9933x8 Type=Byte, ColorInterp=Green
+Band 3 Block=9933x8 Type=Byte, ColorInterp=Blue
+== ./Tif/Tif/Skysat2_Geoparquemet_22052020_utm19s.tif
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/Skysat2_Geoparquemet_22052020_utm19s.tif
+Size is 7214, 12485
+Coordinate System is:
+PROJCRS["WGS 84 / UTM zone 19S",
+    BASEGEOGCRS["WGS 84",
+        ENSEMBLE["World Geodetic System 1984 ensemble",
+            MEMBER["World Geodetic System 1984 (Transit)"],
+            MEMBER["World Geodetic System 1984 (G730)"],
+            MEMBER["World Geodetic System 1984 (G873)"],
+            MEMBER["World Geodetic System 1984 (G1150)"],
+            MEMBER["World Geodetic System 1984 (G1674)"],
+            MEMBER["World Geodetic System 1984 (G1762)"],
+            MEMBER["World Geodetic System 1984 (G2139)"],
+            ELLIPSOID["WGS 84",6378137,298.257223563,
+                LENGTHUNIT["metre",1]],
+            ENSEMBLEACCURACY[2.0]],
+        PRIMEM["Greenwich",0,
+            ANGLEUNIT["degree",0.0174532925199433]],
+        ID["EPSG",4326]],
+    CONVERSION["UTM zone 19S",
+        METHOD["Transverse Mercator",
+            ID["EPSG",9807]],
+        PARAMETER["Latitude of natural origin",0,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8801]],
+        PARAMETER["Longitude of natural origin",-69,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8802]],
+        PARAMETER["Scale factor at natural origin",0.9996,
+            SCALEUNIT["unity",1],
+            ID["EPSG",8805]],
+        PARAMETER["False easting",500000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8806]],
+        PARAMETER["False northing",10000000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8807]]],
+    CS[Cartesian,2],
+        AXIS["(E)",east,
+            ORDER[1],
+            LENGTHUNIT["metre",1]],
+        AXIS["(N)",north,
+            ORDER[2],
+            LENGTHUNIT["metre",1]],
+    USAGE[
+        SCOPE["Navigation and medium accuracy spatial referencing."],
+        AREA["Between 72°W and 66°W, southern hemisphere between 80°S and equator, onshore and offshore. Argentina. Bolivia. Brazil. Chile. Colombia. Peru."],
+        BBOX[-80,-72,0,-66]],
+    ID["EPSG",32719]]
+Data axis to CRS axis mapping: 1,2
+Origin = (345632.000000000000000,6311328.000000000000000)
+Pixel Size = (1.000000000000000,-1.000000000000000)
+Metadata:
+  AREA_OR_POINT=Area
+  TIFFTAG_XRESOLUTION=1
+  TIFFTAG_YRESOLUTION=1
+Image Structure Metadata:
+  INTERLEAVE=BAND
+Corner Coordinates:
+Upper Left  (  345632.000, 6311328.000) ( 70d39'30.67"W, 33d19'34.12"S)
+Lower Left  (  345632.000, 6298843.000) ( 70d39'38.37"W, 33d26'19.35"S)
+Upper Right (  352846.000, 6311328.000) ( 70d34'51.74"W, 33d19'37.76"S)
+Lower Right (  352846.000, 6298843.000) ( 70d34'59.08"W, 33d26'23.01"S)
+Center      (  349239.000, 6305085.500) ( 70d37'14.96"W, 33d22'58.58"S)
+Band 1 Block=7214x1 Type=Byte, ColorInterp=Red
+Band 2 Block=7214x1 Type=Byte, ColorInterp=Green
+Band 3 Block=7214x1 Type=Byte, ColorInterp=Blue
+== ./Tif/Tif/Skysat_Geoparquemet_22052020_utm19s_falsocolor.tif
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/Skysat_Geoparquemet_22052020_utm19s_falsocolor.tif
+Size is 6196, 10543
+Coordinate System is:
+PROJCRS["WGS 84 / UTM zone 19S",
+    BASEGEOGCRS["WGS 84",
+        ENSEMBLE["World Geodetic System 1984 ensemble",
+            MEMBER["World Geodetic System 1984 (Transit)"],
+            MEMBER["World Geodetic System 1984 (G730)"],
+            MEMBER["World Geodetic System 1984 (G873)"],
+            MEMBER["World Geodetic System 1984 (G1150)"],
+            MEMBER["World Geodetic System 1984 (G1674)"],
+            MEMBER["World Geodetic System 1984 (G1762)"],
+            MEMBER["World Geodetic System 1984 (G2139)"],
+            ELLIPSOID["WGS 84",6378137,298.257223563,
+                LENGTHUNIT["metre",1]],
+            ENSEMBLEACCURACY[2.0]],
+        PRIMEM["Greenwich",0,
+            ANGLEUNIT["degree",0.0174532925199433]],
+        ID["EPSG",4326]],
+    CONVERSION["UTM zone 19S",
+        METHOD["Transverse Mercator",
+            ID["EPSG",9807]],
+        PARAMETER["Latitude of natural origin",0,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8801]],
+        PARAMETER["Longitude of natural origin",-69,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8802]],
+        PARAMETER["Scale factor at natural origin",0.9996,
+            SCALEUNIT["unity",1],
+            ID["EPSG",8805]],
+        PARAMETER["False easting",500000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8806]],
+        PARAMETER["False northing",10000000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8807]]],
+    CS[Cartesian,2],
+        AXIS["(E)",east,
+            ORDER[1],
+            LENGTHUNIT["metre",1]],
+        AXIS["(N)",north,
+            ORDER[2],
+            LENGTHUNIT["metre",1]],
+    USAGE[
+        SCOPE["Navigation and medium accuracy spatial referencing."],
+        AREA["Between 72°W and 66°W, southern hemisphere between 80°S and equator, onshore and offshore. Argentina. Bolivia. Brazil. Chile. Colombia. Peru."],
+        BBOX[-80,-72,0,-66]],
+    ID["EPSG",32719]]
+Data axis to CRS axis mapping: 1,2
+Origin = (346649.000000000000000,6309941.000000000000000)
+Pixel Size = (1.000000000000000,-1.000000000000000)
+Metadata:
+  AREA_OR_POINT=Area
+  TIFFTAG_XRESOLUTION=1
+  TIFFTAG_YRESOLUTION=1
+Image Structure Metadata:
+  INTERLEAVE=BAND
+Corner Coordinates:
+Upper Left  (  346649.000, 6309941.000) ( 70d38'52.19"W, 33d20'19.66"S)
+Lower Left  (  346649.000, 6299398.000) ( 70d38'58.66"W, 33d26' 1.87"S)
+Upper Right (  352845.000, 6309941.000) ( 70d34'52.59"W, 33d20'22.78"S)
+Lower Right (  352845.000, 6299398.000) ( 70d34'58.79"W, 33d26' 4.99"S)
+Center      (  349747.000, 6304669.500) ( 70d36'55.56"W, 33d23'12.34"S)
+Band 1 Block=6196x1 Type=Byte, ColorInterp=Red
+Band 2 Block=6196x1 Type=Byte, ColorInterp=Green
+Band 3 Block=6196x1 Type=Byte, ColorInterp=Blue
+== ./Tif/Tif/09APR03150526-M2AS_R2C2-052223060010_01_P0031.tif
+ERROR 1: ./Tif/Tif/09APR03150526-M2AS_R2C2-052223060010_01_P0031.tif.ovr: TIFFFetchDirectory:./Tif/Tif/09APR03150526-M2AS_R2C2-052223060010_01_P0031.tif.ovr: Can not read TIFF directory count
+ERROR 1: ./Tif/Tif/09APR03150526-M2AS_R2C2-052223060010_01_P0031.tif.ovr: TIFFReadDirectory:Failed to read directory at offset 26430184
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/09APR03150526-M2AS_R2C2-052223060010_01_P0031.tif
+       ./Tif/Tif/09APR03150526-M2AS_R2C2-052223060010_01_P0031.tif.aux.xml
+Size is 3186, 4096
+Coordinate System is:
+PROJCRS["WGS 84 / UTM zone 19S",
+    BASEGEOGCRS["WGS 84",
+        DATUM["World Geodetic System 1984",
+            ELLIPSOID["WGS 84",6378137,298.257223563,
+                LENGTHUNIT["metre",1]]],
+        PRIMEM["Greenwich",0,
+            ANGLEUNIT["degree",0.0174532925199433]],
+        ID["EPSG",4326]],
+    CONVERSION["Transverse Mercator",
+        METHOD["Transverse Mercator",
+            ID["EPSG",9807]],
+        PARAMETER["Latitude of natural origin",0,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8801]],
+        PARAMETER["Longitude of natural origin",-69,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8802]],
+        PARAMETER["Scale factor at natural origin",0.9996,
+            SCALEUNIT["unity",1],
+            ID["EPSG",8805]],
+        PARAMETER["False easting",500000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8806]],
+        PARAMETER["False northing",10000000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8807]]],
+    CS[Cartesian,2],
+        AXIS["easting",east,
+            ORDER[1],
+            LENGTHUNIT["metre",1]],
+        AXIS["northing",north,
+            ORDER[2],
+            LENGTHUNIT["metre",1]],
+    ID["EPSG",32719]]
+Data axis to CRS axis mapping: 1,2
+Origin = (346951.199999999953434,6308344.799999999813735)
+Pixel Size = (2.400000000000007,-2.400000000000091)
+Metadata:
+  AREA_OR_POINT=Area
+  DataType=Generic
+Image Structure Metadata:
+  INTERLEAVE=PIXEL
+Corner Coordinates:
+Upper Left  (  346951.200, 6308344.800) ( 70d38'41.48"W, 33d21'11.63"S)
+Lower Left  (  346951.200, 6298514.400) ( 70d38'47.50"W, 33d26'30.70"S)
+Upper Right (  354597.600, 6308344.800) ( 70d33'45.74"W, 33d21'15.45"S)
+Lower Right (  354597.600, 6298514.400) ( 70d33'51.46"W, 33d26'34.53"S)
+Center      (  350774.400, 6303429.600) ( 70d36'16.54"W, 33d23'53.10"S)
+Band 1 Block=128x128 Type=UInt32, ColorInterp=Gray
+  NoData Value=65536
+  Metadata:
+    SourceBandIndex=0
+Band 2 Block=128x128 Type=UInt32, ColorInterp=Undefined
+  NoData Value=65536
+  Metadata:
+    SourceBandIndex=1
+Band 3 Block=128x128 Type=UInt32, ColorInterp=Undefined
+  NoData Value=65536
+  Metadata:
+    SourceBandIndex=2
+Band 4 Block=128x128 Type=UInt32, ColorInterp=Undefined
+  NoData Value=65536
+  Metadata:
+    SourceBandIndex=3
+== ./Tif/Tif/Skysat_Geoparquemet_22052020_utm19s.tif
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/Skysat_Geoparquemet_22052020_utm19s.tif
+Size is 6196, 10543
+Coordinate System is:
+PROJCRS["WGS 84 / UTM zone 19S",
+    BASEGEOGCRS["WGS 84",
+        ENSEMBLE["World Geodetic System 1984 ensemble",
+            MEMBER["World Geodetic System 1984 (Transit)"],
+            MEMBER["World Geodetic System 1984 (G730)"],
+            MEMBER["World Geodetic System 1984 (G873)"],
+            MEMBER["World Geodetic System 1984 (G1150)"],
+            MEMBER["World Geodetic System 1984 (G1674)"],
+            MEMBER["World Geodetic System 1984 (G1762)"],
+            MEMBER["World Geodetic System 1984 (G2139)"],
+            ELLIPSOID["WGS 84",6378137,298.257223563,
+                LENGTHUNIT["metre",1]],
+            ENSEMBLEACCURACY[2.0]],
+        PRIMEM["Greenwich",0,
+            ANGLEUNIT["degree",0.0174532925199433]],
+        ID["EPSG",4326]],
+    CONVERSION["UTM zone 19S",
+        METHOD["Transverse Mercator",
+            ID["EPSG",9807]],
+        PARAMETER["Latitude of natural origin",0,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8801]],
+        PARAMETER["Longitude of natural origin",-69,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8802]],
+        PARAMETER["Scale factor at natural origin",0.9996,
+            SCALEUNIT["unity",1],
+            ID["EPSG",8805]],
+        PARAMETER["False easting",500000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8806]],
+        PARAMETER["False northing",10000000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8807]]],
+    CS[Cartesian,2],
+        AXIS["(E)",east,
+            ORDER[1],
+            LENGTHUNIT["metre",1]],
+        AXIS["(N)",north,
+            ORDER[2],
+            LENGTHUNIT["metre",1]],
+    USAGE[
+        SCOPE["Navigation and medium accuracy spatial referencing."],
+        AREA["Between 72°W and 66°W, southern hemisphere between 80°S and equator, onshore and offshore. Argentina. Bolivia. Brazil. Chile. Colombia. Peru."],
+        BBOX[-80,-72,0,-66]],
+    ID["EPSG",32719]]
+Data axis to CRS axis mapping: 1,2
+Origin = (346649.000000000000000,6309941.000000000000000)
+Pixel Size = (1.000000000000000,-1.000000000000000)
+Metadata:
+  AREA_OR_POINT=Area
+  TIFFTAG_XRESOLUTION=1
+  TIFFTAG_YRESOLUTION=1
+Image Structure Metadata:
+  INTERLEAVE=BAND
+Corner Coordinates:
+Upper Left  (  346649.000, 6309941.000) ( 70d38'52.19"W, 33d20'19.66"S)
+Lower Left  (  346649.000, 6299398.000) ( 70d38'58.66"W, 33d26' 1.87"S)
+Upper Right (  352845.000, 6309941.000) ( 70d34'52.59"W, 33d20'22.78"S)
+Lower Right (  352845.000, 6299398.000) ( 70d34'58.79"W, 33d26' 4.99"S)
+Center      (  349747.000, 6304669.500) ( 70d36'55.56"W, 33d23'12.34"S)
+Band 1 Block=6196x1 Type=Byte, ColorInterp=Red
+Band 2 Block=6196x1 Type=Byte, ColorInterp=Green
+Band 3 Block=6196x1 Type=Byte, ColorInterp=Blue
+== ./Tif/Tif/tif1.tif
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/tif1.tif
+       ./Tif/Tif/tif1.tif.ovr
+       ./Tif/Tif/tif1.tif.aux.xml
+Size is 3402, 2361
+Origin = (345586.603442732826807,6308453.334226962178946)
+Pixel Size = (3.811819000000008,-3.811819000000017)
+Metadata:
+  DataType=Generic
+Image Structure Metadata:
+  INTERLEAVE=PIXEL
+Corner Coordinates:
+Upper Left  (  345586.603, 6308453.334) 
+Lower Left  (  345586.603, 6299453.630) 
+Upper Right (  358554.412, 6308453.334) 
+Lower Right (  358554.412, 6299453.630) 
+Center      (  352070.508, 6303953.482) 
+Band 1 Block=128x128 Type=UInt16, ColorInterp=Gray
+  Min=0.000 Max=255.000 
+  Minimum=0.000, Maximum=255.000, Mean=241.841, StdDev=50.342
+  NoData Value=256
+  Overviews: 1701x1181, 851x591, 426x296, 213x148
+  Metadata:
+    RepresentationType=ATHEMATIC
+    STATISTICS_COVARIANCES=2534.305103999722,2467.775838257712,1788.279658616805
+    STATISTICS_MAXIMUM=255
+    STATISTICS_MEAN=241.84076810217
+    STATISTICS_MINIMUM=0
+    STATISTICS_SKIPFACTORX=1
+    STATISTICS_SKIPFACTORY=1
+    STATISTICS_STDDEV=50.341882205572
+Band 2 Block=128x128 Type=UInt16, ColorInterp=Undefined
+  Min=0.000 Max=255.000 
+  Minimum=0.000, Maximum=255.000, Mean=229.781, StdDev=64.867
+  NoData Value=256
+  Overviews: 1701x1181, 851x591, 426x296, 213x148
+  Metadata:
+    RepresentationType=ATHEMATIC
+    STATISTICS_COVARIANCES=2467.775838257712,4207.730521908954,3213.657024037872
+    STATISTICS_MAXIMUM=255
+    STATISTICS_MEAN=229.78105947247
+    STATISTICS_MINIMUM=0
+    STATISTICS_SKIPFACTORX=1
+    STATISTICS_SKIPFACTORY=1
+    STATISTICS_STDDEV=64.867021836284
+Band 3 Block=128x128 Type=UInt16, ColorInterp=Undefined
+  Min=0.000 Max=255.000 
+  Minimum=0.000, Maximum=255.000, Mean=176.920, StdDev=103.906
+  NoData Value=256
+  Overviews: 1701x1181, 851x591, 426x296, 213x148
+  Metadata:
+    RepresentationType=ATHEMATIC
+    STATISTICS_COVARIANCES=1788.279658616805,3213.657024037872,10796.40183134656
+    STATISTICS_MAXIMUM=255
+    STATISTICS_MEAN=176.92042988946
+    STATISTICS_MINIMUM=0
+    STATISTICS_SKIPFACTORX=1
+    STATISTICS_SKIPFACTORY=1
+    STATISTICS_STDDEV=103.90573531498
+== ./Tif/Tif/Skysat4_Geoparquemet_22052020_utm19s.tif
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/Skysat4_Geoparquemet_22052020_utm19s.tif
+Size is 6663, 12131
+Coordinate System is:
+PROJCRS["WGS 84 / UTM zone 19S",
+    BASEGEOGCRS["WGS 84",
+        ENSEMBLE["World Geodetic System 1984 ensemble",
+            MEMBER["World Geodetic System 1984 (Transit)"],
+            MEMBER["World Geodetic System 1984 (G730)"],
+            MEMBER["World Geodetic System 1984 (G873)"],
+            MEMBER["World Geodetic System 1984 (G1150)"],
+            MEMBER["World Geodetic System 1984 (G1674)"],
+            MEMBER["World Geodetic System 1984 (G1762)"],
+            MEMBER["World Geodetic System 1984 (G2139)"],
+            ELLIPSOID["WGS 84",6378137,298.257223563,
+                LENGTHUNIT["metre",1]],
+            ENSEMBLEACCURACY[2.0]],
+        PRIMEM["Greenwich",0,
+            ANGLEUNIT["degree",0.0174532925199433]],
+        ID["EPSG",4326]],
+    CONVERSION["UTM zone 19S",
+        METHOD["Transverse Mercator",
+            ID["EPSG",9807]],
+        PARAMETER["Latitude of natural origin",0,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8801]],
+        PARAMETER["Longitude of natural origin",-69,
+            ANGLEUNIT["degree",0.0174532925199433],
+            ID["EPSG",8802]],
+        PARAMETER["Scale factor at natural origin",0.9996,
+            SCALEUNIT["unity",1],
+            ID["EPSG",8805]],
+        PARAMETER["False easting",500000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8806]],
+        PARAMETER["False northing",10000000,
+            LENGTHUNIT["metre",1],
+            ID["EPSG",8807]]],
+    CS[Cartesian,2],
+        AXIS["(E)",east,
+            ORDER[1],
+            LENGTHUNIT["metre",1]],
+        AXIS["(N)",north,
+            ORDER[2],
+            LENGTHUNIT["metre",1]],
+    USAGE[
+        SCOPE["Navigation and medium accuracy spatial referencing."],
+        AREA["Between 72°W and 66°W, southern hemisphere between 80°S and equator, onshore and offshore. Argentina. Bolivia. Brazil. Chile. Colombia. Peru."],
+        BBOX[-80,-72,0,-66]],
+    ID["EPSG",32719]]
+Data axis to CRS axis mapping: 1,2
+Origin = (346009.000000000000000,6311433.000000000000000)
+Pixel Size = (1.000000000000000,-1.000000000000000)
+Metadata:
+  AREA_OR_POINT=Area
+  TIFFTAG_XRESOLUTION=1
+  TIFFTAG_YRESOLUTION=1
+Image Structure Metadata:
+  INTERLEAVE=BAND
+Corner Coordinates:
+Upper Left  (  346009.000, 6311433.000) ( 70d39'16.03"W, 33d19'30.91"S)
+Lower Left  (  346009.000, 6299302.000) ( 70d39'23.49"W, 33d26' 4.65"S)
+Upper Right (  352672.000, 6311433.000) ( 70d34'58.40"W, 33d19'34.26"S)
+Lower Right (  352672.000, 6299302.000) ( 70d35' 5.55"W, 33d26' 8.02"S)
+Center      (  349340.500, 6305367.500) ( 70d37'10.86"W, 33d22'49.48"S)
+Band 1 Block=6663x1 Type=Byte, ColorInterp=Red
+Band 2 Block=6663x1 Type=Byte, ColorInterp=Green
+Band 3 Block=6663x1 Type=Byte, ColorInterp=Blue
+== ./Tif/Tif/geologico/MapaGeologico22_05.tif
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/geologico/MapaGeologico22_05.tif
+Size is 9934, 7016
+Metadata:
+  TIFFTAG_RESOLUTIONUNIT=2 (pixels/inch)
+  TIFFTAG_XRESOLUTION=300
+  TIFFTAG_YRESOLUTION=300
+Image Structure Metadata:
+  INTERLEAVE=PIXEL
+Corner Coordinates:
+Upper Left  (    0.0,    0.0)
+Lower Left  (    0.0, 7016.0)
+Upper Right ( 9934.0,    0.0)
+Lower Right ( 9934.0, 7016.0)
+Center      ( 4967.0, 3508.0)
+Band 1 Block=9934x8 Type=Byte, ColorInterp=Red
+Band 2 Block=9934x8 Type=Byte, ColorInterp=Green
+Band 3 Block=9934x8 Type=Byte, ColorInterp=Blue
+== ./Tif/Tif/geologico/MapaGeologico22_05concurvas.tif
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/geologico/MapaGeologico22_05concurvas.tif
+Size is 9934, 7016
+Metadata:
+  TIFFTAG_RESOLUTIONUNIT=2 (pixels/inch)
+  TIFFTAG_XRESOLUTION=300
+  TIFFTAG_YRESOLUTION=300
+Image Structure Metadata:
+  INTERLEAVE=PIXEL
+Corner Coordinates:
+Upper Left  (    0.0,    0.0)
+Lower Left  (    0.0, 7016.0)
+Upper Right ( 9934.0,    0.0)
+Lower Right ( 9934.0, 7016.0)
+Center      ( 4967.0, 3508.0)
+Band 1 Block=9934x8 Type=Byte, ColorInterp=Red
+Band 2 Block=9934x8 Type=Byte, ColorInterp=Green
+Band 3 Block=9934x8 Type=Byte, ColorInterp=Blue
+== ./Tif/Tif/geologico/Geologico con leyenda.tif
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/geologico/Geologico con leyenda.tif
+Size is 9934, 7016
+Metadata:
+  TIFFTAG_RESOLUTIONUNIT=2 (pixels/inch)
+  TIFFTAG_XRESOLUTION=300
+  TIFFTAG_YRESOLUTION=300
+Image Structure Metadata:
+  INTERLEAVE=PIXEL
+Corner Coordinates:
+Upper Left  (    0.0,    0.0)
+Lower Left  (    0.0, 7016.0)
+Upper Right ( 9934.0,    0.0)
+Lower Right ( 9934.0, 7016.0)
+Center      ( 4967.0, 3508.0)
+Band 1 Block=9934x8 Type=Byte, ColorInterp=Red
+Band 2 Block=9934x8 Type=Byte, ColorInterp=Green
+Band 3 Block=9934x8 Type=Byte, ColorInterp=Blue
+== ./Tif/Tif/geologico/tif3.tif
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/geologico/tif3.tif
+       ./Tif/Tif/geologico/tif3.tif.ovr
+       ./Tif/Tif/geologico/tif3.tif.aux.xml
+Size is 3402, 2361
+Origin = (345586.603442732826807,6308453.334226962178946)
+Pixel Size = (3.811819000000008,-3.811819000000017)
+Metadata:
+  DataType=Generic
+Image Structure Metadata:
+  INTERLEAVE=PIXEL
+Corner Coordinates:
+Upper Left  (  345586.603, 6308453.334) 
+Lower Left  (  345586.603, 6299453.630) 
+Upper Right (  358554.412, 6308453.334) 
+Lower Right (  358554.412, 6299453.630) 
+Center      (  352070.508, 6303953.482) 
+Band 1 Block=128x128 Type=UInt16, ColorInterp=Gray
+  Min=0.000 Max=255.000 
+  Minimum=0.000, Maximum=255.000, Mean=241.841, StdDev=50.342
+  NoData Value=256
+  Overviews: 1701x1181, 851x591, 426x296, 213x148
+  Metadata:
+    RepresentationType=ATHEMATIC
+    STATISTICS_COVARIANCES=2534.305103999722,2467.775838257712,1788.279658616805
+    STATISTICS_MAXIMUM=255
+    STATISTICS_MEAN=241.84076810217
+    STATISTICS_MINIMUM=0
+    STATISTICS_SKIPFACTORX=1
+    STATISTICS_SKIPFACTORY=1
+    STATISTICS_STDDEV=50.341882205572
+Band 2 Block=128x128 Type=UInt16, ColorInterp=Undefined
+  Min=0.000 Max=255.000 
+  Minimum=0.000, Maximum=255.000, Mean=229.781, StdDev=64.867
+  NoData Value=256
+  Overviews: 1701x1181, 851x591, 426x296, 213x148
+  Metadata:
+    RepresentationType=ATHEMATIC
+    STATISTICS_COVARIANCES=2467.775838257712,4207.730521908954,3213.657024037872
+    STATISTICS_MAXIMUM=255
+    STATISTICS_MEAN=229.78105947247
+    STATISTICS_MINIMUM=0
+    STATISTICS_SKIPFACTORX=1
+    STATISTICS_SKIPFACTORY=1
+    STATISTICS_STDDEV=64.867021836284
+Band 3 Block=128x128 Type=UInt16, ColorInterp=Undefined
+  Min=0.000 Max=255.000 
+  Minimum=0.000, Maximum=255.000, Mean=176.920, StdDev=103.906
+  NoData Value=256
+  Overviews: 1701x1181, 851x591, 426x296, 213x148
+  Metadata:
+    RepresentationType=ATHEMATIC
+    STATISTICS_COVARIANCES=1788.279658616805,3213.657024037872,10796.40183134656
+    STATISTICS_MAXIMUM=255
+    STATISTICS_MEAN=176.92042988946
+    STATISTICS_MINIMUM=0
+    STATISTICS_SKIPFACTORX=1
+    STATISTICS_SKIPFACTORY=1
+    STATISTICS_STDDEV=103.90573531498
+== ./Tif/Tif/geologico/UNion _ de polygonos_mapa2205.tif
+Driver: GTiff/GeoTIFF
+Files: ./Tif/Tif/geologico/UNion _ de polygonos_mapa2205.tif
+Size is 9934, 14044
+Metadata:
+  TIFFTAG_RESOLUTIONUNIT=2 (pixels/inch)
+  TIFFTAG_XRESOLUTION=300
+  TIFFTAG_YRESOLUTION=300
+Image Structure Metadata:
+  INTERLEAVE=PIXEL
+Corner Coordinates:
+Upper Left  (    0.0,    0.0)
+Lower Left  (    0.0,14044.0)
+Upper Right ( 9934.0,    0.0)
+Lower Right ( 9934.0,14044.0)
+Center      ( 4967.0, 7022.0)
+Band 1 Block=9934x8 Type=Byte, ColorInterp=Red
+Band 2 Block=9934x8 Type=Byte, ColorInterp=Green
+Band 3 Block=9934x8 Type=Byte, ColorInterp=Blue

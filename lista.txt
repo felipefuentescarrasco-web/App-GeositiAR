@@ -1,0 +1,267 @@
+1239569	./Shp.rar
+1539	./Shp/Shp/Area Estudio.rar
+5	./Shp/Shp/Area_SIRGAS_19S.cpg
+1527	./Shp/Shp/Area_SIRGAS_19S.dbf
+403	./Shp/Shp/Area_SIRGAS_19S.prj
+132	./Shp/Shp/Area_SIRGAS_19S.sbn
+116	./Shp/Shp/Area_SIRGAS_19S.sbx
+348	./Shp/Shp/Area_SIRGAS_19S.shp
+108	./Shp/Shp/Area_SIRGAS_19S.shx
+5	./Shp/Shp/Cumbre-Tupahue-21012020.cpg
+68493	./Shp/Shp/Cumbre-Tupahue-21012020.dbf
+403	./Shp/Shp/Cumbre-Tupahue-21012020.prj
+236	./Shp/Shp/Cumbre-Tupahue-21012020.sbn
+124	./Shp/Shp/Cumbre-Tupahue-21012020.sbx
+408	./Shp/Shp/Cumbre-Tupahue-21012020.shp
+188	./Shp/Shp/Cumbre-Tupahue-21012020.shx
+5	./Shp/Shp/Geologia_Parquemet.cpg
+11313	./Shp/Shp/Geologia_Parquemet.dbf
+403	./Shp/Shp/Geologia_Parquemet.prj
+628	./Shp/Shp/Geologia_Parquemet.sbn
+164	./Shp/Shp/Geologia_Parquemet.sbx
+357680	./Shp/Shp/Geologia_Parquemet.shp
+6005	./Shp/Shp/Geologia_Parquemet.shp.xml
+524	./Shp/Shp/Geologia_Parquemet.shx
+115875	./Shp/Shp/GeoparqueMet1.rar
+5	./Shp/Shp/GeoparqueMet1/GEOLOGIA_Parquemet.cpg
+11102	./Shp/Shp/GeoparqueMet1/GEOLOGIA_Parquemet.dbf
+403	./Shp/Shp/GeoparqueMet1/GEOLOGIA_Parquemet.prj
+620	./Shp/Shp/GeoparqueMet1/GEOLOGIA_Parquemet.sbn
+164	./Shp/Shp/GeoparqueMet1/GEOLOGIA_Parquemet.sbx
+357080	./Shp/Shp/GeoparqueMet1/GEOLOGIA_Parquemet.shp
+5773	./Shp/Shp/GeoparqueMet1/GEOLOGIA_Parquemet.shp.xml
+516	./Shp/Shp/GeoparqueMet1/GEOLOGIA_Parquemet.shx
+4118	./Shp/Shp/Georuta 1.gdb/a00000001.TablesByName.atx
+110	./Shp/Shp/Georuta 1.gdb/a00000001.gdbindexes
+320	./Shp/Shp/Georuta 1.gdb/a00000001.gdbtable
+5152	./Shp/Shp/Georuta 1.gdb/a00000001.gdbtablx
+2055	./Shp/Shp/Georuta 1.gdb/a00000002.gdbtable
+5152	./Shp/Shp/Georuta 1.gdb/a00000002.gdbtablx
+42	./Shp/Shp/Georuta 1.gdb/a00000003.gdbindexes
+879	./Shp/Shp/Georuta 1.gdb/a00000003.gdbtable
+5152	./Shp/Shp/Georuta 1.gdb/a00000003.gdbtablx
+4118	./Shp/Shp/Georuta 1.gdb/a00000004.CatItemsByPhysicalName.atx
+4118	./Shp/Shp/Georuta 1.gdb/a00000004.CatItemsByType.atx
+4118	./Shp/Shp/Georuta 1.gdb/a00000004.FDO_UUID.atx
+4440	./Shp/Shp/Georuta 1.gdb/a00000004.freelist
+310	./Shp/Shp/Georuta 1.gdb/a00000004.gdbindexes
+8113	./Shp/Shp/Georuta 1.gdb/a00000004.gdbtable
+5152	./Shp/Shp/Georuta 1.gdb/a00000004.gdbtablx
+4118	./Shp/Shp/Georuta 1.gdb/a00000004.spx
+12310	./Shp/Shp/Georuta 1.gdb/a00000005.CatItemTypesByName.atx
+4118	./Shp/Shp/Georuta 1.gdb/a00000005.CatItemTypesByParentTypeID.atx
+4118	./Shp/Shp/Georuta 1.gdb/a00000005.CatItemTypesByUUID.atx
+296	./Shp/Shp/Georuta 1.gdb/a00000005.gdbindexes
+1803	./Shp/Shp/Georuta 1.gdb/a00000005.gdbtable
+5152	./Shp/Shp/Georuta 1.gdb/a00000005.gdbtablx
+4118	./Shp/Shp/Georuta 1.gdb/a00000006.CatRelsByDestinationID.atx
+4118	./Shp/Shp/Georuta 1.gdb/a00000006.CatRelsByOriginID.atx
+4118	./Shp/Shp/Georuta 1.gdb/a00000006.CatRelsByType.atx
+4118	./Shp/Shp/Georuta 1.gdb/a00000006.FDO_UUID.atx
+318	./Shp/Shp/Georuta 1.gdb/a00000006.gdbindexes
+336	./Shp/Shp/Georuta 1.gdb/a00000006.gdbtable
+5152	./Shp/Shp/Georuta 1.gdb/a00000006.gdbtablx
+4118	./Shp/Shp/Georuta 1.gdb/a00000007.CatRelTypesByBackwardLabel.atx
+4118	./Shp/Shp/Georuta 1.gdb/a00000007.CatRelTypesByDestItemTypeID.atx
+4118	./Shp/Shp/Georuta 1.gdb/a00000007.CatRelTypesByForwardLabel.atx
+4118	./Shp/Shp/Georuta 1.gdb/a00000007.CatRelTypesByName.atx
+4118	./Shp/Shp/Georuta 1.gdb/a00000007.CatRelTypesByOriginItemTypeID.atx
+4118	./Shp/Shp/Georuta 1.gdb/a00000007.CatRelTypesByUUID.atx
+602	./Shp/Shp/Georuta 1.gdb/a00000007.gdbindexes
+2504	./Shp/Shp/Georuta 1.gdb/a00000007.gdbtable
+5152	./Shp/Shp/Georuta 1.gdb/a00000007.gdbtablx
+96	./Shp/Shp/Georuta 1.gdb/a00000009.gdbindexes
+1978	./Shp/Shp/Georuta 1.gdb/a00000009.gdbtable
+5152	./Shp/Shp/Georuta 1.gdb/a00000009.gdbtablx
+4118	./Shp/Shp/Georuta 1.gdb/a00000009.spx
+4	./Shp/Shp/Georuta 1.gdb/gdb
+400	./Shp/Shp/Georuta 1.gdb/timestamps
+10752	./Shp/Shp/Georuta 1.lyr
+4118	./Shp/Shp/Georuta 2.gdb/a00000001.TablesByName.atx
+110	./Shp/Shp/Georuta 2.gdb/a00000001.gdbindexes
+320	./Shp/Shp/Georuta 2.gdb/a00000001.gdbtable
+5152	./Shp/Shp/Georuta 2.gdb/a00000001.gdbtablx
+2055	./Shp/Shp/Georuta 2.gdb/a00000002.gdbtable
+5152	./Shp/Shp/Georuta 2.gdb/a00000002.gdbtablx
+42	./Shp/Shp/Georuta 2.gdb/a00000003.gdbindexes
+879	./Shp/Shp/Georuta 2.gdb/a00000003.gdbtable
+5152	./Shp/Shp/Georuta 2.gdb/a00000003.gdbtablx
+4118	./Shp/Shp/Georuta 2.gdb/a00000004.CatItemsByPhysicalName.atx
+4118	./Shp/Shp/Georuta 2.gdb/a00000004.CatItemsByType.atx
+4118	./Shp/Shp/Georuta 2.gdb/a00000004.FDO_UUID.atx
+4440	./Shp/Shp/Georuta 2.gdb/a00000004.freelist
+310	./Shp/Shp/Georuta 2.gdb/a00000004.gdbindexes
+8113	./Shp/Shp/Georuta 2.gdb/a00000004.gdbtable
+5152	./Shp/Shp/Georuta 2.gdb/a00000004.gdbtablx
+4118	./Shp/Shp/Georuta 2.gdb/a00000004.spx
+12310	./Shp/Shp/Georuta 2.gdb/a00000005.CatItemTypesByName.atx
+4118	./Shp/Shp/Georuta 2.gdb/a00000005.CatItemTypesByParentTypeID.atx
+4118	./Shp/Shp/Georuta 2.gdb/a00000005.CatItemTypesByUUID.atx
+296	./Shp/Shp/Georuta 2.gdb/a00000005.gdbindexes
+1803	./Shp/Shp/Georuta 2.gdb/a00000005.gdbtable
+5152	./Shp/Shp/Georuta 2.gdb/a00000005.gdbtablx
+4118	./Shp/Shp/Georuta 2.gdb/a00000006.CatRelsByDestinationID.atx
+4118	./Shp/Shp/Georuta 2.gdb/a00000006.CatRelsByOriginID.atx
+4118	./Shp/Shp/Georuta 2.gdb/a00000006.CatRelsByType.atx
+4118	./Shp/Shp/Georuta 2.gdb/a00000006.FDO_UUID.atx
+318	./Shp/Shp/Georuta 2.gdb/a00000006.gdbindexes
+336	./Shp/Shp/Georuta 2.gdb/a00000006.gdbtable
+5152	./Shp/Shp/Georuta 2.gdb/a00000006.gdbtablx
+4118	./Shp/Shp/Georuta 2.gdb/a00000007.CatRelTypesByBackwardLabel.atx
+4118	./Shp/Shp/Georuta 2.gdb/a00000007.CatRelTypesByDestItemTypeID.atx
+4118	./Shp/Shp/Georuta 2.gdb/a00000007.CatRelTypesByForwardLabel.atx
+4118	./Shp/Shp/Georuta 2.gdb/a00000007.CatRelTypesByName.atx
+4118	./Shp/Shp/Georuta 2.gdb/a00000007.CatRelTypesByOriginItemTypeID.atx
+4118	./Shp/Shp/Georuta 2.gdb/a00000007.CatRelTypesByUUID.atx
+602	./Shp/Shp/Georuta 2.gdb/a00000007.gdbindexes
+2504	./Shp/Shp/Georuta 2.gdb/a00000007.gdbtable
+5152	./Shp/Shp/Georuta 2.gdb/a00000007.gdbtablx
+96	./Shp/Shp/Georuta 2.gdb/a00000009.gdbindexes
+2426	./Shp/Shp/Georuta 2.gdb/a00000009.gdbtable
+5152	./Shp/Shp/Georuta 2.gdb/a00000009.gdbtablx
+4118	./Shp/Shp/Georuta 2.gdb/a00000009.spx
+4	./Shp/Shp/Georuta 2.gdb/gdb
+400	./Shp/Shp/Georuta 2.gdb/timestamps
+10752	./Shp/Shp/Georuta 2.lyr
+5	./Shp/Shp/Georuta1.cpg
+1476	./Shp/Shp/Georuta1.dbf
+266	./Shp/Shp/Georuta1.prj
+132	./Shp/Shp/Georuta1.sbn
+116	./Shp/Shp/Georuta1.sbx
+4380	./Shp/Shp/Georuta1.shp
+108	./Shp/Shp/Georuta1.shx
+77	./Shp/Shp/Georuta1shp.dbf
+15316	./Shp/Shp/Georuta1shp.shp
+108	./Shp/Shp/Georuta1shp.shx
+5	./Shp/Shp/Georuta2.cpg
+1476	./Shp/Shp/Georuta2.dbf
+266	./Shp/Shp/Georuta2.prj
+132	./Shp/Shp/Georuta2.sbn
+116	./Shp/Shp/Georuta2.sbx
+6492	./Shp/Shp/Georuta2.shp
+108	./Shp/Shp/Georuta2.shx
+101	./Shp/Shp/Georuta2shp.dbf
+16444	./Shp/Shp/Georuta2shp.shp
+124	./Shp/Shp/Georuta2shp.shx
+92672	./Shp/Shp/Georutas_geoParquemet_25032020.xls
+626071	./Shp/Shp/OneDrive_1_19-5-2020.zip
+136142	./Shp/Shp/OneDrive_1_7-7-2021.zip
+5	./Shp/Shp/PioNono-Tupahue-21012020.cpg
+62841	./Shp/Shp/PioNono-Tupahue-21012020.dbf
+403	./Shp/Shp/PioNono-Tupahue-21012020.prj
+236	./Shp/Shp/PioNono-Tupahue-21012020.sbn
+124	./Shp/Shp/PioNono-Tupahue-21012020.sbx
+408	./Shp/Shp/PioNono-Tupahue-21012020.shp
+188	./Shp/Shp/PioNono-Tupahue-21012020.shx
+5	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-08012020.cpg
+71319	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-08012020.dbf
+403	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-08012020.prj
+236	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-08012020.sbn
+124	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-08012020.sbx
+408	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-08012020.shp
+188	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-08012020.shx
+5	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-09012020.cpg
+71319	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-09012020.dbf
+403	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-09012020.prj
+236	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-09012020.sbn
+124	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-09012020.sbx
+408	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-09012020.shp
+188	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-09012020.shx
+5	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-10012020.cpg
+71319	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-10012020.dbf
+403	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-10012020.prj
+236	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-10012020.sbn
+124	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-10012020.sbx
+408	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-10012020.shp
+188	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-10012020.shx
+5	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-21012020.cpg
+68493	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-21012020.dbf
+403	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-21012020.prj
+236	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-21012020.sbn
+124	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-21012020.sbx
+408	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-21012020.shp
+188	./Shp/Shp/SHP_georutas/Cumbre-Tupahue-21012020.shx
+5	./Shp/Shp/SHP_georutas/PioNono-Tupahue-08012020.cpg
+59776	./Shp/Shp/SHP_georutas/PioNono-Tupahue-08012020.dbf
+403	./Shp/Shp/SHP_georutas/PioNono-Tupahue-08012020.prj
+228	./Shp/Shp/SHP_georutas/PioNono-Tupahue-08012020.sbn
+124	./Shp/Shp/SHP_georutas/PioNono-Tupahue-08012020.sbx
+380	./Shp/Shp/SHP_georutas/PioNono-Tupahue-08012020.shp
+180	./Shp/Shp/SHP_georutas/PioNono-Tupahue-08012020.shx
+5	./Shp/Shp/SHP_georutas/PioNono-Tupahue-09012020.cpg
+53885	./Shp/Shp/SHP_georutas/PioNono-Tupahue-09012020.dbf
+403	./Shp/Shp/SHP_georutas/PioNono-Tupahue-09012020.prj
+220	./Shp/Shp/SHP_georutas/PioNono-Tupahue-09012020.sbn
+124	./Shp/Shp/SHP_georutas/PioNono-Tupahue-09012020.sbx
+352	./Shp/Shp/SHP_georutas/PioNono-Tupahue-09012020.shp
+172	./Shp/Shp/SHP_georutas/PioNono-Tupahue-09012020.shx
+5	./Shp/Shp/SHP_georutas/PioNono-Tupahue-10012020.cpg
+53885	./Shp/Shp/SHP_georutas/PioNono-Tupahue-10012020.dbf
+403	./Shp/Shp/SHP_georutas/PioNono-Tupahue-10012020.prj
+220	./Shp/Shp/SHP_georutas/PioNono-Tupahue-10012020.sbn
+124	./Shp/Shp/SHP_georutas/PioNono-Tupahue-10012020.sbx
+352	./Shp/Shp/SHP_georutas/PioNono-Tupahue-10012020.shp
+172	./Shp/Shp/SHP_georutas/PioNono-Tupahue-10012020.shx
+5	./Shp/Shp/SHP_georutas/PioNono-Tupahue-21012020.cpg
+62841	./Shp/Shp/SHP_georutas/PioNono-Tupahue-21012020.dbf
+403	./Shp/Shp/SHP_georutas/PioNono-Tupahue-21012020.prj
+236	./Shp/Shp/SHP_georutas/PioNono-Tupahue-21012020.sbn
+124	./Shp/Shp/SHP_georutas/PioNono-Tupahue-21012020.sbx
+408	./Shp/Shp/SHP_georutas/PioNono-Tupahue-21012020.shp
+188	./Shp/Shp/SHP_georutas/PioNono-Tupahue-21012020.shx
+1156752798	./Tif.rar
+90	./Tif/Tif/09APR03150526-M2AS_R2C1-052223060010_01_P0031.tfw
+268444530	./Tif/Tif/09APR03150526-M2AS_R2C1-052223060010_01_P0031.tif
+656	./Tif/Tif/09APR03150526-M2AS_R2C1-052223060010_01_P0031.tif.aux.xml
+34158288	./Tif/Tif/09APR03150526-M2AS_R2C1-052223060010_01_P0031.tif.ovr
+90	./Tif/Tif/09APR03150526-M2AS_R2C2-052223060010_01_P0031.tfw
+209722482	./Tif/Tif/09APR03150526-M2AS_R2C2-052223060010_01_P0031.tif
+656	./Tif/Tif/09APR03150526-M2AS_R2C2-052223060010_01_P0031.tif.aux.xml
+4463919	./Tif/Tif/09APR03150526-M2AS_R2C2-052223060010_01_P0031.tif.ovr
+92	./Tif/Tif/DEM_Alos_Palsar_Parquemet_SIRGAS19S.tfw
+297341	./Tif/Tif/DEM_Alos_Palsar_Parquemet_SIRGAS19S.tif
+2084	./Tif/Tif/DEM_Alos_Palsar_Parquemet_SIRGAS19S.tif.aux.xml
+108408	./Tif/Tif/DEM_Alos_Palsar_Parquemet_SIRGAS19S.tif.ovr
+5661	./Tif/Tif/DEM_Alos_Palsar_Parquemet_SIRGAS19S.tif.xml
+541256	./Tif/Tif/MapaGeologico20_05_2020V2.rar
+418511408	./Tif/Tif/MapaGeologico20_05_2020V2.tif
+222	./Tif/Tif/PS_geoparquemet_2.tfw
+20924965	./Tif/Tif/PS_geoparquemet_2.tif
+134	./Tif/Tif/PS_geoparquemet_2.tif.aux.xml
+6239707	./Tif/Tif/PS_geoparquemet_2.tif.ovr
+55606320	./Tif/Tif/PS_geoparquemet_envi.dat
+604	./Tif/Tif/PS_geoparquemet_envi.dat.aux.xml
+18457632	./Tif/Tif/PS_geoparquemet_envi.dat.enp
+14108568	./Tif/Tif/PS_geoparquemet_envi.dat.ovr
+742	./Tif/Tif/PS_geoparquemet_envi.hdr
+7905381	./Tif/Tif/Parquemet.jp2.jpg
+270500370	./Tif/Tif/Skysat2_Geoparquemet_22052020_utm19s.tif
+376166952	./Tif/Tif/Skysat3_Geoparquemet_22052020_utm19s.tif
+242778063	./Tif/Tif/Skysat4_Geoparquemet_22052020_utm19s.tif
+196226676	./Tif/Tif/Skysat_Geoparquemet_22052020_utm19s.tif
+196226676	./Tif/Tif/Skysat_Geoparquemet_22052020_utm19s_falsocolor.tif
+49682434	./Tif/Tif/composite.tif
+134	./Tif/Tif/composite.tif.aux.xml
+14109760	./Tif/Tif/composite.tif.ovr
+209098052	./Tif/Tif/geologico/Geologico con leyenda.tif
+209098052	./Tif/Tif/geologico/MapaGeologico22_05.tif
+209098052	./Tif/Tif/geologico/MapaGeologico22_05concurvas.tif
+1435844	./Tif/Tif/geologico/OneDrive_1_5-20-2020 (1).zip
+418553540	./Tif/Tif/geologico/UNion _ de polygonos_mapa2205.tif
+474473	./Tif/Tif/geologico/felipe.con leyenda.mpk
+961059	./Tif/Tif/geologico/geologiaParquemet20052020V2.pdf
+90	./Tif/Tif/geologico/tif3.tfw
+50434616	./Tif/Tif/geologico/tif3.tif
+6251	./Tif/Tif/geologico/tif3.tif.aux.xml
+18786680	./Tif/Tif/geologico/tif3.tif.ovr
+524434	./Tif/Tif/mapaGeologico-20-05-2020V1.rar
+418511408	./Tif/Tif/mapaGeologico-20-05-2020V1.tif
+90	./Tif/Tif/tif1.tfw
+50434616	./Tif/Tif/tif1.tif
+6251	./Tif/Tif/tif1.tif.aux.xml
+18786680	./Tif/Tif/tif1.tif.ovr
+90	./Tif/Tif/tif2.tfw
+50434616	./Tif/Tif/tif2.tif
+6251	./Tif/Tif/tif2.tif.aux.xml
+18786680	./Tif/Tif/tif2.tif.ovr
+209098052	./felipe.tif

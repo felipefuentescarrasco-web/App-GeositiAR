@@ -1,0 +1,18 @@
+<PAMDataset>
+  <SRS dataAxisToSRSAxisMapping="1,2">PROJCS["SIRGAS 1995 / UTM zone 19S",GEOGCS["SIRGAS 1995",DATUM["SIRGAS",SPHEROID["GRS 1980",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-69],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",10000000],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH]]</SRS>
+  <GeoTransform>  3.4613196900076198e+05,  4.3281250000000000e+00,  0.0000000000000000e+00,  6.3080492500064038e+06,  0.0000000000000000e+00, -4.3285371702637887e+00</GeoTransform>
+  <Metadata>
+    <MDI key="AREA_OR_POINT">Area</MDI>
+    <MDI key="DataType">Generic</MDI>
+  </Metadata>
+  <PAMRasterBand band="1">
+    <NoDataValue>3.27670000000000E+04</NoDataValue>
+    <Metadata domain="IMAGE_STRUCTURE">
+      <MDI key="COMPRESSION">JPEG</MDI>
+      <MDI key="NBITS">12</MDI>
+    </Metadata>
+    <Metadata>
+      <MDI key="SourceBandIndex">0</MDI>
+    </Metadata>
+  </PAMRasterBand>
+</PAMDataset>

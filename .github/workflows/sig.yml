@@ -1,0 +1,50 @@
+# Baja de Drive la carpeta SIG (tools/sig/carpeta-drive.txt) y hace un reconocimiento de los TIFF:
+# gdalinfo y una vista previa de cada uno, en la rama datos-sig.
+name: SIG
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - tools/sig/carpeta-drive.txt
+      - .github/workflows/sig.yml
+permissions:
+  contents: write
+concurrency:
+  group: sig
+  cancel-in-progress: true
+jobs:
+  reconocer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq gdal-bin unrar >/dev/null
+      - run: pip install gdown
+      - name: Bajar la carpeta de Drive
+        run: gdown --folder "https://drive.google.com/drive/folders/$(head -1 tools/sig/carpeta-drive.txt)" -O "$RUNNER_TEMP/sig"
+      - name: Descomprimir
+        run: |
+          cd "$RUNNER_TEMP/sig"; ls -la
+          for r in *.rar; do mkdir -p "${r%.rar}"; unrar x -o+ -idq "$r" "${r%.rar}/" || true; done
+          find . -type f -printf '%s\t%p\n' | sort -k2 > "$RUNNER_TEMP/lista.txt"; cat "$RUNNER_TEMP/lista.txt"
+      - name: Reconocimiento de los raster
+        run: |
+          mkdir -p "$RUNNER_TEMP/salida/vistas"
+          cp "$RUNNER_TEMP/lista.txt" "$RUNNER_TEMP/salida/"
+          cd "$RUNNER_TEMP/sig"
+          find . -type f \( -iname '*.tif' -o -iname '*.tiff' -o -iname '*.ecw' -o -iname '*.jp2' -o -iname '*.img' \) | while read -r f; do
+            n=$(echo "$f" | sed 's|^\./||; s|[/ ]|_|g')
+            echo "== $f" >> "$RUNNER_TEMP/salida/gdalinfo.txt"
+            gdalinfo "$f" >> "$RUNNER_TEMP/salida/gdalinfo.txt" 2>&1 || true
+            gdal_translate -q -of JPEG -outsize 1600 0 -co QUALITY=80 "$f" "$RUNNER_TEMP/salida/vistas/$n.jpg" 2>> "$RUNNER_TEMP/salida/errores.txt" || \
+            gdal_translate -q -of JPEG -outsize 1600 0 -scale -ot Byte -co QUALITY=80 "$f" "$RUNNER_TEMP/salida/vistas/$n.jpg" 2>> "$RUNNER_TEMP/salida/errores.txt" || true
+          done
+          ls -la "$RUNNER_TEMP/salida/vistas"
+      - name: Guardar en la rama datos-sig
+        run: |
+          cd "$RUNNER_TEMP/salida"
+          git init -q -b datos-sig
+          git config user.name "github-actions[bot]"
+          git config user.email "41898333+github-actions[bot]@users.noreply.github.com"
+          git add -A && git commit -qm "Reconocimiento de la carpeta SIG"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" datos-sig

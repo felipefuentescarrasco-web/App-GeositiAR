@@ -116,10 +116,14 @@ def main():
         col, lw = estilo[nombre]
         for f in capas[nombre]['features']:
             g = f['geometry']
-            if g['type'] == 'Point': ax.plot(*g['coordinates'], 'o', ms=3, color=col)
-            else:
-                lineas = g['coordinates'] if g['type'] in ('MultiLineString', 'Polygon') else [g['coordinates']]
-                for l in lineas: ax.plot([p[0] for p in l], [p[1] for p in l], color=col, lw=lw)
+            if g['type'] in ('Point', 'MultiPoint'):
+                for p in (g['coordinates'] if g['type'] == 'MultiPoint' else [g['coordinates']]): ax.plot(*p, 'o', ms=3, color=col)
+                continue
+            def lineas(c):  # cualquier anidamiento de coordenadas → lista de líneas
+                return [c] if isinstance(c[0][0], float) else [l for x in c for l in lineas(x)]
+            for g2 in (g['geometries'] if g['type'] == 'GeometryCollection' else [g]):
+                if g2['type'] in ('Point', 'MultiPoint') or not g2['coordinates']: continue
+                for l in lineas(g2['coordinates']): ax.plot([p[0] for p in l], [p[1] for p in l], color=col, lw=lw)
     s, o, n, e = CAJA
     ax.set_xlim(o, e); ax.set_ylim(s, n); ax.set_aspect(1 / .834)
     ax.set_title('Capas de OpenStreetMap: senderos (café), ciclovías (azul), agua (celeste), infraestructura (naranjo)')

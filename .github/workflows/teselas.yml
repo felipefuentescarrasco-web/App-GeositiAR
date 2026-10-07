@@ -55,6 +55,8 @@ jobs:
               o = dst / p.relative_to(src).with_suffix('.jpg'); o.parent.mkdir(parents=True, exist_ok=True)
               fondo.save(o, quality=78, optimize=True, progressive=True); n += 1
           print(n, 'teselas')
+          lista = sorted(str(o.relative_to(dst).with_suffix('')) for o in dst.rglob('*.jpg'))
+          (dst / 'lista.json').write_text(json.dumps(lista, separators=(',', ':')))
           PY
           du -sh assets/teselas/skysat
       - name: Guardar en la rama

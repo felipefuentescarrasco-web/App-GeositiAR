@@ -45,7 +45,7 @@ const Vistas = (() => {
       U.el('div', { clase: 'texto' }, [
         U.el('h3', { texto: p.nombre }),
         U.el('p', { clase: 'pequeno tenue', style: 'margin:0', texto: p.subtitulo }),
-        U.el('div', { clase: 'meta' }, [U.el('span', { clase: 'etiqueta parada', texto: 'Parada especial' })])
+        U.el('div', { clase: 'meta' }, [U.el('span', { clase: 'etiqueta parada', texto: U.categoria(p) })])
       ])
     ]);
   }
@@ -406,7 +406,7 @@ const Vistas = (() => {
     return U.el('div', {}, [
       U.el('header', { clase: 'cabecera-geositio', style: 'background-image:url(assets/fotos/' + p.fotos[0].archivo + ')' }, [
         U.el('div', { clase: 'titulo' }, [
-          U.el('span', { clase: 'numero', texto: r ? 'Parada especial · ' + r.nombre.split(' · ')[0] : 'Parada especial' }),
+          U.el('span', { clase: 'numero', texto: r ? U.categoria(p) + ' · ' + r.nombre.split(' · ')[0] : U.categoria(p) }),
           U.el('h1', { texto: p.nombre }),
           U.el('p', { clase: 'sub', style: 'margin:4px 0 0', texto: p.subtitulo })
         ])
@@ -574,7 +574,7 @@ const Vistas = (() => {
           if (!p) return;
           if (p.tipo === 'parada') {
             ficha.appendChild(U.el('div', { clase: 'mapa-ficha' }, [
-              U.el('div', { clase: 'pequeno tenue', texto: 'Parada especial' }),
+              U.el('div', { clase: 'pequeno tenue', texto: U.categoria(p.dato) }),
               U.el('h3', { style: 'margin:2px 0 8px', texto: p.dato.nombre }),
               U.el('a', { clase: 'boton ancho', href: '#/p/' + p.dato.id, texto: 'Abrir ficha' })
             ]));
@@ -587,7 +587,8 @@ const Vistas = (() => {
             ]));
           } else {
             ficha.appendChild(U.el('div', { clase: 'mapa-ficha' }, [
-              U.el('h3', { style: 'margin:0 0 6px', texto: p.dato.nombre }),
+              U.el('div', { clase: 'pequeno tenue', texto: U.categoria(p.dato) }),
+              U.el('h3', { style: 'margin:2px 0 6px', texto: p.dato.nombre }),
               U.el('p', { clase: 'pequeno tenue', style: 'margin:0', texto: p.dato.texto })
             ]));
           }
@@ -605,8 +606,9 @@ const Vistas = (() => {
       contenedor.appendChild(U.el('div', { clase: 'mapa-leyenda' }, [
         U.el('div', {}, [U.el('i', { style: 'background:#c1622f' }), 'Geositio por visitar']),
         U.el('div', {}, [U.el('i', { style: 'background:#4f9d7e' }), 'Geositio visitado']),
-        U.el('div', {}, [U.el('i', { style: 'background:#d8c08a' }), 'Mirador / cantera']),
-        U.el('div', {}, [U.el('i', { style: 'background:#7b6bb0' }), 'Parada especial'])
+        U.el('div', {}, [U.el('i', { style: 'background:#2f7fb5' }), 'Geomirador']),
+        U.el('div', {}, [U.el('i', { style: 'background:#7b6bb0' }), 'Geomaqueta']),
+        U.el('div', {}, [U.el('i', { style: 'background:#d8c08a' }), 'Punto de interés'])
       ]));
 
       const btnUbicar = U.el('button', {

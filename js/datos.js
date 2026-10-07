@@ -432,14 +432,15 @@ const GEOSITIOS = [
   }
 ];
 
-/* Puntos de interés que no son geositios pero valen la parada. */
+/* Puntos de interés que no son geositios pero valen la parada. El mirador es la categoría
+   «geomirador» (U.categoria); coordenadas de los shp de la carpeta SIG. */
 const PUNTOS = [
   { id: 'POI01', tipo: 'mirador', nombre: 'Mirador El Hundimiento',
-    lat: -33.4232, lon: -70.6243, alt: 783, ruta: 'r2',
+    lat: -33.420218, lon: -70.62558, alt: 783, ruta: 'r2',   // Mirador PM-XX-03 de Cumbre-Tupahue-21012020.shp
     texto: 'Mirador desde donde se explica la geomorfología de Santiago y la historia geológica ' +
       'de la región: la cuenca rellena de sedimentos, el cordón de cerros isla y la cordillera al fondo.' },
   { id: 'POI02', tipo: 'cantera', nombre: 'Cantera El Hundimiento',
-    lat: -33.4219, lon: -70.6239, alt: 771, ruta: 'r2',
+    lat: -33.418966, lon: -70.625176, alt: 771, ruta: 'r2',  // PM-31 de Cumbre-Tupahue-21012020.shp (771 m)
     texto: 'Antigua cantera. La roca está totalmente meteorizada y alterada a arcillas y calcita, ' +
       'y se evidencia una posible zona de falla: la mitad izquierda del frente es de color amarillo ' +
       'claro. Taludes inestables: obsérvala desde el camino.' }

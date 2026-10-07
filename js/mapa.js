@@ -1,18 +1,18 @@
 /* Mapa con Leaflet (js/vendor/leaflet/), como en la app de Carlos Venegas.
 
-   Fondos: satélite (Esri World Imagery), calles (OpenStreetMap) y topográfico
-   (OpenTopoMap), con selector. Capas: georutas y unidades geológicas.
+   Fondos: satélite (Esri World Imagery), satélite 2020 (SkySat 1 m de la carpeta SIG, teselas
+   propias en assets/teselas/skysat, sobre Esri), calles (OpenStreetMap) y topográfico (OpenTopoMap).
+   Capas: georutas, geología (Geologia_Parquemet.shp, Sernageomin), senderos, ciclovías, agua e
+   infraestructura (OpenStreetMap, recortadas al parque) y las zonas del plan de manejo del acta de
+   Restauración Ladera (24.09.2026), digitalizadas de sus láminas (tools/sig/acta_capas.py).
    Las teselas que se ven quedan guardadas por el service worker, y
    App.descargarTodo() baja las del recorrido para usarlas sin señal.
 
    Georutas:
      - Georuta 1: trazado real (assets/geo/georuta1.geojson, de la capa
        Georuta1_v2 de ArcGIS Online de la Unidad de Geopatrimonio).
-     - Georuta 2: no hay trazado oficial todavía. La primera vez que hay red se
-       calcula a pie por los caminos de OpenStreetMap entre sus geositios
-       (servicio OSRM de routing.openstreetmap.de) y se guarda en el teléfono;
-       mientras tanto se dibuja punteada uniendo los geositios. Cuando exista el
-       trazado oficial basta con dejarlo como assets/geo/georuta2.geojson. */
+     - Georuta 2: trazado oficial (Georuta2.shp de la carpeta SIG). Si faltara el archivo,
+       se calcula a pie por los caminos de OpenStreetMap (OSRM) y si no, punteada. */
 
 const Mapa = (() => {
 
@@ -21,6 +21,13 @@ const Mapa = (() => {
       nombre: 'Satélite',
       url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       opciones: { maxNativeZoom: 19, attribution: 'Imagen © Esri, Maxar, Earthstar Geographics' }
+    },
+    skysat: {
+      nombre: 'Satélite 2020 (SkySat)',
+      url: 'assets/teselas/skysat/{z}/{x}/{y}.jpg',
+      sobre: 'satelite',   // fuera del parque se ve el satélite de Esri
+      opciones: { minNativeZoom: 13, maxNativeZoom: 17, bounds: [[-33.434, -70.645], [-33.359, -70.593]],
+        attribution: 'Imagen SkySat 22-05-2020 (Planet) · Sernageomin' }
     },
     calles: {
       nombre: 'Calles',
@@ -36,7 +43,51 @@ const Mapa = (() => {
   const CLAVE_FONDO = 'geoparquemet:mapa-fondo';
   const CLAVE_RUTA2 = 'geoparquemet:georuta2-osm';
 
-  const COLOR_GEOL = { volcanica: '#8d6a52', intrusiva: '#5d7a86' };
+  /* Geología: color por familia del código de la unidad */
+  function colorGeol(codigo) {
+    const c = (codigo || '').replace(/\s/g, '');
+    if (/^OlMa/i.test(c)) return /UcC|UcB/.test(c) ? '#a0603f' : '#c98a5a';   // Fm. Abanico: lavas / piroclastos
+    if (/^Mh/.test(c)) return '#c0504d';                                         // intrusivo porfídico
+    if (/^Plamo|Mapocho/.test(c)) return '#d9cf8e';                             // río y depósitos del Mapocho
+    if (/^Hf|^Plfa/.test(c)) return '#e8d9a6';                                   // fluviales
+    if (/^PlH[cl]/.test(c)) return '#e3b36b';                                    // coluviales
+    if (/^PlHrm/.test(c)) return '#d98c5f';                                      // remoción en masa
+    if (/^Ha|^PlHm/i.test(c)) return '#b3b3b3';                                  // antrópicos
+    return '#999';
+  }
+
+  /* Capas temáticas: archivo, estilo y texto del popup */
+  const C_ACTA = { 'Alto valor ecológico (bosque esclerófilo)': '#e0242a', 'Especies en categoría de conservación': '#2476be',
+    'Árboles patrimoniales': '#28aa46', 'Protección de suelos, canteras y cursos de agua': '#f2e27a', 'Zona de recreación': '#1f9b46',
+    'Infraestructura gris': '#8c8c8c', 'Naturalización': '#4be1d2', 'Enriquecimiento': '#965252', 'Revegetación': '#e6c31e',
+    'Núcleo de restauración nativa': '#e0242a', 'Bosque esclerófilo nativo': '#249c3c', 'Bosque exótico': '#e22022', 'Bosque mixto': '#f0e68c' };
+  const ACTA = [
+    ['Plan Parquemet: tipos de bosque', 'acta_bosque'],
+    ['Plan Parquemet: conservación', 'acta_conservacion'],
+    ['Plan Parquemet: protección', 'acta_proteccion'],
+    ['Plan Parquemet: recreación e infraestructura', 'acta_recreacion'],
+    ['Plan Parquemet: rehabilitación ambiental', 'acta_manejo'],
+    ['Plan Parquemet: núcleos de restauración', 'acta_nucleos']
+  ];
+  const INFRA = { toilets: 'Baños', drinking_water: 'Agua potable', parking: 'Estacionamiento', shelter: 'Refugio',
+    restaurant: 'Restaurante', cafe: 'Café', fountain: 'Pileta', viewpoint: 'Mirador', information: 'Información',
+    picnic_site: 'Zona de picnic', attraction: 'Atractivo', playground: 'Juegos infantiles', swimming_pool: 'Piscina',
+    station: 'Estación', funicular: 'Funicular' };
+
+  function capaGeoJSON(archivo, opciones) {
+    const grupo = L.layerGroup();
+    let cargada = false;
+    grupo.on('add', () => {
+      if (cargada) return;
+      cargada = true;
+      fetch(archivo).then(r => r.json()).then(gj => L.geoJSON(gj, opciones).addTo(grupo))
+        .catch(() => { cargada = false; });
+    });
+    return grupo;
+  }
+
+  const popup = (titulo, lineas) => U.el('div', { clase: 'popup-geol' },
+    [U.el('b', { texto: titulo })].concat(lineas.filter(Boolean).map(t => U.el('div', { clase: 'pequeno', texto: t }))));
 
   /* ---------------------------------------------------- georutas */
 
@@ -99,9 +150,11 @@ const Mapa = (() => {
     let elegido = 'satelite';
     try { const f = JSON.parse(localStorage.getItem(CLAVE_FONDO)); if (FONDOS[f]) elegido = f; } catch (e) { /* por defecto */ }
     const fondos = {};
+    const teselas = k => L.tileLayer(FONDOS[k].url, Object.assign({ maxZoom: 20, crossOrigin: true }, FONDOS[k].opciones));
     Object.keys(FONDOS).forEach(k => {
-      fondos[FONDOS[k].nombre] = L.tileLayer(FONDOS[k].url, Object.assign({ maxZoom: 20, crossOrigin: true }, FONDOS[k].opciones));
-      fondos[FONDOS[k].nombre]._clave = k;
+      const capa = FONDOS[k].sobre ? L.layerGroup([teselas(FONDOS[k].sobre), teselas(k)]) : teselas(k);
+      capa._clave = k;
+      fondos[FONDOS[k].nombre] = capa;
     });
     fondos[FONDOS[elegido].nombre].addTo(mapa);
     mapa.on('baselayerchange', e => { try { localStorage.setItem(CLAVE_FONDO, JSON.stringify(e.layer._clave)); } catch (er) { /* nada */ } });
@@ -119,34 +172,65 @@ const Mapa = (() => {
       });
     });
 
-    /* unidades geológicas (los polígonos de la app de Carlos) */
-    const capaGeol = L.layerGroup();
-    fetch('assets/geo/geologia.geojson').then(r => r.json()).then(gj => {
-      L.geoJSON(gj, {
-        style: f => ({ color: COLOR_GEOL[f.properties.tipo] || '#999', weight: 1, fillOpacity: .35 }),
-        onEachFeature: (f, capa) => {
-          const p = f.properties;
-          capa.bindPopup(U.el('div', { clase: 'popup-geol' }, [
-            U.el('b', { texto: p.nombre + (p.codigo ? ' (' + p.codigo + ')' : '') }),
-            U.el('div', { clase: 'pequeno', texto: p.edad || '' })
-          ]));
-        }
-      }).addTo(capaGeol);
-    }).catch(() => { /* sin la capa, el mapa sigue funcionando */ });
+    /* unidades geológicas (Geologia_Parquemet.shp, Sernageomin) */
+    const capaGeol = capaGeoJSON('assets/geo/geologia_sernageomin.geojson', {
+      style: f => ({ color: '#5a4636', weight: .8, fillColor: colorGeol(f.properties.codigo), fillOpacity: .5 }),
+      onEachFeature: (f, c) => c.bindPopup(popup(f.properties.unidad, [f.properties.codigo, 'Fuente: Sernageomin']))
+    });
 
-    L.control.layers(fondos, { 'Georutas': capaRutas, 'Geología': capaGeol }, { position: 'topright', collapsed: true }).addTo(mapa);
+    /* OpenStreetMap, recortado al parque */
+    const tip = (a, b) => U.el('div', {}, [U.el('b', { texto: a }), U.el('div', { clase: 'pequeno', texto: b || 'OpenStreetMap' })]);
+    const capaSenderos = capaGeoJSON('assets/geo/osm_senderos.geojson', {
+      style: f => ({ color: '#7a4a1e', weight: 2, opacity: .9, dashArray: f.properties.highway === 'steps' ? '2 4' : '5 4' }),
+      onEachFeature: (f, c) => c.bindTooltip(tip(f.properties.name || 'Sendero'), { sticky: true })
+    });
+    const capaCiclo = capaGeoJSON('assets/geo/osm_ciclovias.geojson', {
+      style: { color: '#1f6fd1', weight: 3, opacity: .9 },
+      onEachFeature: (f, c) => c.bindTooltip(tip(f.properties.name || 'Ciclovía / ruta de bicicleta'), { sticky: true })
+    });
+    const capaAgua = capaGeoJSON('assets/geo/osm_agua.geojson', {
+      style: { color: '#2aa0c8', weight: 2, fillColor: '#7fd0ea', fillOpacity: .6 },
+      onEachFeature: (f, c) => c.bindTooltip(tip(f.properties.name || 'Curso o cuerpo de agua'), { sticky: true })
+    });
+    const capaInfra = capaGeoJSON('assets/geo/osm_infraestructura.geojson', {
+      pointToLayer: (f, ll) => L.circleMarker(ll, { radius: 5, color: '#fff', weight: 1.5, fillColor: '#c1622f', fillOpacity: 1 }),
+      style: { color: '#c1622f', weight: 2, fillOpacity: .25 },
+      onEachFeature: (f, c) => {
+        const p = f.properties;
+        const tipo = INFRA[p.amenity || p.tourism || p.leisure || p.aerialway || p.railway] || 'Infraestructura';
+        c.bindTooltip(p.name ? tip(p.name, tipo) : tip(tipo));
+      }
+    });
+    const capaLimite = capaGeoJSON('assets/geo/acta_parque.geojson', {
+      style: { color: '#2f6f5e', weight: 2.5, fill: false, dashArray: '6 4' }, interactive: false
+    });
+
+    /* plan de manejo (acta de Restauración Ladera) */
+    const capasActa = {};
+    ACTA.forEach(([nombre, archivo]) => {
+      capasActa[nombre] = capaGeoJSON('assets/geo/' + archivo + '.geojson', {
+        style: f => ({ color: '#333', weight: .6, fillColor: C_ACTA[f.properties.clase] || '#999', fillOpacity: .6 }),
+        onEachFeature: (f, c) => c.bindPopup(popup(f.properties.clase, [f.properties.ha ? f.properties.ha + ' ha' : '',
+          'Acta Participación Ciudadana – Restauración Ladera (24.09.2026)', 'Digitalizado de la lámina: aproximado.']))
+      });
+    });
+
+    L.control.layers(fondos, Object.assign({
+      'Georutas': capaRutas, 'Límite del parque': capaLimite, 'Geología': capaGeol, 'Senderos': capaSenderos,
+      'Ciclovías': capaCiclo, 'Agua': capaAgua, 'Infraestructura': capaInfra
+    }, capasActa), { position: 'topright', collapsed: true }).addTo(mapa);
     L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(mapa);
 
     /* geositios y otros puntos */
     const marcadores = [];
     let seleccionado = null;
     function icono(p, sel) {
-      const esG = p.tipo === 'geositio', esP = p.tipo === 'parada';
-      const color = esG ? (U.visitado(p.dato.id) ? '#4f9d7e' : '#c1622f') : esP ? '#7b6bb0' : '#d8c08a';
-      const tam = sel ? 34 : esG || esP ? 28 : 18;
+      const esG = p.tipo === 'geositio', esP = p.tipo === 'parada', esM = p.tipo === 'mirador';
+      const color = esG ? (U.visitado(p.dato.id) ? '#4f9d7e' : '#c1622f') : esP ? '#7b6bb0' : esM ? '#2f7fb5' : '#d8c08a';
+      const tam = sel ? 34 : esG || esP ? 28 : esM ? 24 : 18;
       return L.divIcon({
         className: 'marca-mapa' + (sel ? ' sel' : ''),
-        html: '<span style="background:' + color + ';width:' + tam + 'px;height:' + tam + 'px">' + (esG ? p.dato.num : esP ? '3D' : '') + '</span>',
+        html: '<span style="background:' + color + ';width:' + tam + 'px;height:' + tam + 'px">' + (esG ? p.dato.num : esP ? '3D' : esM ? '&#9673;' : '') + '</span>',
         iconSize: [tam, tam], iconAnchor: [tam / 2, tam / 2]
       });
     }

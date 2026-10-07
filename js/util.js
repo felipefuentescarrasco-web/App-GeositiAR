@@ -185,6 +185,9 @@ const U = (() => {
   const parada = id => PARADAS.find(p => p.id === id) || null;
   /* paradas especiales que van después de un geositio en su ruta */
   const paradasTras = idGeositio => PARADAS.filter(p => p.despues === idGeositio);
+  /* Categoría de un punto que no es geositio: geomaqueta (maqueta 3D/táctil), geomirador, etc. */
+  const CATEGORIAS = { maqueta: 'Geomaqueta', mirador: 'Geomirador', cantera: 'Punto de interés' };
+  const categoria = p => CATEGORIAS[p.tipo] || 'Parada especial';
 
   function geositiosDeRuta(idRuta) {
     const r = ruta(idRuta);
@@ -285,7 +288,7 @@ const U = (() => {
     leerEstado, guardarEstado, visitado, marcarVisitado, totalVisitados,
     distancia, rumbo, cardinal, formatoDistancia, seguirPosicion,
     aviso, modal, vibrar,
-    geositio, ruta, geositiosDeRuta, portada, miniatura, parada, paradasTras,
+    geositio, ruta, geositiosDeRuta, portada, miniatura, parada, paradasTras, categoria,
     conGlosario, mostrarTermino, tituloTermino, normaliza,
     leerEnVoz, detenerVoz, hablando
   };

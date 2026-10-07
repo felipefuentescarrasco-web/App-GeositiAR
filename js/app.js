@@ -135,13 +135,13 @@ const App = (() => {
 
   /* ------------------------------------------------- descarga sin conexión */
 
-  /* Las rutas propias llevan ?v=16, igual que en index.html, para que la copia
+  /* Las rutas propias llevan ?v=17, igual que en index.html, para que la copia
      guardada corresponda exactamente a la que pide la página. */
   const ARCHIVOS_BASE = [
-    'index.html', 'manifest.webmanifest', 'css/app.css?v=16',
-    'js/datos.js?v=16', 'js/i18n-datos.js?v=16', 'js/i18n.js?v=16', 'js/util.js?v=16', 'js/cortina.js?v=16', 'js/visor3d.js?v=16',
-    'js/pano.js?v=16', 'js/mapa.js?v=16', 'js/corte.js?v=16', 'js/escaner.js?v=16',
-    'js/vistas.js?v=16', 'js/app.js?v=16',
+    'index.html', 'manifest.webmanifest', 'css/app.css?v=17',
+    'js/datos.js?v=17', 'js/i18n-datos.js?v=17', 'js/i18n.js?v=17', 'js/util.js?v=17', 'js/cortina.js?v=17', 'js/visor3d.js?v=17',
+    'js/pano.js?v=17', 'js/mapa.js?v=17', 'js/corte.js?v=17', 'js/escaner.js?v=17',
+    'js/vistas.js?v=17', 'js/app.js?v=17',
     'js/vendor/three.min.js', 'js/vendor/GLTFLoader.js', 'js/vendor/OrbitControls.js',
     'js/vendor/jsqr.js',
     'assets/icons/icono-192.png', 'assets/icons/icono-512.png',
@@ -151,7 +151,11 @@ const App = (() => {
     'js/vendor/three-mod/addons/renderers/CSS3DRenderer.js',
     'ar/objetivos.json', 'ar/carteles.json', 'ar/calibracion.json', 'ar/marcador.mind',
     'js/vendor/leaflet/leaflet.js', 'js/vendor/leaflet/leaflet.css',
-    'assets/geo/georuta1.geojson', 'assets/geo/georuta2.geojson', 'assets/geo/geologia.geojson'
+    'assets/geo/georuta1.geojson', 'assets/geo/georuta2.geojson', 'assets/geo/geologia_sernageomin.geojson',
+    'assets/geo/acta_parque.geojson', 'assets/geo/acta_bosque.geojson', 'assets/geo/acta_conservacion.geojson',
+    'assets/geo/acta_proteccion.geojson', 'assets/geo/acta_recreacion.geojson', 'assets/geo/acta_manejo.geojson',
+    'assets/geo/acta_nucleos.geojson', 'assets/geo/osm_senderos.geojson', 'assets/geo/osm_ciclovias.geojson',
+    'assets/geo/osm_agua.geojson', 'assets/geo/osm_infraestructura.geojson'
   ];
 
   /* Realidad aumentada: objetivos, capas y audios de los carteles en los tres idiomas. */
@@ -183,10 +187,9 @@ const App = (() => {
       alAvanzar(100);
       return;
     }
-    /* contenido de la app y, aparte, las teselas del mapa del recorrido (satélite y calles) */
-    const lista = listaCompleta(), teselas = Mapa.teselasRecorrido();
-    const total = lista.length + teselas.length;
-    let hechos = 0;
+    /* contenido de la app y, aparte, las teselas del mapa del recorrido (satélite, calles y SkySat) */
+    const lista = listaCompleta();
+    let teselas = Mapa.teselasRecorrido(), total = lista.length + teselas.length, hechos = 0;
     function bajar(nombreCache, urls) {
       return caches.open(nombreCache).then(cache => {
         /* de a tres para no ahogar la conexión del cerro */
@@ -207,7 +210,12 @@ const App = (() => {
       });
     }
     bajar('geoparquemet-contenido', lista)
-      .then(() => bajar('geoparquemet-teselas-ruta', teselas))
+      .then(() => fetch('assets/teselas/skysat/lista.json').then(r => r.json()).catch(() => []))
+      .then(sky => {
+        const propias = sky.map(t => 'assets/teselas/skysat/' + t + '.jpg');
+        teselas = teselas.concat(propias); total += propias.length;
+        return bajar('geoparquemet-teselas-ruta', teselas);
+      })
       .then(() => alAvanzar(100));
   }
 

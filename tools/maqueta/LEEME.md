@@ -19,3 +19,10 @@ Modelo `assets/3d/maqueta.glb` hecho el 6-oct-2026 con los videos y fotos de la 
 6. **GLB** (`4_glb.py <carpeta> salida.glb 2048`): une las texturas en una, junta vértices repetidos,
    endereza (Y arriba, lado largo en X, 2 unidades) y escribe el mismo formato liviano que
    `tools/build_assets.py`. ~3,6 MB.
+7. **Georreferencia** (`georref.py <dem.tif>`): calza la altura de la vista cenital del GLB con el DEM ALOS
+   PALSAR de la carpeta SIG (giro, escala y posición; correlación 0,78) y guarda la afín modelo → UTM 19S en
+   `georref.json`. Las curvas de 650/750/850 m del DEM caen sobre las curvas talladas de la maqueta. El extremo
+   nororiente del parque queda fuera de la maqueta.
+8. **Capas** (`5_capas.py`): dibuja georutas y geositios (`_puntos_app.json`, sacado de `js/datos.js`),
+   geología, límite, senderos/ciclovías/agua y las zonas del acta en PNG transparentes del marco cenital
+   (`assets/3d/maqueta_capas/`). El visor (`js/visor3d.js`) las pega sobre el relieve con una copia de la malla.

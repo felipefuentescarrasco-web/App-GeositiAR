@@ -4,6 +4,7 @@ name: Georuta 2
 on:
   workflow_dispatch:
   push:
+    branches-ignore: [main]  # al publicar en main no se regeneran los datos
     paths:
       - tools/georuta2.py
       - .github/workflows/georuta2.yml

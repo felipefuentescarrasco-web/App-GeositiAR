@@ -3,6 +3,7 @@ name: Capas OSM
 on:
   workflow_dispatch:
   push:
+    branches-ignore: [main]  # al publicar en main no se regeneran los datos
     paths:
       - tools/osm_capas.py
       - .github/workflows/osm.yml

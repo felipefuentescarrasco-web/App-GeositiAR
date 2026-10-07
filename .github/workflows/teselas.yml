@@ -3,6 +3,7 @@ name: Teselas satelitales
 on:
   workflow_dispatch:
   push:
+    branches-ignore: [main]  # al publicar en main no se regeneran los datos
     paths:
       - .github/workflows/teselas.yml
       - assets/geo/acta_parque.geojson

@@ -4,6 +4,7 @@
 name: Maqueta
 on:
   push:
+    branches-ignore: [main]  # al publicar en main no se regeneran los datos
     paths:
       - tools/maqueta/carpeta-drive.txt
       - tools/maqueta/cuadros.py

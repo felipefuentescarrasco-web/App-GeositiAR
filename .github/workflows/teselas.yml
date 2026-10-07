@@ -1,0 +1,55 @@
+# Teselas XYZ de la imagen SkySat 2020 (1 m, carpeta SIG de Drive) recortada al parque → assets/teselas/skysat.
+name: Teselas satelitales
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/teselas.yml
+permissions:
+  contents: write
+concurrency:
+  group: teselas
+  cancel-in-progress: true
+jobs:
+  teselas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq gdal-bin python3-gdal unrar >/dev/null
+      - run: pip install gdown pillow
+      - name: Bajar la carpeta de Drive
+        run: gdown --folder "https://drive.google.com/drive/folders/$(head -1 tools/sig/carpeta-drive.txt)" -O "$RUNNER_TEMP/sig"
+      - name: Descomprimir
+        run: |
+          cd "$RUNNER_TEMP/sig"
+          for r in *.rar; do mkdir -p "${r%.rar}"; unrar x -o+ -idq "$r" "${r%.rar}/" || true; done
+          find . -iname 'Skysat3_*utm19s.tif'
+      - name: Recortar y teselar
+        run: |
+          f=$(find "$RUNNER_TEMP/sig" -iname 'Skysat3_*utm19s.tif' | head -1)
+          gdalwarp -q -t_srs EPSG:3857 -te -70.6460 -33.4380 -70.5960 -33.4000 -te_srs EPSG:4326 \
+            -r bilinear -dstalpha -co TILED=YES "$f" "$RUNNER_TEMP/parque.tif"
+          gdal2tiles.py -q --xyz -z 13-17 -w none -r bilinear --processes=4 "$RUNNER_TEMP/parque.tif" "$RUNNER_TEMP/png"
+          python3 - "$RUNNER_TEMP/png" assets/teselas/skysat <<'PY'
+          import sys, pathlib
+          from PIL import Image
+          src, dst = map(pathlib.Path, sys.argv[1:])
+          n = 0
+          for p in src.rglob('*.png'):
+              im = Image.open(p).convert('RGBA')
+              if im.getextrema()[3][1] == 0: continue  # tesela vacía
+              fondo = Image.new('RGB', im.size, (236, 232, 222)); fondo.paste(im, mask=im.split()[3])
+              o = dst / p.relative_to(src).with_suffix('.jpg'); o.parent.mkdir(parents=True, exist_ok=True)
+              fondo.save(o, quality=78, optimize=True, progressive=True); n += 1
+          print(n, 'teselas')
+          PY
+          du -sh assets/teselas/skysat
+      - name: Guardar en la rama
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898333+github-actions[bot]@users.noreply.github.com"
+          git add assets/teselas/skysat
+          git diff --cached --quiet || git commit -qm "Teselas de la imagen SkySat 2020 del parque"
+          git pull --rebase -q origin "${GITHUB_REF_NAME}" || true
+          git push origin "HEAD:${GITHUB_REF_NAME}"

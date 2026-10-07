@@ -1,0 +1,222 @@
+[
+ {
+  "capa": "PioNono-Tupahue-21012020",
+  "categoria": "Centro Interpretación 1",
+  "nombre": "Maqueta del Parque",
+  "id_punto": "PM-XX-01",
+  "lat": -33.427659,
+  "lon": -70.637851,
+  "elev": 615.0,
+  "desc": ""
+ },
+ {
+  "capa": "PioNono-Tupahue-21012020",
+  "categoria": "Geositio 1",
+  "nombre": "Caída de bloques de roca volcánica",
+  "id_punto": "PM-1",
+  "lat": -33.428561,
+  "lon": -70.637405,
+  "elev": 589.9,
+  "desc": ""
+ },
+ {
+  "capa": "PioNono-Tupahue-21012020",
+  "categoria": "Geositio 2",
+  "nombre": "Dique en rocas volcánicas",
+  "id_punto": "PM-2",
+  "lat": -33.426506,
+  "lon": -70.637566,
+  "elev": 620.3,
+  "desc": ""
+ },
+ {
+  "capa": "PioNono-Tupahue-21012020",
+  "categoria": "Geositio 3",
+  "nombre": "Vegetación , roca y suelo",
+  "id_punto": "PM_I_03",
+  "lat": -33.42075,
+  "lon": -70.637733,
+  "elev": 655.0,
+  "desc": ""
+ },
+ {
+  "capa": "PioNono-Tupahue-21012020",
+  "categoria": "Geositio 4",
+  "nombre": "Cristales de piroxeno en roca intrusiva",
+  "id_punto": "PM-4",
+  "lat": -33.420331,
+  "lon": -70.6379,
+  "elev": 650.0,
+  "desc": ""
+ },
+ {
+  "capa": "PioNono-Tupahue-21012020",
+  "categoria": "Geositio 5",
+  "nombre": "Descomposición de la roca en capas",
+  "id_punto": "PM-5",
+  "lat": -33.420221,
+  "lon": -70.637792,
+  "elev": 650.6,
+  "desc": ""
+ },
+ {
+  "capa": "PioNono-Tupahue-21012020",
+  "categoria": "Geositio 6",
+  "nombre": "Contacto roca volcánica con roca intrusiva",
+  "id_punto": "PM_C_02",
+  "lat": -33.417406,
+  "lon": -70.627551,
+  "elev": 710.0,
+  "desc": ""
+ },
+ {
+  "capa": "PioNono-Tupahue-21012020",
+  "categoria": "Geositio 7",
+  "nombre": "Toba soldada",
+  "id_punto": "PM-19, PM_C_04",
+  "lat": -33.417131,
+  "lon": -70.625351,
+  "elev": 716.5,
+  "desc": ""
+ },
+ {
+  "capa": "PioNono-Tupahue-21012020",
+  "categoria": "Geositio 8",
+  "nombre": "Piscina Tupahue",
+  "id_punto": "PM_TU_01",
+  "lat": -33.415895,
+  "lon": -70.623789,
+  "elev": 700.0,
+  "desc": ""
+ },
+ {
+  "capa": "PioNono-Tupahue-21012020",
+  "categoria": "",
+  "nombre": "",
+  "id_punto": "",
+  "lat": Infinity,
+  "lon": Infinity,
+  "elev": 0.0,
+  "desc": ""
+ },
+ {
+  "capa": "PioNono-Tupahue-21012020",
+  "categoria": "",
+  "nombre": "",
+  "id_punto": "",
+  "lat": Infinity,
+  "lon": Infinity,
+  "elev": 0.0,
+  "desc": ""
+ },
+ {
+  "capa": "Cumbre-Tupahue-21012020",
+  "categoria": "Geositio 12",
+  "nombre": "",
+  "id_punto": "PM_B_01, PM-32",
+  "lat": -33.425542,
+  "lon": -70.633188,
+  "elev": 847.3,
+  "desc": ""
+ },
+ {
+  "capa": "Cumbre-Tupahue-21012020",
+  "categoria": "Geositio 11",
+  "nombre": "",
+  "id_punto": "PM-29, PM_B_02",
+  "lat": -33.422685,
+  "lon": -70.632445,
+  "elev": 828.0,
+  "desc": ""
+ },
+ {
+  "capa": "Cumbre-Tupahue-21012020",
+  "categoria": "Mirador",
+  "nombre": "",
+  "id_punto": "PM-XX-03",
+  "lat": -33.420218,
+  "lon": -70.62558,
+  "elev": 783.0,
+  "desc": ""
+ },
+ {
+  "capa": "Cumbre-Tupahue-21012020",
+  "categoria": "Centro Interpretación 2",
+  "nombre": "",
+  "id_punto": "PM-31",
+  "lat": -33.418966,
+  "lon": -70.625176,
+  "elev": 770.7,
+  "desc": ""
+ },
+ {
+  "capa": "Cumbre-Tupahue-21012020",
+  "categoria": "Geositio 10",
+  "nombre": "",
+  "id_punto": "PM-XX-02",
+  "lat": -33.417991,
+  "lon": -70.626893,
+  "elev": 765.0,
+  "desc": ""
+ },
+ {
+  "capa": "Cumbre-Tupahue-21012020",
+  "categoria": "Geositio 9",
+  "nombre": "",
+  "id_punto": "PM-43, PM_B_11",
+  "lat": -33.418283,
+  "lon": -70.628207,
+  "elev": 761.8,
+  "desc": ""
+ },
+ {
+  "capa": "Cumbre-Tupahue-21012020",
+  "categoria": "Geositio 8",
+  "nombre": "",
+  "id_punto": "PM_TU_01",
+  "lat": -33.415895,
+  "lon": -70.623789,
+  "elev": 700.0,
+  "desc": ""
+ },
+ {
+  "capa": "Cumbre-Tupahue-21012020",
+  "categoria": "",
+  "nombre": "",
+  "id_punto": "",
+  "lat": Infinity,
+  "lon": Infinity,
+  "elev": 0.0,
+  "desc": ""
+ },
+ {
+  "capa": "Cumbre-Tupahue-21012020",
+  "categoria": "",
+  "nombre": "",
+  "id_punto": "",
+  "lat": Infinity,
+  "lon": Infinity,
+  "elev": 0.0,
+  "desc": ""
+ },
+ {
+  "capa": "Cumbre-Tupahue-21012020",
+  "categoria": "",
+  "nombre": "",
+  "id_punto": "",
+  "lat": Infinity,
+  "lon": Infinity,
+  "elev": 0.0,
+  "desc": ""
+ },
+ {
+  "capa": "Cumbre-Tupahue-21012020",
+  "categoria": "",
+  "nombre": "",
+  "id_punto": "",
+  "lat": Infinity,
+  "lon": Infinity,
+  "elev": 0.0,
+  "desc": ""
+ }
+]

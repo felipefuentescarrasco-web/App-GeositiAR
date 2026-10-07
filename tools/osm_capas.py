@@ -13,7 +13,8 @@ SAL = RAIZ / 'assets' / 'geo'
 # caja del cerro San Cristóbal y alrededores (sur, oeste, norte, este)
 CAJA = (-33.4380, -70.6460, -33.4000, -70.5960)
 UA = {'User-Agent': 'GeoParquemet-Geotours/1.0 (Sernageomin; app de geositios)'}
-SERVIDORES = ['https://overpass-api.de/api/interpreter', 'https://overpass.kumi.systems/api/interpreter']
+SERVIDORES = ['https://overpass-api.de/api/interpreter', 'https://overpass.private.coffee/api/interpreter',
+              'https://maps.mail.ru/osm/tools/overpass/api/interpreter', 'https://overpass.kumi.systems/api/interpreter']
 
 CONSULTAS = {
     'senderos': 'way["highway"~"^(path|footway|track|steps|bridleway|pedestrian)$"]',
@@ -31,12 +32,12 @@ CONSULTAS = {
 
 def overpass(cuerpo):
     s, o, n, e = CAJA
-    q = f'[out:json][timeout:90][bbox:{s},{o},{n},{e}];({cuerpo};);out tags geom;'
+    q = f'[out:json][timeout:180][bbox:{s},{o},{n},{e}];({cuerpo};);out tags geom;'
     for url in SERVIDORES:
-        for intento in range(3):
+        for intento in range(2):
             try:
                 req = urllib.request.Request(url, data=urllib.parse.urlencode({'data': q}).encode(), headers=UA)
-                with urllib.request.urlopen(req, timeout=120) as r:
+                with urllib.request.urlopen(req, timeout=200) as r:
                     return json.loads(r.read().decode())
             except Exception as ex:
                 print('  reintento', url.split('/')[2], ex); time.sleep(5 + 10 * intento)

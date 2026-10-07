@@ -1,0 +1,31 @@
+# Baja de OpenStreetMap las capas del parque (tools/osm_capas.py) y las deja en la misma rama.
+name: Capas OSM
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - tools/osm_capas.py
+      - .github/workflows/osm.yml
+permissions:
+  contents: write
+concurrency:
+  group: osm
+  cancel-in-progress: true
+jobs:
+  capas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install matplotlib
+      - run: python tools/osm_capas.py
+      - name: Guardar en la rama
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898333+github-actions[bot]@users.noreply.github.com"
+          git add -f assets/geo/osm_*.geojson tools/_osm/control.png
+          git diff --cached --quiet || git commit -m "Capas del parque desde OpenStreetMap"
+          git pull --rebase -q origin "${GITHUB_REF_NAME}" || true
+          git push origin "HEAD:${GITHUB_REF_NAME}"

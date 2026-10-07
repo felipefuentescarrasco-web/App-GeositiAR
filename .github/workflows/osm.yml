@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install matplotlib
+      - run: pip install matplotlib shapely
       - run: python tools/osm_capas.py
       - name: Guardar en la rama
         run: |

@@ -3,15 +3,16 @@
 Senderos y caminos peatonales, ciclovías y rutas de bicicleta, cursos y cuerpos de agua, infraestructura
 (baños, agua potable, estacionamientos, miradores, refugios, juegos, piscinas, teleférico/funicular) y el
 límite del parque. Se corre en GitHub Actions (.github/workflows/osm.yml) porque necesita internet.
-Uso: python tools/osm_capas.py
+Uso: python tools/osm_capas.py [--recortar]
 """
-import json, time, urllib.request, urllib.parse
+import json, sys, time, urllib.request, urllib.parse
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
 SAL = RAIZ / 'assets' / 'geo'
-# caja del cerro San Cristóbal y alrededores (sur, oeste, norte, este)
-CAJA = (-33.4380, -70.6460, -33.4000, -70.5960)
+# caja del parque completo (sur, oeste, norte, este); después se recorta al contorno del parque (acta_parque.geojson)
+CAJA = (-33.4340, -70.6450, -33.3590, -70.5930)
+MARGEN = 0.0004  # ~40 m alrededor del contorno
 UA = {'User-Agent': 'GeoParquemet-Geotours/1.0 (Sernageomin; app de geositios)'}
 SERVIDORES = ['https://overpass-api.de/api/interpreter', 'https://overpass.private.coffee/api/interpreter',
               'https://maps.mail.ru/osm/tools/overpass/api/interpreter', 'https://overpass.kumi.systems/api/interpreter']
@@ -68,11 +69,40 @@ def a_geojson(datos):
     return {'type': 'FeatureCollection', 'features': feats}
 
 
+def recortar(gj, nombre):
+    """Deja solo lo que cae dentro del parque (más un margen); el límite OSM se deja tal cual."""
+    if nombre == 'limite': return gj
+    from shapely.geometry import shape, mapping
+    from shapely.ops import unary_union
+    parque = json.loads((SAL / 'acta_parque.geojson').read_text(encoding='utf-8'))
+    zona = unary_union([shape(f['geometry']) for f in parque['features']]).buffer(MARGEN)
+    feats = []
+    for f in gj['features']:
+        g = shape(f['geometry'])
+        if not g.intersects(zona): continue
+        if g.geom_type != 'Point':
+            g = g.intersection(zona)
+            if g.is_empty or g.length < 0.0002: continue
+            g = g.simplify(0.000005)
+        geo = json.loads(json.dumps(mapping(g)))
+        def red(c): return [round(c[0], 6), round(c[1], 6)] if isinstance(c[0], float) else [red(x) for x in c]
+        geo['coordinates'] = red(geo['coordinates'])
+        feats.append({**f, 'geometry': geo})
+    return {**gj, 'features': feats}
+
+
 def main():
     SAL.mkdir(parents=True, exist_ok=True)
     capas = {}
+    if '--recortar' in sys.argv:  # solo volver a recortar los archivos ya bajados
+        for nombre in CONSULTAS:
+            p = SAL / f'osm_{nombre}.geojson'
+            gj = recortar(json.loads(p.read_text(encoding='utf-8')), nombre)
+            p.write_text(json.dumps(gj, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+            print(nombre, len(gj['features']), 'elementos')
+        return
     for nombre, cuerpo in CONSULTAS.items():
-        gj = a_geojson(overpass(cuerpo))
+        gj = recortar(a_geojson(overpass(cuerpo)), nombre)
         gj['properties'] = {'fuente': '© colaboradores de OpenStreetMap (ODbL)', 'capa': nombre}
         (SAL / f'osm_{nombre}.geojson').write_text(json.dumps(gj, ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
         capas[nombre] = gj

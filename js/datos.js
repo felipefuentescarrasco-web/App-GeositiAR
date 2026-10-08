@@ -486,6 +486,7 @@ const PARADAS = [
       { archivo: 'PAR01_3.jpg', titulo: 'Detalle desde arriba',
         leyenda: 'Calles, caminos y curvas de nivel en el sector del cerro.' }
     ],
+    ra: 'ar-maqueta.html',   // realidad aumentada sobre la maqueta real (tools/maqueta/ra_objetivos.py)
     modelo: { archivo: 'maqueta.glb', titulo: 'Maqueta táctil Parquemet',
       nota: 'Modelo hecho por fotogrametría con videos tomados alrededor de la maqueta. Gíralo ' +
         'y acércalo para recorrer el relieve y los rótulos del borde. Las capas se pegan sobre el ' +

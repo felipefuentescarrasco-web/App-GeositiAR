@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GeoParquemet · RA de la maqueta</title>
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="assets/icons/icono-192.png">
+<!-- Realidad aumentada sobre la maqueta táctil del Parquemet (parada PAR01).
+     MindAR reconoce sectores de la maqueta (ar/maqueta.mind, de tools/maqueta/ra_objetivos.py: ortofoto
+     armada con las fotos reales, 15 sectores con traslape) y sobre el relieve se pegan las mismas capas
+     del visor 3D (assets/3d/maqueta_capas), con rótulos con flecha y ficha al tocar, sin leyenda.
+     Las capas van sobre una copia invisible de la malla de la fotogrametría: así siguen las laderas y
+     el relieve tapa lo que queda detrás. -->
+<style>
+  :root { --lava: #c1622f; --papel: #f4f1ea; }
+  html, body { margin: 0; height: 100%; background: #000; color: #fff; font: 15px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+  #escena { position: fixed; inset: 0; }
+  #escena video { object-fit: cover; }
+  .barra { position: fixed; top: 0; left: 0; right: 0; z-index: 10; display: flex; align-items: center; gap: 8px; padding: calc(10px + env(safe-area-inset-top)) 10px 10px; background: linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,0)); }
+  .barra button { border: 0; background: rgba(255,255,255,.18); color: #fff; border-radius: 10px; padding: 8px 11px; font: inherit; font-weight: 700; }
+  .barra b { flex: 1; font-size: .92rem; text-shadow: 0 1px 3px #000; }
+  .panel { position: fixed; left: 10px; right: 10px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 10; background: rgba(20,28,24,.9); border-radius: 16px; padding: 12px 14px; max-width: 560px; margin: 0 auto; backdrop-filter: blur(6px); max-height: 50vh; overflow-y: auto; }
+  .panel p { margin: 0 0 8px; }
+  .ok { color: #7ee07e; font-weight: 700; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chips button { border: 0; border-radius: 999px; padding: 7px 12px; font: inherit; font-size: .82rem; font-weight: 700; background: rgba(255,255,255,.18); color: #fff; }
+  .chips button[aria-pressed="true"] { background: var(--lava); }
+  .deslizador { display: flex; align-items: center; gap: 10px; font-size: .82rem; margin-top: 8px; }
+  .deslizador input { flex: 1; accent-color: var(--lava); height: 28px; }
+  .aviso { font-size: .8rem; opacity: .8; margin: 8px 0 0; }
+  #rotulos, #flechas { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
+  #flechas { width: 100%; height: 100%; }
+  #flechas line { stroke: #fff; stroke-width: 2; filter: drop-shadow(0 0 2px rgba(0,0,0,.9)); }
+  #flechas circle { fill: #fff; stroke: #10171a; stroke-width: 2; }
+  .rotulo { position: absolute; left: 0; top: 0; max-width: 46vw; padding: 4px 9px; border-radius: 12px; background: rgba(16,23,26,.88); font-size: .78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 1px 5px rgba(0,0,0,.5); }
+  .rotulo i, #ficha i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+  #ficha { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,.1); }
+  #ficha .cerrar { float: right; border: 0; background: none; color: #fff; font-size: 1.3rem; line-height: 1; }
+  #ficha a { display: inline-block; margin-top: 8px; color: #fff; background: var(--lava); border-radius: 999px; padding: 6px 12px; text-decoration: none; font-weight: 700; font-size: .82rem; }
+  /* mira: lo que hay en el centro de la pantalla, para las vistas cercanas donde no cabe un rótulo */
+  #mira { position: fixed; left: 50%; top: 42%; z-index: 6; transform: translate(-50%, -50%); pointer-events: none; text-align: center; }
+  #mira .cruz { width: 26px; height: 26px; margin: 0 auto; border: 2px solid #fff; border-radius: 50%; box-shadow: 0 0 0 2px rgba(0,0,0,.4); }
+  #mira .txt { margin-top: 6px; padding: 4px 10px; border-radius: 12px; background: rgba(16,23,26,.88); font-size: .82rem; font-weight: 700; white-space: nowrap; }
+  #mira .txt i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+  #cargando { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; text-align: center; background: #000; padding: 20px; }
+  [hidden] { display: none !important; }
+</style>
+<script src="js/datos.js?v=20"></script>
+<script src="js/i18n-datos.js?v=20"></script>
+<script src="js/i18n.js?v=20"></script>
+<script type="importmap">
+{ "imports": { "three": "./js/vendor/three-mod/three.module.min.js", "three/addons/": "./js/vendor/three-mod/addons/" } }
+</script>
+</head>
+<body>
+<div id="escena"></div>
+<svg id="flechas"></svg>
+<div id="rotulos"></div>
+<div id="mira" hidden><div class="cruz"></div><div class="txt" hidden></div></div>
+<div class="barra"><button id="volver" aria-label="Volver">←</button><b>Maqueta táctil Parquemet · RA</b></div>
+<div class="panel">
+  <p id="buscando">Apunta el teléfono hacia la maqueta, desde arriba y a un metro o menos. Cuando la reconozca, verás la capa sobre el relieve.</p>
+  <p id="viendo" class="ok" hidden>✓ Maqueta reconocida</p>
+  <div class="chips" id="capas"></div>
+  <div class="deslizador" id="fila-op" hidden><span>Capa</span><input type="range" id="opacidad" min="20" max="100" value="80" aria-label="Opacidad de la capa"></div>
+  <p class="aviso" id="ayuda" hidden>Toca un color de la maqueta para ver qué es, o ponlo en la mira del centro.</p>
+  <div id="ficha" hidden></div>
+</div>
+<div id="cargando"><div><p id="txt-cargando">Preparando la cámara…</p><p id="error" hidden></p></div></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { MindARThree } from './js/vendor/mindar/mindar-image-three.prod.js';
+
+const $ = s => document.querySelector(s);
+const el = (tag, props = {}, hijos = []) => {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) k === 'texto' ? (e.textContent = v) : k === 'style' ? (e.style.cssText = v) : e.setAttribute(k, v);
+  hijos.forEach(h => e.appendChild(typeof h === 'string' ? document.createTextNode(h) : h));
+  return e;
+};
+const volver = () => { location.href = './index.html#/p/PAR01'; };
+$('#volver').onclick = volver;
+const fallo = msg => { $('#cargando').hidden = false; $('#txt-cargando').hidden = true; const e = $('#error'); e.hidden = false; e.textContent = msg; };
+
+const parada = PARADAS.find(p => p.id === 'PAR01');
+const capas = parada.modelo.capas;
+const conf = await fetch('ar/maqueta.json').then(r => r.json());
+
+/* GLB liviano de la maqueta (posiciones, índices): solo la forma, la imagen la pone la cámara */
+async function malla() {
+  const buf = await fetch('assets/3d/' + parada.modelo.archivo).then(r => r.arrayBuffer());
+  const dv = new DataView(buf), lj = dv.getUint32(12, true);
+  const j = JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 20, lj)));
+  const b0 = 20 + lj + 8;
+  const acc = (i, Tipo, n) => {
+    const a = j.accessors[i], v = j.bufferViews[a.bufferView];
+    return new Tipo(buf.slice(b0 + (v.byteOffset || 0) + (a.byteOffset || 0), b0 + (v.byteOffset || 0) + (a.byteOffset || 0) + a.count * n * Tipo.BYTES_PER_ELEMENT));
+  };
+  const p = j.meshes[0].primitives[0];
+  const pos = acc(p.attributes.POSITION, Float32Array, 3), idx = acc(p.indices, Uint32Array, 1);
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  g.setIndex(new THREE.BufferAttribute(idx, 1));
+  g.computeBoundingBox();
+  const bb = g.boundingBox, zmax = Math.max(Math.abs(bb.min.z), Math.abs(bb.max.z));
+  /* coordenadas de textura de la vista cenital, como en el visor 3D y en tools/maqueta/5_capas.py */
+  const uv = new Float32Array(pos.length / 3 * 2);
+  for (let i = 0; i < pos.length / 3; i++) {
+    uv[2 * i] = (pos[3 * i] - bb.min.x) / (bb.max.x - bb.min.x);
+    uv[2 * i + 1] = 1 - (pos[3 * i + 2] + zmax) / (2 * zmax);
+  }
+  g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+  return g;
+}
+
+const mind = new MindARThree({
+  container: $('#escena'), imageTargetSrc: 'ar/maqueta.mind', maxTrack: 1,
+  uiLoading: 'no', uiScanning: 'no', uiError: 'no',
+  filterMinCF: 0.0005, filterBeta: 1, warmupTolerance: 3, missTolerance: 10
+});
+const { renderer, scene, camera } = mind;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+window.__ra = { mind };
+
+const geo = await malla();
+/* la maqueta entera, en coordenadas del modelo; cuelga del ancla del sector que se esté viendo */
+const maqueta = new THREE.Group();
+maqueta.matrixAutoUpdate = false; maqueta.visible = false;
+scene.add(maqueta);
+const tapa = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ colorWrite: false, side: THREE.DoubleSide }));   // solo profundidad (y para tocar)
+tapa.renderOrder = 0;
+const matCapa = new THREE.MeshBasicMaterial({ transparent: true, opacity: .8, depthWrite: false, side: THREE.DoubleSide,
+  polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+const piel = new THREE.Mesh(geo, matCapa);
+piel.renderOrder = 1; piel.visible = false;
+maqueta.add(tapa, piel);
+
+/* de modelo (x, y, z) al sector k: el ancla de MindAR mide el sector con ancho 1, centrado, Y hacia arriba
+   de la imagen y Z hacia la cámara. La imagen es la vista cenital: x → derecha, z → abajo, y (altura) → Z. */
+const enSector = conf.objetivos.map(o => {
+  const w = o.x1 - o.x0, cx = (o.x0 + o.x1) / 2, cz = (o.z0 + o.z1) / 2;
+  return new THREE.Matrix4().set(
+    1 / w, 0, 0, -cx / w,
+    0, 0, -1 / w, cz / w,
+    0, 1 / w, 0, -conf.base_y / w,
+    0, 0, 0, 1);
+});
+const anclas = conf.objetivos.map((_, k) => mind.addAnchor(k));
+
+/* ---------- capas, rótulos y fichas ---------- */
+const cargadorTex = new THREE.TextureLoader();
+const texturas = {}, datos = {};
+let activa = null, etiquetas = [];
+const fila = $('#capas');
+capas.forEach(c => {
+  const b = el('button', { type: 'button', 'aria-pressed': 'false', texto: c.nombre });
+  b.onclick = () => mostrar(c, b);
+  fila.appendChild(b);
+});
+$('#opacidad').oninput = e => { matCapa.opacity = e.target.value / 100; };
+
+function mostrar(c, chip) {
+  activa = activa === c ? null : c;
+  fila.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', 'false'));
+  ficha(null); ponerRotulos({});
+  $('#fila-op').hidden = $('#ayuda').hidden = !activa;
+  if (!activa) { piel.visible = false; return; }
+  chip.setAttribute('aria-pressed', 'true');
+  const poner = tex => { if (activa !== c) return; matCapa.map = tex; matCapa.needsUpdate = true; piel.visible = true; };
+  if (texturas[c.archivo]) poner(texturas[c.archivo]);
+  else cargadorTex.load('assets/3d/' + c.archivo, tex => { tex.colorSpace = THREE.SRGBColorSpace; texturas[c.archivo] = tex; poner(tex); });
+  if (!c.fichas) { $('#ayuda').hidden = true; return; }
+  (datos[c.fichas] ? Promise.resolve(datos[c.fichas]) : fetch('assets/3d/' + c.fichas).then(r => r.json()))
+    .then(d => { datos[c.fichas] = d; if (activa === c) ponerRotulos(d); });
+}
+
+/* altura del relieve en (x, z), para que la flecha toque la maqueta */
+const ray = new THREE.Raycaster();
+const solo = new THREE.Mesh(geo);
+function sobreRelieve(x, z) {
+  ray.set(new THREE.Vector3(x, 5, z), new THREE.Vector3(0, -1, 0));
+  const h = ray.intersectObject(solo, false)[0];
+  return new THREE.Vector3(x, h ? h.point.y : conf.base_y, z);
+}
+function ponerRotulos(d) {
+  $('#rotulos').innerHTML = ''; $('#flechas').innerHTML = ''; etiquetas = [];
+  (d.etiquetas || []).slice(0, innerWidth < 600 ? 6 : 10).forEach(e => {
+    const div = el('div', { class: 'rotulo' }, [el('i', { style: 'background:' + e.color }), el('span', { texto: e.texto })]);
+    const linea = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    const punta = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    punta.setAttribute('r', '4');
+    $('#rotulos').appendChild(div); $('#flechas').append(linea, punta);
+    etiquetas.push({ div, linea, punta, local: sobreRelieve(e.x, e.z) });
+  });
+}
+const v = new THREE.Vector3();
+function moverRotulos() {
+  const W = innerWidth, H = innerHeight, ocupados = [];
+  const lista = etiquetas.map(e => {
+    v.copy(e.local).applyMatrix4(maqueta.matrixWorld).project(camera);
+    return { e, x: (v.x + 1) / 2 * W, y: (1 - v.y) / 2 * H, ok: maqueta.visible && v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1 };
+  }).sort((a, b) => a.y - b.y);
+  lista.forEach(({ e, x, y, ok }) => {
+    e.div.hidden = !ok; e.linea.style.display = e.punta.style.display = ok ? '' : 'none';
+    if (!ok) return;
+    const w = e.div.offsetWidth || 90, h = e.div.offsetHeight || 24;
+    let lx = Math.min(Math.max(x - w / 2, 6), W - w - 6), ly = Math.max(y - 56 - h, 60);
+    for (let n = 0; n < 8; n++) {
+      const c = ocupados.find(o => lx < o.x + o.w + 4 && lx + w + 4 > o.x && ly < o.y + o.h + 3 && ly + h + 3 > o.y);
+      if (!c) break;
+      ly = c.y - h - 4; if (ly < 60) ly = c.y + c.h + 4;
+    }
+    ocupados.push({ x: lx, y: ly, w, h });
+    e.div.style.transform = `translate(${lx}px,${ly}px)`;
+    e.linea.setAttribute('x1', lx + w / 2); e.linea.setAttribute('y1', ly + h); e.linea.setAttribute('x2', x); e.linea.setAttribute('y2', y);
+    e.punta.setAttribute('cx', x); e.punta.setAttribute('cy', y);
+  });
+}
+
+/* tocar la maqueta: polígono que contiene el punto, o el punto (geositio) más cercano */
+const dentro = (px, pz, a) => { let c = false; for (let i = 0, j = a.length - 1; i < a.length; j = i++) { const [xi, zi] = a[i], [xj, zj] = a[j]; if ((zi > pz) !== (zj > pz) && px < (xj - xi) * (pz - zi) / (zj - zi) + xi) c = !c; } return c; };
+function ficha(f) {
+  const d = $('#ficha'); d.innerHTML = '';
+  if (!f) { d.hidden = true; return; }
+  d.append(el('button', { class: 'cerrar', type: 'button', 'aria-label': 'Cerrar', texto: '×' }));
+  d.firstChild.onclick = () => { d.hidden = true; };
+  if (f.color) d.append(el('i', { style: 'background:' + f.color }));
+  d.append(el('b', { texto: f.clase }));
+  (f.info || []).forEach(t => d.append(el('div', { style: 'font-size:.85rem;opacity:.85', texto: t })));
+  if (f.enlace) d.append(el('a', { href: './index.html' + f.enlace, texto: 'Abrir ficha' }));
+  d.hidden = false;
+}
+let inicio = null;
+addEventListener('pointerdown', e => { inicio = [e.clientX, e.clientY]; });
+addEventListener('pointerup', e => {
+  if (!activa || !maqueta.visible || !inicio || e.target.closest('.panel, .barra')) return;
+  if (Math.hypot(e.clientX - inicio[0], e.clientY - inicio[1]) > 10) return;
+  const d = datos[activa.fichas]; if (!d) return;
+  ray.setFromCamera(new THREE.Vector2(e.clientX / innerWidth * 2 - 1, -e.clientY / innerHeight * 2 + 1), camera);
+  const h = ray.intersectObject(tapa, false)[0];
+  if (!h) return ficha(null);
+  ficha(queHay(d, maqueta.worldToLocal(h.point.clone())));
+});
+function queHay(d, l) {
+  let mejor = null, dist = .03;
+  (d.puntos || []).forEach(p => { const dd = Math.hypot(p.x - l.x, p.z - l.z); if (dd < dist) { dist = dd; mejor = p; } });
+  return mejor || (d.poligonos || []).find(p => dentro(l.x, l.z, p.anillos[0]) && !p.anillos.slice(1).some(a => dentro(l.x, l.z, a))) || null;
+}
+/* la mira se revisa unas 6 veces por segundo */
+let ultimaMira = 0;
+function revisarMira(t) {
+  const d = activa && datos[activa.fichas];
+  $('#mira').hidden = !(d && maqueta.visible);
+  if ($('#mira').hidden || t - ultimaMira < 160) return;
+  ultimaMira = t;
+  ray.setFromCamera(new THREE.Vector2(0, 1 - .42 * 2), camera);
+  const h = ray.intersectObject(tapa, false)[0];
+  const f = h && queHay(d, maqueta.worldToLocal(h.point.clone()));
+  const txt = $('#mira .txt');
+  txt.hidden = !f;
+  if (f) { txt.innerHTML = ''; if (f.color) txt.append(el('i', { style: 'background:' + f.color })); txt.append(el('span', { texto: f.clase })); }
+}
+
+/* ---------- cada cuadro: el sector que MindAR esté siguiendo ubica la maqueta entera ---------- */
+const m = new THREE.Matrix4();
+function cuadro() {
+  const k = anclas.findIndex(a => a.group.visible);
+  maqueta.visible = k >= 0;
+  if (k >= 0) {
+    a = anclas[k].group; a.updateMatrixWorld();
+    maqueta.matrix.copy(m.multiplyMatrices(a.matrixWorld, enSector[k]));
+    maqueta.matrixWorldNeedsUpdate = true;
+  }
+  $('#buscando').hidden = maqueta.visible; $('#viendo').hidden = !maqueta.visible;
+}
+let a;
+
+try {
+  await mind.start();
+  $('#cargando').hidden = true;
+  renderer.setAnimationLoop(t => {
+    cuadro();
+    renderer.render(scene, camera);
+    if (etiquetas.length) moverRotulos();
+    revisarMira(t);
+  });
+} catch (e) {
+  console.error(e);
+  fallo(/NotAllowed|Permission/i.test(String(e)) ? 'Permite el acceso a la cámara para usar la realidad aumentada.' : 'No se pudo abrir la cámara de este dispositivo.');
+}
+addEventListener('pagehide', () => { try { mind.stop(); } catch { } });
+</script>
+</body>
+</html>

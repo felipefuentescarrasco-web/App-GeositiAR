@@ -26,3 +26,11 @@ Modelo `assets/3d/maqueta.glb` hecho el 6-oct-2026 con los videos y fotos de la 
 8. **Capas** (`5_capas.py`): dibuja georutas y geositios (`_puntos_app.json`, sacado de `js/datos.js`),
    geología, límite, senderos/ciclovías/agua y las zonas del acta en PNG transparentes del marco cenital
    (`assets/3d/maqueta_capas/`). El visor (`js/visor3d.js`) las pega sobre el relieve con una copia de la malla.
+9. **Ortofoto** (`6_ortofoto.py <carpeta> <modelo COLMAP en TXT> 30`): proyecta los cuadros tomados casi desde
+   arriba (≤ 30°) sobre el relieve con las cámaras de COLMAP → `_ortofoto.jpg`, en el mismo marco que la vista
+   cenital. Se ve como la ve el teléfono (aluminio real), a diferencia de la textura del modelo.
+10. **RA sobre la maqueta** (`ra_objetivos.py 5 3` + `node compilar_ra.mjs [--probar <cuadros>]`): 15 sectores
+    de la ortofoto con 30 % de traslape → `ar/maqueta.mind` (8,6 MB) y `ar/maqueta.json` (rectángulo de cada
+    sector en coordenadas del modelo). Prueba limpia (ortofoto con la mitad de los cuadros verticales, prueba
+    con la otra mitad): 10 de 12 reconocidos. Con tomas oblicuas (25–50°) casi no reconoce: hay que mirar desde
+    arriba. `ar-maqueta.html` pega las capas sobre una copia invisible de la malla anclada al sector que se ve.

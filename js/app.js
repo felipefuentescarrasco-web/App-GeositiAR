@@ -135,17 +135,17 @@ const App = (() => {
 
   /* ------------------------------------------------- descarga sin conexión */
 
-  /* Las rutas propias llevan ?v=19, igual que en index.html, para que la copia
+  /* Las rutas propias llevan ?v=20, igual que en index.html, para que la copia
      guardada corresponda exactamente a la que pide la página. */
   const ARCHIVOS_BASE = [
-    'index.html', 'manifest.webmanifest', 'css/app.css?v=19',
-    'js/datos.js?v=19', 'js/i18n-datos.js?v=19', 'js/i18n.js?v=19', 'js/util.js?v=19', 'js/cortina.js?v=19', 'js/visor3d.js?v=19',
-    'js/pano.js?v=19', 'js/mapa.js?v=19', 'js/corte.js?v=19', 'js/escaner.js?v=19',
-    'js/vistas.js?v=19', 'js/app.js?v=19',
+    'index.html', 'manifest.webmanifest', 'css/app.css?v=20',
+    'js/datos.js?v=20', 'js/i18n-datos.js?v=20', 'js/i18n.js?v=20', 'js/util.js?v=20', 'js/cortina.js?v=20', 'js/visor3d.js?v=20',
+    'js/pano.js?v=20', 'js/mapa.js?v=20', 'js/corte.js?v=20', 'js/escaner.js?v=20',
+    'js/vistas.js?v=20', 'js/app.js?v=20',
     'js/vendor/three.min.js', 'js/vendor/GLTFLoader.js', 'js/vendor/OrbitControls.js',
     'js/vendor/jsqr.js',
     'assets/icons/icono-192.png', 'assets/icons/icono-512.png',
-    'ar.html', 'js/vendor/mindar/mindar-image-three.prod.js',
+    'ar.html', 'ar-maqueta.html', 'ar/maqueta.mind', 'ar/maqueta.json', 'js/vendor/mindar/mindar-image-three.prod.js',
     'js/vendor/mindar/controller-mGt1s8dJ.js', 'js/vendor/mindar/ui-fBadYuor.js',
     'js/vendor/three-mod/three.module.min.js',
     'js/vendor/three-mod/addons/renderers/CSS3DRenderer.js',

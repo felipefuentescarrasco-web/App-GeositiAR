@@ -429,6 +429,11 @@ const Vistas = (() => {
         ]) : null,
         U.el('h2', { texto: 'Modelo 3D' }),
         Visor3D.bloque(p.modelo),
+        p.ra ? U.el('div', { clase: 'aviso-caja', style: 'margin-top:12px' }, [
+          U.el('div', { clase: 'pequeno tenue', texto: 'Realidad aumentada' }),
+          U.el('p', { style: 'margin:4px 0 10px', texto: 'Frente a la maqueta, apunta el teléfono desde arriba y verás las capas sobre el relieve real.' }),
+          U.el('a', { clase: 'boton', href: p.ra, texto: '📷 Capas sobre la maqueta (RA)' })
+        ]) : null,
         U.el('h2', { texto: 'Fotografías' }),
         ...p.fotos.map(f => U.el('figure', { clase: 'foto-parada' }, [
           U.el('img', { src: 'assets/fotos/' + f.archivo, alt: f.titulo, loading: 'lazy' }),

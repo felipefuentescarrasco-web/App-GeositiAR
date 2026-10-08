@@ -118,11 +118,13 @@ const Visor3D = (() => {
     observador.observe(lienzo);
 
     let vivo = true;
+    let alCuadro = null;   // rótulos de las capas de la maqueta
     (function animar() {
       if (!vivo) return;
       requestAnimationFrame(animar);
       control.update();
       render.render(escena, camara);
+      if (alCuadro) alCuadro();
     })();
 
     const cargador = new THREE.GLTFLoader();
@@ -144,7 +146,9 @@ const Visor3D = (() => {
       escena.add(malla);
 
       const frente = direccionDeVista(malla);
-      inicioCamara = frente
+      inicioCamara = capas && capas.length
+        ? new THREE.Vector3(0, radio * 1.4, radio * 0.55)   // maqueta: casi desde arriba, como se mira la mesa
+        : frente
         ? frente.clone().multiplyScalar(radio * 1.9).add(new THREE.Vector3(0, radio * 0.3, 0))
         : new THREE.Vector3(radio * 1.1, radio * 0.65, radio * 1.5);
 
@@ -303,10 +307,14 @@ const Visor3D = (() => {
     }
 
     /* Capas de información pegadas sobre el relieve (maqueta): una copia de la malla que comparte la
-       geometría, con coordenadas de textura sacadas de la vista cenital (x, z) del modelo. */
+       geometría, con coordenadas de textura sacadas de la vista cenital (x, z) del modelo.
+       Sin leyenda (idea de Carlos Venegas): cada clase lleva un rótulo flotante con una flecha que apunta
+       a su polígono, y al tocar un polígono o un punto se abre su ficha. Los rótulos y polígonos vienen
+       del .json de cada capa (tools/maqueta/5_capas.py), en coordenadas del modelo. */
     function armarCapas() {
       const cargadorTex = new THREE.TextureLoader();
       const piel = [];        // mallas superpuestas, una por malla del modelo
+      let base = null;        // malla principal: rótulos y toques se calculan sobre ella
       let opacidad = 0.85;
       malla.traverse(o => {
         if (!o.isMesh || o.userData.capa) return;
@@ -331,41 +339,149 @@ const Visor3D = (() => {
         capa.visible = false;
         o.add(capa);
         piel.push(capa);
+        if (!base || p.count > base.geometry.attributes.position.count) base = o;
       });
 
-      const texturas = {};
-      let activa = null;
-      const leyenda = U.el('div', { clase: 'leyenda-capas' });
+      /* capa de rótulos (HTML sobre el lienzo) y ficha al tocar */
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('class', 'flechas-3d');
+      const rotulos = U.el('div', { clase: 'rotulos-3d' });
+      const ficha = U.el('div', { clase: 'ficha-3d', hidden: true });
+      lienzo.appendChild(svg); lienzo.appendChild(rotulos); lienzo.appendChild(ficha);
+
+      const texturas = {}, datos = {};
+      let activa = null, etiquetas = [];
+      const ray = new THREE.Raycaster();
+      const abajo = new THREE.Vector3(0, -1, 0);
+
+      /* altura de la superficie en (x, z) del modelo, para que la flecha toque el relieve */
+      function sobreRelieve(x, z) {
+        base.updateMatrixWorld();
+        const caja = base.geometry.boundingBox;
+        const o = base.localToWorld(new THREE.Vector3(x, caja.max.y + 1, z));
+        ray.set(o, abajo);
+        const hit = ray.intersectObject(base, false)[0];
+        return hit ? hit.point : base.localToWorld(new THREE.Vector3(x, caja.max.y, z));
+      }
+
+      function ponerRotulos(d) {
+        rotulos.innerHTML = ''; svg.innerHTML = ''; etiquetas = [];
+        /* en pantallas chicas, solo las unidades más grandes (vienen ordenadas por superficie) */
+        const max = lienzo.clientWidth < 500 ? 5 : 9;
+        (d.etiquetas || []).slice(0, max).forEach(e => {
+          const div = U.el('div', { clase: 'rotulo-3d' }, [U.el('i', { style: 'background:' + e.color }), U.el('span', { texto: e.texto })]);
+          const linea = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          const punta = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          punta.setAttribute('r', '3.5');
+          rotulos.appendChild(div); svg.appendChild(linea); svg.appendChild(punta);
+          etiquetas.push({ div, linea, punta, mundo: sobreRelieve(e.x, e.z) });
+        });
+      }
+
+      const v = new THREE.Vector3();
+      function moverRotulos() {
+        if (!etiquetas.length) return;
+        const r = lienzo.getBoundingClientRect();
+        const W = r.width, H = r.height, ocupados = [];
+        const lista = etiquetas.map(e => {
+          v.copy(e.mundo).project(camara);
+          return { e, x: (v.x + 1) / 2 * W, y: (1 - v.y) / 2 * H, visible: v.z < 1 && Math.abs(v.x) < 1.05 && Math.abs(v.y) < 1.05 };
+        }).sort((a, b) => a.y - b.y);
+        lista.forEach(({ e, x, y, visible }) => {
+          e.div.hidden = !visible; e.linea.style.display = e.punta.style.display = visible ? '' : 'none';
+          if (!visible) return;
+          const w = e.div.offsetWidth || 80, h = e.div.offsetHeight || 22;
+          let lx = Math.min(Math.max(x - w / 2, 4), W - w - 4), ly = Math.max(y - 44 - h, 4);
+          /* si choca con otro rótulo, se sube (o se baja si no cabe) */
+          for (let n = 0; n < 8; n++) {
+            const choca = ocupados.find(o => lx < o.x + o.w + 4 && lx + w + 4 > o.x && ly < o.y + o.h + 3 && ly + h + 3 > o.y);
+            if (!choca) break;
+            ly = choca.y - h - 4;
+            if (ly < 4) ly = choca.y + choca.h + 4;
+          }
+          ocupados.push({ x: lx, y: ly, w, h });
+          e.div.style.transform = 'translate(' + lx + 'px,' + ly + 'px)';
+          e.linea.setAttribute('x1', lx + w / 2); e.linea.setAttribute('y1', ly + h);
+          e.linea.setAttribute('x2', x); e.linea.setAttribute('y2', y);
+          e.punta.setAttribute('cx', x); e.punta.setAttribute('cy', y);
+        });
+      }
+      alCuadro = moverRotulos;
+
+      /* tocar: polígono que contiene el punto o punto más cercano */
+      function dentro(px, pz, anillo) {
+        let c = false;
+        for (let i = 0, j = anillo.length - 1; i < anillo.length; j = i++) {
+          const [xi, zi] = anillo[i], [xj, zj] = anillo[j];
+          if ((zi > pz) !== (zj > pz) && px < (xj - xi) * (pz - zi) / (zj - zi) + xi) c = !c;
+        }
+        return c;
+      }
+      function buscar(d, x, z) {
+        let mejor = null, dist = 0.03;
+        (d.puntos || []).forEach(p => { const dd = Math.hypot(p.x - x, p.z - z); if (dd < dist) { dist = dd; mejor = p; } });
+        if (mejor) return mejor;
+        return (d.poligonos || []).find(p => dentro(x, z, p.anillos[0]) && !p.anillos.slice(1).some(h => dentro(x, z, h))) || null;
+      }
+      function mostrarFicha(f) {
+        ficha.innerHTML = '';
+        if (!f) { ficha.hidden = true; return; }
+        ficha.appendChild(U.el('button', { clase: 'cerrar', type: 'button', 'aria-label': 'Cerrar', texto: '×',
+          onclick: () => { ficha.hidden = true; } }));
+        if (f.color) ficha.appendChild(U.el('i', { style: 'background:' + f.color }));
+        ficha.appendChild(U.el('b', { texto: f.clase }));
+        (f.info || []).forEach(t => ficha.appendChild(U.el('div', { clase: 'pequeno', texto: t })));
+        if (f.enlace) ficha.appendChild(U.el('a', { clase: 'boton', href: f.enlace, texto: 'Abrir ficha' }));
+        ficha.hidden = false;
+      }
+      let inicioToque = null;
+      render.domElement.addEventListener('pointerdown', ev => { inicioToque = [ev.clientX, ev.clientY]; });
+      render.domElement.addEventListener('pointerup', ev => {
+        if (!activa || !inicioToque || Math.hypot(ev.clientX - inicioToque[0], ev.clientY - inicioToque[1]) > 8) return;
+        const d = datos[activa.fichas];
+        if (!d) return;
+        const r = render.domElement.getBoundingClientRect();
+        ray.setFromCamera(new THREE.Vector2((ev.clientX - r.left) / r.width * 2 - 1, -(ev.clientY - r.top) / r.height * 2 + 1), camara);
+        const hit = ray.intersectObject(base, false)[0];
+        if (!hit) return mostrarFicha(null);
+        const l = base.worldToLocal(hit.point.clone());
+        mostrarFicha(buscar(d, l.x, l.z));
+      });
+
       const fila = U.el('div', { clase: 'capas-3d' });
       const rangoOp = U.el('input', { type: 'range', min: '20', max: '100', value: String(opacidad * 100),
         'aria-label': 'Opacidad de la capa' });
       const filaOp = U.el('div', { clase: 'control-corte', hidden: true }, [U.el('span', { clase: 'pequeno tenue', texto: 'Capa' }), rangoOp]);
+      const ayuda = U.el('p', { clase: 'pequeno tenue', hidden: true, style: 'margin:4px 0 0;width:100%',
+        texto: 'Toca un color de la maqueta para ver qué es.' });
       rangoOp.addEventListener('input', () => {
         opacidad = rangoOp.value / 100;
         piel.forEach(c => { c.material.opacity = opacidad; });
       });
 
       function mostrar(c, chip) {
-        const misma = activa === c;
-        activa = misma ? null : c;
+        activa = activa === c ? null : c;
         fila.querySelectorAll('.chip').forEach(b => b.setAttribute('aria-pressed', 'false'));
-        leyenda.innerHTML = '';
-        filaOp.hidden = !activa;
+        mostrarFicha(null);
+        ponerRotulos({});
+        filaOp.hidden = ayuda.hidden = !activa;
         if (!activa) { piel.forEach(m => { m.visible = false; }); return; }
         chip.setAttribute('aria-pressed', 'true');
-        (c.leyenda || []).forEach(([col, txt]) => leyenda.appendChild(
-          U.el('span', {}, [U.el('i', { style: 'background:' + col }), txt])));
         const poner = tex => {
           if (activa !== c) return;
           piel.forEach(m => { m.material.map = tex; m.material.needsUpdate = true; m.visible = true; });
         };
-        if (texturas[c.archivo]) return poner(texturas[c.archivo]);
-        cargadorTex.load('assets/3d/' + c.archivo, tex => {
+        if (texturas[c.archivo]) poner(texturas[c.archivo]);
+        else cargadorTex.load('assets/3d/' + c.archivo, tex => {
           tex.encoding = THREE.sRGBEncoding;
           tex.anisotropy = render.capabilities.getMaxAnisotropy();
           texturas[c.archivo] = tex;
           poner(tex);
         }, undefined, () => U.aviso('No se pudo cargar la capa'));
+        if (!c.fichas) { ayuda.hidden = true; return; }
+        (datos[c.fichas] ? Promise.resolve(datos[c.fichas]) : fetch('assets/3d/' + c.fichas).then(r => r.json()))
+          .then(d => { datos[c.fichas] = d; if (activa === c) ponerRotulos(d); })
+          .catch(() => { ayuda.hidden = true; });
       }
 
       capas.forEach(c => {
@@ -375,8 +491,8 @@ const Visor3D = (() => {
       });
       controles.appendChild(U.el('div', { clase: 'titulo-capas pequeno tenue', texto: 'Capas sobre la maqueta' }));
       controles.appendChild(fila);
+      controles.appendChild(ayuda);
       controles.appendChild(filaOp);
-      controles.appendChild(leyenda);
     }
 
     /* Al abandonar la vista hay que soltar la GPU: si no, el teléfono se calienta. */

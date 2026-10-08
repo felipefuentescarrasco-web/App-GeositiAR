@@ -135,13 +135,13 @@ const App = (() => {
 
   /* ------------------------------------------------- descarga sin conexión */
 
-  /* Las rutas propias llevan ?v=18, igual que en index.html, para que la copia
+  /* Las rutas propias llevan ?v=19, igual que en index.html, para que la copia
      guardada corresponda exactamente a la que pide la página. */
   const ARCHIVOS_BASE = [
-    'index.html', 'manifest.webmanifest', 'css/app.css?v=18',
-    'js/datos.js?v=18', 'js/i18n-datos.js?v=18', 'js/i18n.js?v=18', 'js/util.js?v=18', 'js/cortina.js?v=18', 'js/visor3d.js?v=18',
-    'js/pano.js?v=18', 'js/mapa.js?v=18', 'js/corte.js?v=18', 'js/escaner.js?v=18',
-    'js/vistas.js?v=18', 'js/app.js?v=18',
+    'index.html', 'manifest.webmanifest', 'css/app.css?v=19',
+    'js/datos.js?v=19', 'js/i18n-datos.js?v=19', 'js/i18n.js?v=19', 'js/util.js?v=19', 'js/cortina.js?v=19', 'js/visor3d.js?v=19',
+    'js/pano.js?v=19', 'js/mapa.js?v=19', 'js/corte.js?v=19', 'js/escaner.js?v=19',
+    'js/vistas.js?v=19', 'js/app.js?v=19',
     'js/vendor/three.min.js', 'js/vendor/GLTFLoader.js', 'js/vendor/OrbitControls.js',
     'js/vendor/jsqr.js',
     'assets/icons/icono-192.png', 'assets/icons/icono-512.png',
@@ -177,7 +177,7 @@ const App = (() => {
     PARADAS.forEach(p => {
       p.fotos.forEach(f => lista.push('assets/fotos/' + f.archivo, 'assets/fotos/t_' + f.archivo));
       if (p.modelo) lista.push('assets/3d/' + p.modelo.archivo);
-      if (p.modelo && p.modelo.capas) p.modelo.capas.forEach(c => lista.push('assets/3d/' + c.archivo));
+      if (p.modelo && p.modelo.capas) p.modelo.capas.forEach(c => { lista.push('assets/3d/' + c.archivo); if (c.fichas) lista.push('assets/3d/' + c.fichas); });
     });
     return Array.from(new Set(lista));
   }

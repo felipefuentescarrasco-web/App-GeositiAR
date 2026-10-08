@@ -1,4 +1,7 @@
-"""Capas de información para pegar sobre el modelo 3D de la maqueta → assets/3d/maqueta_capas/*.png.
+"""Capas de información para pegar sobre el modelo 3D de la maqueta → assets/3d/maqueta_capas/*.png y *.json.
+
+El .json de cada capa lleva, en coordenadas del modelo (x, z), los rótulos flotantes (uno por clase, en el
+polígono más grande) y los polígonos/puntos que se pueden tocar para ver su ficha: así no hace falta leyenda.
 
 Cada capa es una imagen con transparencia en el marco de la vista cenital del GLB (x de -1 a 1, z de
 -zmax a zmax, igual que la dibuja el visor). La posición de cada elemento sale de la georreferencia
@@ -72,6 +75,41 @@ def main():
 
     def nueva(): return Image.new('RGBA', (ANCHO, alto), (0, 0, 0, 0))
 
+    from shapely.geometry import Polygon, box
+    from shapely.ops import unary_union
+    from georref import INTERIOR as I
+    interior = box(-1 + I[2] / 599.5, -zmax + I[0] / 599.5, -1 + I[3] / 599.5, -zmax + I[1] / 599.5)
+
+    def modelo(c):
+        c = np.asarray(c, float)[:, :2]
+        E, N = T.transform(c[:, 0], c[:, 1])
+        return np.c_[B[0, 0] * E + B[0, 1] * N + B[0, 2], B[1, 0] * E + B[1, 1] * N + B[1, 2]]
+
+    def exportar(nombre, feats, clase, info, color, rotular=True, puntos=None, rotulos=None):
+        polis, por_clase = [], {}
+        for f in feats:
+            for pol in anillos(f['geometry']):
+                g = Polygon(modelo(pol[0]), [modelo(h) for h in pol[1:]]).buffer(0).intersection(interior)
+                if g.is_empty: continue
+                g = g.simplify(0.0015)
+                for parte in getattr(g, 'geoms', [g]):
+                    if parte.geom_type != 'Polygon' or parte.area < 2e-6: continue
+                    r = lambda a: [[round(x, 4), round(y, 4)] for x, y in a.coords]
+                    polis.append({'clase': clase(f), 'info': [t for t in info(f) if t], 'color': color(f),
+                                  'anillos': [r(parte.exterior)] + [r(h) for h in parte.interiors]})
+                    por_clase.setdefault(clase(f), []).append(parte)
+        etiquetas = list(rotulos or [])
+        if rotular:
+            for c, partes in por_clase.items():
+                mayor = max(partes, key=lambda g: g.area)
+                if mayor.area < 4e-4: continue   # demasiado chico para rotular sin tapar
+                p = mayor.representative_point()
+                etiquetas.append({'texto': c, 'x': round(p.x, 4), 'z': round(p.y, 4), 'area': round(mayor.area, 4),
+                                  'color': polis[[q['clase'] for q in polis].index(c)]['color']})
+            etiquetas.sort(key=lambda e: -e.get('area', 1))   # el visor muestra las más grandes primero
+        (SAL / f'{nombre}.json').write_text(json.dumps({'etiquetas': etiquetas, 'poligonos': polis, 'puntos': puntos or []},
+                                                      ensure_ascii=False, separators=(',', ':')), encoding='utf-8')
+
     def poligonos(d, feats, color, a=.62, borde=(40, 30, 25, 200)):
         for f in feats:
             col = color(f)
@@ -102,8 +140,11 @@ def main():
 
     # geología
     d = {'img': nueva()}
-    poligonos(d, geojson('geologia_sernageomin'), lambda f: color_geol(f['properties']['codigo']), .6)
+    feats = geojson('geologia_sernageomin')
+    poligonos(d, feats, lambda f: color_geol(f['properties']['codigo']), .6)
     guardar('geologia', d['img'])
+    exportar('geologia', feats, lambda f: f['properties']['unidad'], lambda f: [f['properties']['codigo'], 'Fuente: Sernageomin'],
+             lambda f: color_geol(f['properties']['codigo']))
 
     # georutas, geositios y paradas
     img = nueva(); dr = ImageDraw.Draw(img)
@@ -120,6 +161,18 @@ def main():
         dr.ellipse((x - r, y - r, x + r, y + r), fill=rgba(col, 1), outline=(255, 255, 255, 255), width=3)
         if p.get('rotulo'): dr.text((x, y), p['rotulo'], font=fuente, fill='white', anchor='mm')
     guardar('georutas', img)
+    rot = []
+    for n, nom, col in (('georuta1', 'Georuta 1', '#c1622f'), ('georuta2', 'Georuta 2', '#2f6f5e')):
+        l = max((l for f in geojson(n) for l in lineas(f['geometry'])), key=len)
+        x, z = modelo([l[len(l) // 2]])[0]
+        rot.append({'texto': nom, 'x': round(float(x), 4), 'z': round(float(z), 4), 'color': col})
+    pts = []
+    for p in puntos:
+        x, z = modelo([[p['lon'], p['lat']]])[0]
+        tipo = {'geositio': 'Geositio', 'mirador': 'Geomirador', 'maqueta': 'Geomaqueta'}.get(p['tipo'], 'Punto de interés')
+        pts.append({'x': round(float(x), 4), 'z': round(float(z), 4), 'clase': p['nombre'],
+                    'info': [tipo + (' ' + p['rotulo'] if p['tipo'] == 'geositio' else '')], 'enlace': p.get('enlace')})
+    exportar('georutas', [], None, None, None, rotular=False, puntos=pts, rotulos=rot)
 
     # límite del parque
     img = nueva(); dr = ImageDraw.Draw(img)
@@ -127,6 +180,7 @@ def main():
         for l in lineas(f['geometry']): dr.line(px(l) + [px(l)[0]], fill=(255, 255, 255, 240), width=9)
         for l in lineas(f['geometry']): dr.line(px(l) + [px(l)[0]], fill=rgba('#2f6f5e', 1), width=5)
     guardar('limite', img)
+    exportar('limite', geojson('acta_parque'), lambda f: 'Parque Metropolitano de Santiago', lambda f: [], lambda f: '#2f6f5e')
 
     # senderos, ciclovías y agua
     img = nueva(); dr = ImageDraw.Draw(img)
@@ -143,8 +197,12 @@ def main():
     # plan de manejo del acta
     for nombre, archivo in (('bosques', 'acta_bosque'), ('conservacion', 'acta_conservacion'), ('rehabilitacion', 'acta_manejo')):
         d = {'img': nueva()}
-        poligonos(d, geojson(archivo), lambda f: C_ACTA.get(f['properties']['clase'], '#999999'), .62, (30, 30, 30, 160))
+        feats = geojson(archivo)
+        poligonos(d, feats, lambda f: C_ACTA.get(f['properties']['clase'], '#999999'), .62, (30, 30, 30, 160))
         guardar(nombre, d['img'])
+        exportar(nombre, feats, lambda f: f['properties']['clase'],
+                 lambda f: [f"{f['properties']['ha']} ha" if f['properties'].get('ha') else '', 'Plan de manejo Parquemet (acta 24.09.2026)'],
+                 lambda f: C_ACTA.get(f['properties']['clase'], '#999999'))
 
 
 if __name__ == '__main__':

@@ -146,10 +146,15 @@ const U = (() => {
   /* ------------------------------------------------------------- interfaz */
 
   let tiempoAviso = null;
-  function aviso(texto, ms) {
+  /* accion (opcional): { texto, href } agrega un botón al aviso, p. ej. "Abrir ficha". */
+  function aviso(texto, ms, accion) {
     const cont = $('#avisos');
     cont.innerHTML = '';
-    cont.appendChild(el('div', { clase: 'aviso', texto: texto }));
+    cont.appendChild(el('div', { clase: 'aviso' + (accion ? ' con-accion' : '') }, [
+      el('span', { texto: texto }),
+      accion ? el('a', { clase: 'aviso-accion', href: accion.href, texto: accion.texto,
+                         onclick: () => { cont.innerHTML = ''; } }) : null
+    ]));
     clearTimeout(tiempoAviso);
     tiempoAviso = setTimeout(() => { cont.innerHTML = ''; }, ms || 2600);
   }

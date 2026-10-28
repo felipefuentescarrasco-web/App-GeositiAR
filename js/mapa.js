@@ -221,6 +221,35 @@ const Mapa = (() => {
     }, capasActa), { position: 'topright', collapsed: true }).addTo(mapa);
     L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(mapa);
 
+    /* Botón propio para prender y apagar la geología (como en la app de Carlos Venegas):
+       queda a la vista, sin abrir el selector de capas. Recuerda la elección. */
+    const CLAVE_GEOL = 'gpm-mapa-geologia';
+    const BotonGeol = L.Control.extend({
+      options: { position: 'topright' },
+      onAdd() {
+        const b = L.DomUtil.create('button', 'btn-geol-mapa');
+        b.type = 'button';
+        b.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M3 18l5-9 4 5 3-4 6 8z" fill="currentColor" opacity=".35"/><path d="M3 18h18M5 14.5h14M7 11h10" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg><small>' + I18N.t('Geología') + '</small>';
+        b.title = I18N.t('Prender o apagar la geología');
+        L.DomEvent.disableClickPropagation(b);
+        const pintar = () => {
+          const on = mapa.hasLayer(capaGeol);
+          b.classList.toggle('activo', on);
+          b.setAttribute('aria-pressed', String(on));
+        };
+        b.addEventListener('click', () => {
+          if (mapa.hasLayer(capaGeol)) mapa.removeLayer(capaGeol); else capaGeol.addTo(mapa);
+          try { localStorage.setItem(CLAVE_GEOL, mapa.hasLayer(capaGeol) ? '1' : '0'); } catch (e) { /* nada */ }
+          pintar();
+        });
+        mapa.on('overlayadd overlayremove', pintar);
+        try { if (localStorage.getItem(CLAVE_GEOL) === '1') capaGeol.addTo(mapa); } catch (e) { /* nada */ }
+        pintar();
+        return b;
+      }
+    });
+    new BotonGeol().addTo(mapa);
+
     /* geositios y otros puntos */
     const marcadores = [];
     let seleccionado = null;

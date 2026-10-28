@@ -73,8 +73,9 @@ const Escaner = (() => {
         onclick: () => cerrar() }, [U.icono('cerrar')]),
       U.el('div', { clase: 'pie' }, [
         U.el('button', { clase: 'boton secundario', type: 'button',
-          onclick: () => { cerrar(); pedirCodigo(alEncontrar); } },
-          ['Escribir el número del geositio'])
+          onclick: () => { cerrar(); location.hash = '#/rutas'; } }, ['Ver los geositios']),
+        U.el('button', { clase: 'boton secundario', type: 'button',
+          onclick: () => { cerrar(); location.hash = '#/'; } }, ['Menú principal'])
       ])
     ]);
     document.body.appendChild(capa);
@@ -129,7 +130,7 @@ const Escaner = (() => {
     }).catch(err => {
       cerrar();
       if (err && (err.name === 'NotAllowedError' || err.name === 'SecurityError')) {
-        U.aviso('Sin permiso de cámara. Escribe el número del geositio.', 3600);
+        U.aviso('Sin permiso de cámara. Elige el geositio en la lista.', 3600);
       } else {
         U.aviso('No se pudo abrir la cámara en este dispositivo.', 3600);
       }
@@ -167,37 +168,24 @@ const Escaner = (() => {
           setTimeout(ciclo, 180);
         })();
       }).catch(() => {
-        instruccion.textContent = 'No se pudo iniciar el lector. Usa el número del geositio.';
+        instruccion.textContent = 'No se pudo iniciar el lector. Elige el geositio en la lista.';
       });
     }
 
     return cerrar;
   }
 
-  /* Alternativa sin cámara: elegir el geositio de una lista corta. */
-  function pedirCodigo(alEncontrar) {
-    const campo = U.el('input', {
-      clase: 'buscador', type: 'number', inputmode: 'numeric', min: '1', max: '12',
-      placeholder: 'Número del geositio (1 a 12)', 'aria-label': 'Número del geositio'
-    });
-    const lista = U.el('div', { style: 'display:grid;grid-template-columns:repeat(4,1fr);gap:8px' },
-      GEOSITIOS.map(g => U.el('button', {
-        clase: 'chip', type: 'button', style: 'text-align:center',
-        onclick: () => { cerrar(); alEncontrar(g); }, texto: String(g.num)
-      })));
+  /* Sin cámara: en vez de pedir un número, se ofrecen los dos caminos de siempre,
+     el menú principal o la lista de geositios (con sus nombres y fotos). */
+  function pedirCodigo() {
+    const ir = hash => { cerrar(); location.hash = hash; };
     const cerrar = U.modal(U.el('div', { clase: 'caja' }, [
-      U.el('h2', { texto: 'Ir a un geositio' }),
-      U.el('p', { clase: 'pequeno tenue',
-        texto: 'El número está impreso en el cartel, junto al código QR.' }),
-      campo,
-      lista
+      U.el('h2', { texto: '¿A dónde quieres ir?' }),
+      U.el('div', { clase: 'pila-botones' }, [
+        U.el('button', { clase: 'boton', type: 'button', onclick: () => ir('#/rutas') }, ['Ver los geositios']),
+        U.el('button', { clase: 'boton secundario', type: 'button', onclick: () => ir('#/') }, ['Menú principal'])
+      ])
     ]));
-    campo.addEventListener('change', () => {
-      const g = interpretar(campo.value);
-      if (g) { cerrar(); alEncontrar(g); }
-      else U.aviso('No existe un geositio con ese número');
-    });
-    setTimeout(() => campo.focus(), 120);
   }
 
   return { abrir, interpretar, pedirCodigo };

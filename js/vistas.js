@@ -109,13 +109,22 @@ const Vistas = (() => {
     const cercano = U.el('div');
 
     const vista = U.el('div', {}, [
-      U.el('section', { clase: 'portada' }, [
-        U.el('h1', { texto: 'GeoParquemet' }),
+      U.el('div', { clase: 'barra-inst' }, [
+        U.el('img', { src: 'assets/img/sernageomin.webp', alt: 'Sernageomin, Ministerio de Minería, Gobierno de Chile' }),
+        U.el('span', { texto: 'Unidad de Geopatrimonio' }),
+        U.el('img', { src: 'assets/img/parquemet.webp', alt: 'Parquemet' })
+      ]),
+      U.el('img', { clase: 'portada-imagen', src: 'assets/img/portada.webp',
+        alt: 'GeoParquemet: revelando la historia geológica del Parque Metropolitano' }),
+      U.el('section', { clase: 'portada con-imagen' }, [
+        U.el('p', { clase: 'sobre', texto: 'Sernageomin · Geopatrimonio' }),
+        U.el('h1', { clase: 'oculto-visual', texto: 'GeoParquemet' }),
         U.el('p', { clase: 'lema',
           texto: 'Geotours por el cerro San Cristóbal. Escanea el código QR del ' +
                  'geositio y mira la geología que tienes delante.' }),
         selectorIdioma(true)
       ]),
+      bannerInstalar(),
       U.el('div', { clase: 'contenido' }, [
         U.el('div', { clase: 'acciones-inicio' }, [
           U.el('a', { clase: 'boton ancho', href: '#/escanear' },
@@ -174,6 +183,29 @@ const Vistas = (() => {
     alSalir(parar);
 
     return vista;
+  }
+
+  /* Banner que enseña a instalar la app (pantalla completa y sin señal en el cerro).
+     En Android usa el aviso del navegador; en iPhone explica Compartir → Agregar a inicio. */
+  function bannerInstalar() {
+    if (App.instalada()) return null;
+    try { if (sessionStorage.getItem('gpm-banner-instalar') === 'no') return null; } catch (e) { /* nada */ }
+    const cerrar = U.el('button', { clase: 'banner-cerrar', type: 'button', 'aria-label': 'Cerrar' }, ['✕']);
+    const banner = U.el('div', { clase: 'banner-instalar' }, [
+      U.el('button', { clase: 'banner-cuerpo', type: 'button', onclick: () => App.ensenarInstalar() }, [
+        U.el('span', { clase: 'banner-ico', 'aria-hidden': 'true', texto: '📲' }),
+        U.el('span', {}, [
+          U.el('b', { texto: 'Instala GeoParquemet en tu teléfono' }),
+          U.el('small', { texto: 'Pantalla completa y funciona sin señal en el cerro. Toca para ver cómo.' })
+        ])
+      ]),
+      cerrar
+    ]);
+    cerrar.addEventListener('click', () => {
+      banner.remove();
+      try { sessionStorage.setItem('gpm-banner-instalar', 'no'); } catch (e) { /* nada */ }
+    });
+    return banner;
   }
 
   /* --------------------------------------------------------------- rutas */
@@ -259,22 +291,7 @@ const Vistas = (() => {
     });
     pintarVisita();
 
-    const btnVoz = U.el('button', { clase: 'chip', type: 'button' }, ['Escuchar']);
-    btnVoz.addEventListener('click', () => {
-      if (U.hablando()) { U.detenerVoz(); btnVoz.textContent = 'Escuchar'; return; }
-      const texto = [
-        I18N.t('Geositio ' + g.num) + '. ' + g.nombre + '.',
-        g.gancho,
-        I18N.t('Qué observar.') + ' ' + (g.claves || []).join(' '),
-        g.observa || ''
-      ].join(' ');
-      U.leerEnVoz(texto);
-      btnVoz.textContent = 'Detener';
-      const revisar = setInterval(() => {
-        if (!U.hablando()) { btnVoz.textContent = 'Escuchar'; clearInterval(revisar); }
-      }, 700);
-      alSalir(() => clearInterval(revisar));
-    });
+    const audio = reproductorAudio(g);
 
     const btnLlegar = U.el('a', {
       clase: 'chip',
@@ -338,8 +355,9 @@ const Vistas = (() => {
       cabecera,
       U.el('div', { clase: 'contenido', style: 'padding-bottom:0' }, [
         U.el('p', { clase: 'gancho', texto: g.gancho }),
-        U.el('div', { clase: 'controles-3d' }, [btnVisita, btnVoz, btnLlegar]),
+        U.el('div', { clase: 'controles-3d' }, [btnVisita, btnLlegar]),
         distancia,
+        audio,
         bloqueRA(g)
       ]),
       barraPestanas,
@@ -364,6 +382,45 @@ const Vistas = (() => {
 
     elegir(secciones[0].id);
     return vista;
+  }
+
+  /* Narración grabada del geositio en español, inglés y portugués (assets/audio/<idioma>/gN.mp3).
+     Las de los geositios 1 a 8 vienen de la app de Carlos Venegas; las de 9 a 12 se generaron con
+     las mismas voces (tools/voces_geositios.py). Parte en el idioma de la app; se puede cambiar. */
+  const AUDIO_IDIOMAS = [['es', '🇨🇱', 'ES'], ['en', '🇬🇧', 'EN'], ['pt', '🇧🇷', 'PT']];
+  function reproductorAudio(g) {
+    let lang = I18N.idioma;
+    const sonido = new Audio();
+    sonido.preload = 'none';
+    const btn = U.el('button', { clase: 'boton audio-play', type: 'button', 'aria-label': 'Escuchar' });
+    const barra = U.el('input', { type: 'range', min: '0', max: '1000', value: '0', clase: 'audio-barra',
+      'aria-label': 'Avance de la narración' });
+    const tiempo = U.el('span', { clase: 'pequeno tenue audio-tiempo', texto: '' });
+    const fmt = t => isFinite(t) ? Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0') : '';
+    const idiomas = U.el('div', { clase: 'audio-idiomas', role: 'group' }, AUDIO_IDIOMAS.map(([c, b, n]) =>
+      U.el('button', { type: 'button', 'data-l': c, 'aria-pressed': String(c === lang), title: n,
+        onclick: () => { if (c === lang) return; const sonaba = !sonido.paused; lang = c; cargar(); pintarIdioma();
+                         if (sonaba) sonido.play(); } }, [b + ' ' + n])));
+    function pintarIdioma() { U.$$('button', idiomas).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.l === lang))); }
+    function cargar() { sonido.src = 'assets/audio/' + lang + '/g' + g.num + '.mp3'; barra.value = 0; }
+    function pintar() {
+      btn.innerHTML = sonido.paused ? '▶ <span>Escuchar el geositio</span>' : '❚❚ <span>Pausa</span>';
+      tiempo.textContent = fmt(sonido.currentTime) + (sonido.duration ? ' / ' + fmt(sonido.duration) : '');
+      if (sonido.duration) barra.value = Math.round(1000 * sonido.currentTime / sonido.duration);
+    }
+    btn.addEventListener('click', () => {
+      U.detenerVoz();
+      if (sonido.paused) sonido.play().catch(() => U.aviso('No se pudo reproducir el audio. Revisa la conexión.'));
+      else sonido.pause();
+    });
+    barra.addEventListener('input', () => { if (sonido.duration) sonido.currentTime = sonido.duration * barra.value / 1000; });
+    ['play', 'pause', 'timeupdate', 'loadedmetadata', 'ended'].forEach(e => sonido.addEventListener(e, pintar));
+    alSalir(() => { sonido.pause(); sonido.src = ''; });
+    cargar(); pintar();
+    return U.el('div', { clase: 'tarjeta audio-geositio' }, [
+      U.el('div', { clase: 'audio-fila' }, [btn, idiomas]),
+      U.el('div', { clase: 'audio-fila' }, [barra, tiempo])
+    ]);
   }
 
   /* Realidad aumentada (ar.html): la interpretación dibujada sobre la roca, con la cámara.
@@ -783,6 +840,16 @@ const Vistas = (() => {
       clase: 'chip', type: 'button', 'aria-pressed': String(!!e.ajustes.contraste),
       texto: 'Alto contraste'
     });
+    const vibrar = U.el('button', {
+      clase: 'chip', type: 'button', 'aria-pressed': String(e.ajustes.vibrar !== false),
+      texto: 'Vibrar al llegar a un geositio'
+    });
+    vibrar.addEventListener('click', () => {
+      e.ajustes.vibrar = e.ajustes.vibrar === false;
+      vibrar.setAttribute('aria-pressed', String(e.ajustes.vibrar));
+      if (e.ajustes.vibrar) U.vibrar(120);
+      U.guardarEstado();
+    });
     contraste.addEventListener('click', () => {
       e.ajustes.contraste = !e.ajustes.contraste;
       document.body.classList.toggle('contraste', e.ajustes.contraste);
@@ -814,7 +881,7 @@ const Vistas = (() => {
       U.el('div', { clase: 'control-corte' }, [
         U.el('span', { clase: 'pequeno tenue', texto: 'Texto' }), escala
       ]),
-      U.el('div', { clase: 'controles-3d' }, [contraste]),
+      U.el('div', { clase: 'controles-3d' }, [contraste, vibrar]),
 
       U.el('h2', { style: 'margin-top:22px', texto: 'Uso sin conexión' }),
       U.el('p', { clase: 'pequeno tenue',

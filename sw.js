@@ -8,7 +8,7 @@
    Las teselas del mapa se guardan aparte, a medida que se navega, para que el
    tramo ya recorrido siga viéndose sin señal. */
 
-const VERSION = 'v20';
+const VERSION = 'v21';
 const CACHE_ESQUELETO = 'geoparquemet-esqueleto-' + VERSION;
 const CACHE_CONTENIDO = 'geoparquemet-contenido';
 const CACHE_TESELAS = 'geoparquemet-teselas';
@@ -20,19 +20,19 @@ const ESQUELETO = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './css/app.css?v=20',
-  './js/datos.js?v=20',
-  './js/i18n-datos.js?v=20',
-  './js/i18n.js?v=20',
-  './js/util.js?v=20',
-  './js/cortina.js?v=20',
-  './js/visor3d.js?v=20',
-  './js/pano.js?v=20',
-  './js/mapa.js?v=20',
-  './js/corte.js?v=20',
-  './js/escaner.js?v=20',
-  './js/vistas.js?v=20',
-  './js/app.js?v=20',
+  './css/app.css?v=21',
+  './js/datos.js?v=21',
+  './js/i18n-datos.js?v=21',
+  './js/i18n.js?v=21',
+  './js/util.js?v=21',
+  './js/cortina.js?v=21',
+  './js/visor3d.js?v=21',
+  './js/pano.js?v=21',
+  './js/mapa.js?v=21',
+  './js/corte.js?v=21',
+  './js/escaner.js?v=21',
+  './js/vistas.js?v=21',
+  './js/app.js?v=21',
   './js/vendor/three.min.js',
   './js/vendor/GLTFLoader.js',
   './js/vendor/OrbitControls.js',
@@ -47,7 +47,10 @@ const ESQUELETO = [
   './js/vendor/three-mod/three.module.min.js',
   './js/vendor/three-mod/addons/renderers/CSS3DRenderer.js',
   './assets/icons/icono-192.png',
-  './assets/icons/icono-512.png'
+  './assets/icons/icono-512.png',
+  './assets/img/portada.webp',
+  './assets/img/sernageomin.webp',
+  './assets/img/parquemet.webp'
 ];
 
 self.addEventListener('install', ev => {

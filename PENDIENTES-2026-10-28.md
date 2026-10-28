@@ -47,13 +47,21 @@ Cuadros: `Parquemet/3D/GST<N>_2026/img` (3 por segundo, el más nítido de cada 
 
 | Orden | Geositio | Material (Celu, 27-10) | Qué marcar | Estado |
 |---|---|---|---|---|
-| 1 | 3 (nuevo, el viejo quedó tapado) | videos 143929–144156 + fotos 144145–149 | horizontes de suelo O (raíces, materia orgánica), A, B hacia abajo | cámaras en curso |
-| 2 | 4 | video 150916 (181 cuadros listos); 144705–150916; más arriba: 151539 y foto 151620 | piroxenos: tocar uno abre la ficha del mineral | ficha del mineral hecha |
-| 3 | 6 | 152800–152915; columnas en el segundo 0:34 de 152915 | caras de las columnas (como la interpretación del G9) | pendiente |
-| 4 | 7 | 153428–153640 | fiammes (las lentejas naranjas) | pendiente |
+| 1 | 3 (nuevo, el viejo quedó tapado) | videos 143929–144156 + fotos 144145–149 | horizontes de suelo O (raíces, materia orgánica), A, B hacia abajo | ladera (143929–144006): malla con textura lista (scratch `gpm/g3_1/gst3_ladera.glb`); corte del camino: denso a media resolución en curso (el de resolución completa se quedó sin memoria) |
+| 2 | 4 | video 150916 (181 cuadros listos); 144705–150916; más arriba: 151539 y foto 151620 | piroxenos: tocar uno abre la ficha del mineral | ficha del mineral hecha; cámaras 115/181; denso en cola |
+| 3 | 6 | 152800–152915; columnas en el segundo 0:34 de 152915 | caras de las columnas (como la interpretación del G9) | cámaras 372/390; denso en cola |
+| 4 | 7 | 153428–153640 | fiammes (las lentejas naranjas) | cámaras 228/303; denso en cola |
 
 Las fotos de las 15:19 (151910, 151948, 151951) son una roca a la altura del G5, pero de la unidad del G6.
 Las fotos de lupa del piroxeno (GST4_5 a GST4_8) tienen versión de zoom de 3200 px sacada de los originales de `2D/` (`*_escala.jpg`). No hay cortes transparentes.
+
+## Hecho el 28-10 con las fotos de la mañana
+
+- [x] G1: objetivo g1_19 (foto de las 10:54). La de las 10:56 ya se reconocía y no se agregó (el dibujo se deformaba).
+- [x] Maqueta: sectores 15 y 16 con fotos cenitales reales (`tools/maqueta/ra_foto.py`); 3 de 4 fotos del día reconocidas (antes 0).
+- [x] QR de la app: `Parquemet/QR_GeoParquemet.png`.
+- Scripts de modelos en el scratchpad: `cadena3.sh` (denso G4/G6/G7), `textura.sh <mvs WSL> <carpeta Windows>`,
+  `vista.py <glb> <jpg>` (vistas rápidas). Flujo por modelo: `recortar.py` → `textura.sh` → `glb.py`.
 
 ## Pendiente
 

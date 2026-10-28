@@ -98,7 +98,8 @@ const GEOSITIOS = [
     id: 'GPM03', num: 3, codigo: 'GST00003',
     nombre: 'Vegetación, roca y suelo',
     subtitulo: 'De la roca dura a la tierra del cerro',
-    lat: -33.4207, lon: -70.6377, alt: 655,
+    /* 28-10-2026: el afloramiento original quedó tapado; el geositio pasó a este talud (ubicación de Felipe en terreno) */
+    lat: -33.422126, lon: -70.636947, alt: 645,
     ruta: 'r1', orden: 3,
     unidad: 'OlMa', litologia: 'Toba meteorizada', clase: 'Andesítica',
     interes: 'Meteorización y suelo',
@@ -151,17 +152,20 @@ const GEOSITIOS = [
     observa: 'Acerca la vista a una cara fresca: los piroxenos reflejan la luz como pequeños espejos.',
     fotos: [
       { base: 'GST4_1.jpg', interp: 'GST4_1_interpretada.jpg',
-        titulo: 'Textura porfírica',
-        leyenda: 'Fenocristales de piroxeno y plagioclasa destacados sobre la masa fundamental.' },
+        titulo: 'Afloramiento',
+        leyenda: 'La microdiorita cortada por fracturas en varias direcciones.' },
       { base: 'GST4_2.jpg', interp: 'GST4_2_interpretada.jpg',
-        titulo: 'Detalle de fenocristales', leyenda: 'Cristales euhedrales de piroxeno.' },
-      { base: 'GST4_5.jpg', interp: 'GST4_5_interpretada.jpg',
-        titulo: 'Afloramiento', leyenda: 'Vista general de la microdiorita porfírica.' },
-      { base: 'GST4_7.jpg', interp: 'GST4_7_interpretada.jpg',
-        titulo: 'Cara fresca', leyenda: 'Contraste entre cara alterada y cara fresca de la roca.' }
+        titulo: 'Fenocristales en la roca', leyenda: 'Cristales euhedrales de piroxeno (en verde). Toca uno para verlo de cerca.',
+        minerales: [{ m: 'piroxeno', x: 0.371, y: 0.356 }, { m: 'piroxeno', x: 0.478, y: 0.298 }] },
+      { base: 'GST4_cristal.jpg', interp: 'GST4_cristal_interpretada.jpg',
+        titulo: 'Un cristal grande', leyenda: 'Prisma negro de piroxeno en la roca, un poco más arriba por el camino (terreno 27-10-2026). Tócalo.',
+        minerales: [{ m: 'piroxeno', x: 0.436, y: 0.619 }] }
     ],
-    modelo: { archivo: 'gst4.glb', titulo: 'Bloque de microdiorita',
-      nota: 'Acércate al modelo hasta ver los cristales de piroxeno.' },
+    muestra: { base: 'GST4_4.jpg', interp: 'GST4_4_interpretada.jpg', titulo: 'Muestra de mano',
+      leyenda: 'Los piroxenos (en verde) destacan sobre la masa de grano fino. Toca uno para verlo con lupa.',
+      minerales: [{ m: 'piroxeno', x: 0.239, y: 0.562 }, { m: 'piroxeno', x: 0.212, y: 0.318 }, { m: 'piroxeno', x: 0.293, y: 0.242 }] },
+    modelo: { archivo: 'gst4.glb', titulo: 'Bloque de microdiorita', mineral: 'piroxeno',
+      nota: 'Acércate al modelo hasta ver los cristales de piroxeno y toca uno negro para abrir su ficha.' },
     glosario: ['piroxeno', 'plagioclasa', 'fenocristal', 'porfirica', 'microdiorita', 'magnetita']
   },
   {
@@ -449,6 +453,37 @@ const PUNTOS = [
 /* Paradas especiales de las georutas que no son geositios del inventario: tienen ficha propia
    (#/p/<id>) y aparecen en la ruta después del geositio indicado en "despues". No cuentan en el
    progreso de los doce geositios ni tienen número. */
+/* Minerales que se abren al tocar un cristal en las fotos o en el modelo 3D (js/mineral.js). */
+const MINERALES = {
+  piroxeno: {
+    nombre: 'Piroxeno (augita)',
+    resumen: 'Silicato de hierro, magnesio y calcio. Cristales negros a verde muy oscuro, en prismas ' +
+      'cortos de ocho caras, con brillo vítreo. Aquí miden de 1 mm a más de 1 cm.',
+    cristal: { color: 0x020503,
+      nota: 'Hábito del cristal de augita: un prisma de sección octogonal, con terminaciones inclinadas ' +
+        '(cristal monoclínico). En el corte transversal se ven sus dos clivajes, que se cruzan casi en ' +
+        'ángulo recto (87° y 93°): la forma más simple de distinguirlo del anfíbol, cuyos clivajes forman 56° y 124°.' },
+    lupa: [
+      { base: 'GST4_5.jpg', interp: 'GST4_5_interpretada.jpg', titulo: 'Cristal alargado con lupa',
+        leyenda: 'Contorno del cristal en verde; en amarillo, alteración. Escala de 4 mm.' },
+      { base: 'GST4_6.jpg', interp: 'GST4_6_interpretada.jpg', titulo: 'Sección basal',
+        leyenda: 'Cristal cortado de través: se insinúa la sección de ocho caras. Escala de 8 mm.' },
+      { base: 'GST4_7.jpg', interp: 'GST4_7_interpretada.jpg', titulo: 'Cristales entrecruzados',
+        leyenda: 'Prismas que crecieron juntos en el magma. Escala de 10 mm.' },
+      { base: 'GST4_8.jpg', interp: 'GST4_8_interpretada.jpg', titulo: 'Maclas en cruz',
+        leyenda: 'Dos prismas cruzados en la masa de plagioclasa. Escala de 4 mm.' },
+      { base: 'GST4_9.jpg', interp: 'GST4_9_interpretada.jpg', titulo: 'Detalle de las caras',
+        leyenda: 'Con aumento se ven las caras y los bordes rectos del cristal. Escala de 4 mm.' }
+    ],
+    muestra: [
+      { base: 'GST4_3.jpg', interp: 'GST4_3_interpretada.jpg', titulo: 'Muestra recogida en el geositio',
+        leyenda: 'Fenocristales de piroxeno marcados en verde. Escala en centímetros.' },
+      { base: 'GST4_4.jpg', interp: 'GST4_4_interpretada.jpg', titulo: 'Cara cortada de la muestra',
+        leyenda: 'Los piroxenos sobre la masa fundamental de grano fino.' }
+    ]
+  }
+};
+
 const PARADAS = [
   {
     id: 'PAR01', tipo: 'maqueta', ruta: 'r1', despues: 'GPM01',

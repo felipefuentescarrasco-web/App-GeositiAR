@@ -65,7 +65,7 @@ const Visor3D = (() => {
       cargarLibrerias()
         .then(() => montar(lienzo, estado, controles, ruta, modelo.capas, p => {
           txt.textContent = 'Cargando ' + Math.round(p) + ' %';
-        }))
+        }, modelo.mineral))
         .catch(err => {
           estado.innerHTML = '';
           estado.appendChild(U.el('div', { texto: 'No se pudo mostrar el modelo. ' + err.message }));
@@ -75,7 +75,7 @@ const Visor3D = (() => {
     return cont;
   }
 
-  function montar(lienzo, estado, controles, ruta, capas, alAvanzar) {
+  function montar(lienzo, estado, controles, ruta, capas, alAvanzar, mineral) {
     const escena = new THREE.Scene();
     escena.background = new THREE.Color(0x10171a);
 
@@ -144,6 +144,7 @@ const Visor3D = (() => {
         if (o.material.map) o.material.map.encoding = THREE.sRGBEncoding;
       });
       escena.add(malla);
+      if (mineral && typeof Mineral !== 'undefined') tocarMineral();
 
       const frente = direccionDeVista(malla);
       inicioCamara = capas && capas.length
@@ -173,6 +174,43 @@ const Visor3D = (() => {
       estado.appendChild(U.el('div', { texto: 'No se pudo descargar el modelo.' }));
       console.error(err);
     });
+
+    /* Tocar un cristal oscuro del modelo abre la ficha del mineral: se mira el color de la textura
+       en el punto tocado y se compara con el tono medio de la roca (un toque, no un arrastre). */
+    function tocarMineral() {
+      const rayo = new THREE.Raycaster(), punto = new THREE.Vector2(), muestras = new Map();
+      function muestrear(tex) {
+        if (muestras.has(tex)) return muestras.get(tex);
+        const im = tex.image, c = document.createElement('canvas');
+        c.width = Math.min(2048, im.width); c.height = Math.round(c.width * im.height / im.width);
+        const ctx = c.getContext('2d', { willReadFrequently: true });
+        ctx.drawImage(im, 0, 0, c.width, c.height);
+        const d = ctx.getImageData(0, 0, c.width, c.height).data, lum = [];
+        for (let i = 0; i < d.length; i += 4 * 97) lum.push(0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]);
+        lum.sort((a, b) => a - b);
+        const m = { ctx, w: c.width, h: c.height, mediana: lum[lum.length >> 1], flip: tex.flipY };
+        muestras.set(tex, m);
+        return m;
+      }
+      let abajo = null;
+      render.domElement.addEventListener('pointerdown', e => { abajo = [e.clientX, e.clientY, performance.now()]; });
+      render.domElement.addEventListener('pointerup', e => {
+        if (!abajo || Math.hypot(e.clientX - abajo[0], e.clientY - abajo[1]) > 8 || performance.now() - abajo[2] > 450) return;
+        const r = render.domElement.getBoundingClientRect();
+        punto.set((e.clientX - r.left) / r.width * 2 - 1, -(e.clientY - r.top) / r.height * 2 + 1);
+        rayo.setFromCamera(punto, camara);
+        const golpe = rayo.intersectObject(malla, true).find(h => h.uv && h.object.material && h.object.material.map);
+        if (!golpe) return;
+        let m;
+        try { m = muestrear(golpe.object.material.map); } catch (er) { return; }
+        const x = Math.round(golpe.uv.x * (m.w - 1)), y = Math.round((m.flip ? 1 - golpe.uv.y : golpe.uv.y) * (m.h - 1));
+        const d = m.ctx.getImageData(Math.max(0, x - 2), Math.max(0, y - 2), 5, 5).data;
+        let suma = 0;
+        for (let i = 0; i < d.length; i += 4) suma += 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+        if (suma / (d.length / 4) < m.mediana * 0.55) Mineral.abrir(mineral);
+        else U.aviso('Toca uno de los cristales negros para ver el mineral');
+      });
+    }
 
     /* Estas mallas son casi siempre una pared de roca, no un objeto cerrado.
        Mirándolas desde su normal media se ve la cara fotografiada; con una

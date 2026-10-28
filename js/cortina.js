@@ -116,8 +116,12 @@ const Cortina = (() => {
         U.el('h3', { texto: foto.titulo }),
         U.el('span', { clase: 'pequeno tenue', texto: 'desliza →' })
       ]) : null,
-      crear({ base: base, interp: interp, alt: foto.titulo || '',
-              leyenda: foto.leyenda, insinuar: insinuar }),
+      /* cristales señalados en la foto: marcas que abren la ficha del mineral (js/mineral.js) */
+      foto.minerales && typeof Mineral !== 'undefined'
+        ? Mineral.marcas(crear({ base: base, interp: interp, alt: foto.titulo || '',
+                                 leyenda: foto.leyenda, insinuar: insinuar }), foto.minerales)
+        : crear({ base: base, interp: interp, alt: foto.titulo || '',
+                  leyenda: foto.leyenda, insinuar: insinuar }),
       foto.leyenda ? U.el('p', { clase: 'leyenda-foto', texto: foto.leyenda }) : null
     ]);
   }

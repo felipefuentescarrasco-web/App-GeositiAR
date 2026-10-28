@@ -9,8 +9,9 @@ import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 let chromium;
-try { ({ chromium } = require('playwright')); }
-catch { ({ chromium } = require('/opt/node22/lib/node_modules/playwright')); }
+for (const m of [process.env.PLAYWRIGHT, 'playwright', 'playwright-core', '/opt/node22/lib/node_modules/playwright'].filter(Boolean)) {
+  try { ({ chromium } = require(m)); break; } catch { /* siguiente */ }
+}
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const args = process.argv.slice(2);
 const iProbar = args.indexOf('--probar');
@@ -31,7 +32,7 @@ const servidor = http.createServer((req, res) => {
   fs.createReadStream(f).pipe(res);
 });
 await new Promise(ok => servidor.listen(8794, ok));
-const nav = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+const nav = await chromium.launch({ executablePath: process.env.CHROMIUM || undefined, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const pag = await nav.newPage();
 pag.on('pageerror', e => console.log('err', e.message));
 await pag.goto('http://localhost:8794/vacio');
@@ -51,7 +52,7 @@ if (!args.includes('--solo-probar')) {
 }
 
 if (CUADROS) {
-  const lista = fs.readdirSync(CUADROS).filter(f => /\.jpe?g$/i.test(f)).sort().filter((_, i) => i % 3 === 0);
+  const lista = fs.readdirSync(CUADROS).filter(f => /\.jpe?g$/i.test(f)).sort().filter((_, i) => i % (Number(process.env.CADA) || 3) === 0);   // CADA=1: todas (fotos sueltas)
   const r = await pag.evaluate(async ({ lista, n }) => {
     window.requestAnimationFrame = cb => setTimeout(() => cb(performance.now()), 16);
     const { Controller } = await import('/js/vendor/mindar/mindar-image.prod.js');

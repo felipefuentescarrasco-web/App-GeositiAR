@@ -34,3 +34,6 @@ Modelo `assets/3d/maqueta.glb` hecho el 6-oct-2026 con los videos y fotos de la 
     sector en coordenadas del modelo). Prueba limpia (ortofoto con la mitad de los cuadros verticales, prueba
     con la otra mitad): 10 de 12 reconocidos. Con tomas oblicuas (25–50°) casi no reconoce: hay que mirar desde
     arriba. `ar-maqueta.html` pega las capas sobre una copia invisible de la malla anclada al sector que se ve.
+11. **Sector con foto real** (`ra_foto.py <foto>` + `node compilar_ra.mjs`): endereza una foto tomada desde
+    arriba al marco de la ortofoto y la agrega como sector (luz de otro día). 28-10-2026: `maqueta_15` con la foto
+    de las 11:16; las dos oblicuas de ese día no se reconocen ni se pueden usar.

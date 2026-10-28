@@ -8,33 +8,33 @@
    Las teselas del mapa se guardan aparte, a medida que se navega, para que el
    tramo ya recorrido siga viéndose sin señal. */
 
-const VERSION = 'v26';
+const VERSION = 'v27';
 const CACHE_ESQUELETO = 'geoparquemet-esqueleto-' + VERSION;
 const CACHE_CONTENIDO = 'geoparquemet-contenido';
 const CACHE_TESELAS = 'geoparquemet-teselas';
 /* Teselas del recorrido bajadas con "Descargar todo": no se recortan. */
 const CACHE_TESELAS_RUTA = 'geoparquemet-teselas-ruta';
 const MAX_TESELAS = 1500;
-const RENOVAR = ['/ar/g1.mind', '/ar/g1_hoja.mind'];
+const RENOVAR = ['/ar/g1.mind', '/ar/g1_hoja.mind', '/ar/maqueta.mind', '/ar/maqueta.json'];
 
 const ESQUELETO = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './css/app.css?v=26',
-  './js/datos.js?v=26',
-  './js/i18n-datos.js?v=26',
-  './js/i18n.js?v=26',
-  './js/util.js?v=26',
-  './js/cortina.js?v=26',
-  './js/visor3d.js?v=26',
-  './js/mineral.js?v=26',
-  './js/pano.js?v=26',
-  './js/mapa.js?v=26',
-  './js/corte.js?v=26',
-  './js/escaner.js?v=26',
-  './js/vistas.js?v=26',
-  './js/app.js?v=26',
+  './css/app.css?v=27',
+  './js/datos.js?v=27',
+  './js/i18n-datos.js?v=27',
+  './js/i18n.js?v=27',
+  './js/util.js?v=27',
+  './js/cortina.js?v=27',
+  './js/visor3d.js?v=27',
+  './js/mineral.js?v=27',
+  './js/pano.js?v=27',
+  './js/mapa.js?v=27',
+  './js/corte.js?v=27',
+  './js/escaner.js?v=27',
+  './js/vistas.js?v=27',
+  './js/app.js?v=27',
   './js/vendor/three.min.js',
   './js/vendor/GLTFLoader.js',
   './js/vendor/OrbitControls.js',

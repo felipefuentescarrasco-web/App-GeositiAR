@@ -133,12 +133,21 @@ const Vistas = (() => {
             [U.icono('mapa'), 'Ver el mapa de geositios'])
         ]),
         cercano,
+        U.el('figure', { clase: 'pano-portada' }, [
+          U.el('div', { clase: 'pano-franja' }, [
+            U.el('img', { src: 'assets/img/pano_cerro.webp', alt: 'Panorámica del cerro San Cristóbal desde el aire', loading: 'lazy',
+              /* parte centrada en el cerro, que está al medio de la panorámica */
+              onload: ev => { const f = ev.target.parentNode; f.scrollLeft = (f.scrollWidth - f.clientWidth) / 2; } })
+          ]),
+          U.el('figcaption', { texto: 'El cerro San Cristóbal desde el dron (27-10-2026). Desliza para recorrerlo.' })
+        ]),
         U.el('h2', { style: 'margin-top:22px', texto: 'Georutas' }),
         U.el('div', {}, RUTAS.map(tarjetaRuta)),
         bloqueProgreso(),
         U.el('h2', { style: 'margin-top:22px', texto: 'Antes de partir' }),
         U.el('a', { clase: 'tarjeta', href: '#/historia',
                     style: 'display:block;text-decoration:none;color:inherit' }, [
+          U.el('img', { clase: 'planeta', src: 'assets/img/planeta.webp', alt: '', loading: 'lazy' }),
           U.el('div', { clase: 'tarjeta-cuerpo' }, [
             U.el('h3', { texto: 'La historia geológica en cinco actos' }),
             U.el('p', { clase: 'pequeno tenue', style: 'margin:0',

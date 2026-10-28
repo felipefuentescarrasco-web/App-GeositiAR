@@ -115,6 +115,8 @@ const I18N = (() => {
     'Confirma con «Instalar». El ícono de GeoParquemet queda junto a tus apps.': ['Confirm with “Install”. The GeoParquemet icon appears with your apps.', 'Confirme com “Instalar”. O ícone do GeoParquemet fica junto aos seus apps.'],
     'Llegaste a': ['You reached', 'Você chegou a'],
     'Abrir': ['Open', 'Abrir'],
+    'El cerro San Cristóbal desde el dron (27-10-2026). Desliza para recorrerlo.': ['San Cristóbal hill from the drone (27-10-2026). Swipe to explore it.', 'O morro San Cristóbal visto do drone (27-10-2026). Deslize para percorrê-lo.'],
+    'Panorámica del cerro San Cristóbal desde el aire': ['Aerial panorama of San Cristóbal hill', 'Panorâmica aérea do morro San Cristóbal'],
     'Vibrar al llegar a un geositio': ['Vibrate when reaching a geosite', 'Vibrar ao chegar a um geossítio'],
     'Cómo llegar': ['Directions', 'Como chegar'],
     'ya llegaste': ['you are here', 'você chegou'],

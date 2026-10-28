@@ -138,17 +138,17 @@ const App = (() => {
 
   /* ------------------------------------------------- descarga sin conexión */
 
-  /* Las rutas propias llevan ?v=22, igual que en index.html, para que la copia
+  /* Las rutas propias llevan ?v=23, igual que en index.html, para que la copia
      guardada corresponda exactamente a la que pide la página. */
   const ARCHIVOS_BASE = [
-    'index.html', 'manifest.webmanifest', 'css/app.css?v=22',
-    'js/datos.js?v=22', 'js/i18n-datos.js?v=22', 'js/i18n.js?v=22', 'js/util.js?v=22', 'js/cortina.js?v=22', 'js/visor3d.js?v=22',
-    'js/pano.js?v=22', 'js/mapa.js?v=22', 'js/corte.js?v=22', 'js/escaner.js?v=22',
-    'js/vistas.js?v=22', 'js/app.js?v=22',
+    'index.html', 'manifest.webmanifest', 'css/app.css?v=23',
+    'js/datos.js?v=23', 'js/i18n-datos.js?v=23', 'js/i18n.js?v=23', 'js/util.js?v=23', 'js/cortina.js?v=23', 'js/visor3d.js?v=23',
+    'js/pano.js?v=23', 'js/mapa.js?v=23', 'js/corte.js?v=23', 'js/escaner.js?v=23',
+    'js/vistas.js?v=23', 'js/app.js?v=23',
     'js/vendor/three.min.js', 'js/vendor/GLTFLoader.js', 'js/vendor/OrbitControls.js',
     'js/vendor/jsqr.js',
     'assets/icons/icono-192.png', 'assets/icons/icono-512.png',
-    'assets/img/portada.webp', 'assets/img/sernageomin.webp', 'assets/img/parquemet.webp',
+    'assets/img/portada.webp', 'assets/img/pano_cerro.webp', 'assets/img/planeta.webp', 'assets/img/sernageomin.webp', 'assets/img/parquemet.webp',
     'ar.html', 'ar-maqueta.html', 'ar/maqueta.mind', 'ar/maqueta.json', 'js/vendor/mindar/mindar-image-three.prod.js',
     'js/vendor/mindar/controller-mGt1s8dJ.js', 'js/vendor/mindar/ui-fBadYuor.js',
     'js/vendor/three-mod/three.module.min.js',

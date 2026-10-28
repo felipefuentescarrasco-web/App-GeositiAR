@@ -539,3 +539,11 @@ input[type="range"] { accent-color: var(--lava); height: 30px; }
                     border-color: var(--lava); }
 .aviso-accion { color: #fff; background: var(--lava); border-radius: 999px; padding: 4px 12px;
                 text-decoration: none; font-weight: 700; white-space: nowrap; }
+
+/* panorámicas del dron (Drive "Fusionadas", 27-10-2026) */
+.pano-portada { margin: 18px 0 0; }
+.pano-franja { overflow-x: auto; border-radius: var(--r-md); scrollbar-width: none; }
+.pano-franja::-webkit-scrollbar { display: none; }
+.pano-franja img { display: block; height: 190px; width: auto; max-width: none; }
+.pano-portada figcaption { font-size: .8rem; color: var(--papel-tenue); margin-top: 6px; }
+.tarjeta .planeta { float: right; width: 84px; height: 84px; border-radius: 50%; margin: 12px 12px 6px 6px; object-fit: cover; }

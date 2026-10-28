@@ -138,13 +138,13 @@ const App = (() => {
 
   /* ------------------------------------------------- descarga sin conexión */
 
-  /* Las rutas propias llevan ?v=27, igual que en index.html, para que la copia
+  /* Las rutas propias llevan ?v=28, igual que en index.html, para que la copia
      guardada corresponda exactamente a la que pide la página. */
   const ARCHIVOS_BASE = [
-    'index.html', 'manifest.webmanifest', 'css/app.css?v=27',
-    'js/datos.js?v=27', 'js/i18n-datos.js?v=27', 'js/i18n.js?v=27', 'js/util.js?v=27', 'js/cortina.js?v=27', 'js/visor3d.js?v=27', 'js/mineral.js?v=27',
-    'js/pano.js?v=27', 'js/mapa.js?v=27', 'js/corte.js?v=27', 'js/escaner.js?v=27',
-    'js/vistas.js?v=27', 'js/app.js?v=27',
+    'index.html', 'manifest.webmanifest', 'css/app.css?v=28',
+    'js/datos.js?v=28', 'js/i18n-datos.js?v=28', 'js/i18n.js?v=28', 'js/util.js?v=28', 'js/cortina.js?v=28', 'js/visor3d.js?v=28', 'js/mineral.js?v=28',
+    'js/pano.js?v=28', 'js/mapa.js?v=28', 'js/corte.js?v=28', 'js/escaner.js?v=28',
+    'js/vistas.js?v=28', 'js/app.js?v=28',
     'js/vendor/three.min.js', 'js/vendor/GLTFLoader.js', 'js/vendor/OrbitControls.js',
     'js/vendor/jsqr.js',
     'assets/icons/icono-192.png', 'assets/icons/icono-512.png',

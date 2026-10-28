@@ -33,13 +33,13 @@ def main(foto, nombre=None):
     img, _, (xmin, zmin, esc) = glb.cenital(pos, uv, idx, tex, ANCHO)
     orto = cv2.imread(str(Path(__file__).parent / '_ortofoto.jpg'))
     H0, W0 = orto.shape[:2]
-    cl = cv2.createCLAHE(3, (8, 8)); s = cv2.SIFT_create(20000)
+    cl = cv2.createCLAHE(6, (8, 8)); s = cv2.SIFT_create(20000)   # CLAHE fuerte: el sol cambia mucho el brillo del aluminio
     ko, do = s.detectAndCompute(cl.apply(cv2.cvtColor(orto, cv2.COLOR_BGR2GRAY)), None)
     f = cv2.cvtColor(np.array(ImageOps.exif_transpose(Image.open(foto)).convert('RGB')), cv2.COLOR_RGB2BGR)
-    k = 1600 / max(f.shape[:2]); fp = cv2.resize(f, None, fx=k, fy=k)
+    k = 1000 / max(f.shape[:2]); fp = cv2.resize(f, None, fx=k, fy=k, interpolation=cv2.INTER_AREA)   # escala parecida a la ortofoto (1600 y 2400 calzan peor)
     kf, df = s.detectAndCompute(cl.apply(cv2.cvtColor(fp, cv2.COLOR_BGR2GRAY)), None)
-    m = [a for a, b in cv2.BFMatcher().knnMatch(df, do, k=2) if a.distance < 0.8 * b.distance]
-    H, mk = cv2.findHomography(np.float32([kf[a.queryIdx].pt for a in m]), np.float32([ko[a.trainIdx].pt for a in m]), cv2.RANSAC, 10)
+    m = [a for a, b in cv2.BFMatcher().knnMatch(df, do, k=2) if a.distance < 0.88 * b.distance]
+    H, mk = cv2.findHomography(np.float32([kf[a.queryIdx].pt for a in m]), np.float32([ko[a.trainIdx].pt for a in m]), cv2.RANSAC, 12)
     n = int(mk.sum()) if mk is not None else 0
     if n < 60: sys.exit(f'{foto}: solo {n} puntos en común con la ortofoto; no sirve')
     H = H @ np.diag([k, k, 1])   # desde la foto a resolución completa

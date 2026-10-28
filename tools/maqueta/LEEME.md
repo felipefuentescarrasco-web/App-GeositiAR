@@ -36,4 +36,4 @@ Modelo `assets/3d/maqueta.glb` hecho el 6-oct-2026 con los videos y fotos de la 
     arriba. `ar-maqueta.html` pega las capas sobre una copia invisible de la malla anclada al sector que se ve.
 11. **Sector con foto real** (`ra_foto.py <foto>` + `node compilar_ra.mjs`): endereza una foto tomada desde
     arriba al marco de la ortofoto y la agrega como sector (luz de otro día). 28-10-2026: `maqueta_15` con la foto
-    de las 11:16; las dos oblicuas de ese día no se reconocen ni se pueden usar.
+    de las 11:16 y `maqueta_16` con la de las 11:25 (poniente, con reflejo de sol): 3 de 4 fotos del día reconocidas.

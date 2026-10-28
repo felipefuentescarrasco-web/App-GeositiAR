@@ -44,6 +44,15 @@
   .fila button.sec, .btn.sec { background: rgba(255,255,255,.18); color: #fff; }
   .fila button[aria-pressed="false"] { background: rgba(255,255,255,.18); color: #fff; }
   .fila button[aria-pressed="true"].fijar { background: #ffc766; color: #111; }
+  /* botón grande para fijar la imagen (27-10-2026): queda a mano del pulgar mientras se ve la capa */
+  #pin { position: fixed; right: 12px; top: 42%; z-index: 9; width: 72px; height: 72px; border-radius: 50%;
+         border: 3px solid #fff; background: rgba(193,98,47,.92); color: #fff; font: inherit; font-weight: 700;
+         display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0;
+         box-shadow: 0 4px 16px rgba(0,0,0,.5); }
+  #pin[hidden] { display: none; }
+  #pin span { font-size: 1.6rem; line-height: 1; }
+  #pin small { font-size: .62rem; line-height: 1.1; }
+  #pin[aria-pressed="true"] { background: #ffc766; color: #111; border-color: #111; }
   .estab { display: inline-flex; background: rgba(255,255,255,.12); border-radius: 999px; padding: 2px; }
   .estab button { background: none; padding: 5px 10px; }
   .estab button[aria-pressed="true"] { background: var(--lava); }
@@ -83,6 +92,7 @@
 <div id="marco"><div id="escena"></div></div>
 <div id="carteles" hidden><svg><defs><marker id="flecha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z" fill="#fff"/></marker></defs></svg></div>
 <div id="gestos" hidden></div>
+<button id="pin" hidden aria-pressed="false"><span>📌</span><small></small></button>
 <div class="barra">
   <button id="volver" aria-label="←">←</button><b id="titulo"></b>
   <div class="modo" role="group"><a id="modo-roca" href="#"></a><a id="modo-hoja" href="#"></a></div>
@@ -137,7 +147,7 @@ const TXT_RA = {
     no_hay: 'Este geositio todavía no tiene realidad aumentada.', sin_camara: 'No se pudo abrir la cámara de este dispositivo.',
     permiso: 'Permite el acceso a la cámara para usar la realidad aumentada.',
     carteles: '🏷️ Carteles', toca: 'Toca un ícono para saber más.', curiosos: '🤓 Para curiosos', cerrar: 'Cerrar', escuchar: '🔊 Escuchar', pausa: '⏸ Pausa',
-    modo_roca: 'Roca', modo_hoja: 'Hoja', fijar: '📌 Fijar imagen', soltar: '▶ Seguir cámara',
+    modo_roca: 'Roca', modo_hoja: 'Hoja', fijar: '📌 Fijar imagen', soltar: '▶ Seguir cámara', pin_fijar: 'Fijar', pin_soltar: 'Soltar',
     estab: 'Estabilidad', agil: 'Ágil', media: 'Media', firme: 'Firme',
     calibrar: '🎯 Calibrar', guardar: '✓ Guardar', cancelar: 'Cancelar', reiniciar: 'Borrar calibración', copiar: 'Copiar valores',
     calib_ayuda: 'Imagen fijada. Arrastra la capa con un dedo; pellizca o gira con dos para que calce con la roca. Después, Guardar.',
@@ -159,7 +169,7 @@ const TXT_RA = {
     no_hay: 'This geosite does not have augmented reality yet.', sin_camara: 'The camera on this device could not be opened.',
     permiso: 'Allow camera access to use augmented reality.',
     carteles: '🏷️ Labels', toca: 'Tap an icon to learn more.', curiosos: '🤓 For the curious', cerrar: 'Close', escuchar: '🔊 Listen', pausa: '⏸ Pause',
-    modo_roca: 'Rock', modo_hoja: 'Sheet', fijar: '📌 Freeze image', soltar: '▶ Follow camera',
+    modo_roca: 'Rock', modo_hoja: 'Sheet', fijar: '📌 Freeze image', soltar: '▶ Follow camera', pin_fijar: 'Freeze', pin_soltar: 'Release',
     estab: 'Stability', agil: 'Quick', media: 'Medium', firme: 'Steady',
     calibrar: '🎯 Calibrate', guardar: '✓ Save', cancelar: 'Cancel', reiniciar: 'Clear calibration', copiar: 'Copy values',
     calib_ayuda: 'Image frozen. Drag the layer with one finger; pinch or twist with two until it matches the rock. Then Save.',
@@ -181,7 +191,7 @@ const TXT_RA = {
     no_hay: 'Este geossítio ainda não tem realidade aumentada.', sin_camara: 'Não foi possível abrir a câmera deste aparelho.',
     permiso: 'Permita o acesso à câmera para usar a realidade aumentada.',
     carteles: '🏷️ Placas', toca: 'Toque em um ícone para saber mais.', curiosos: '🤓 Para curiosos', cerrar: 'Fechar', escuchar: '🔊 Ouvir', pausa: '⏸ Pausar',
-    modo_roca: 'Rocha', modo_hoja: 'Folha', fijar: '📌 Congelar imagem', soltar: '▶ Seguir câmera',
+    modo_roca: 'Rocha', modo_hoja: 'Folha', fijar: '📌 Congelar imagem', soltar: '▶ Seguir câmera', pin_fijar: 'Fixar', pin_soltar: 'Soltar',
     estab: 'Estabilidade', agil: 'Ágil', media: 'Média', firme: 'Firme',
     calibrar: '🎯 Calibrar', guardar: '✓ Salvar', cancelar: 'Cancelar', reiniciar: 'Apagar calibração', copiar: 'Copiar valores',
     calib_ayuda: 'Imagem congelada. Arraste a camada com um dedo; faça pinça ou gire com dois até coincidir com a rocha. Depois, Salvar.',
@@ -349,9 +359,11 @@ function cambiarFuente(f) {
     if (GIMBAL) ponerG(zoomBase());
     $('#buscando').hidden = false; $('#viendo').hidden = true; $('#ficha').hidden = true;
     abierto = null; voz.pause(); capaCarteles.hidden = true;
+    $('#pin').hidden = !congelado;
     return;
   }
   $('#buscando').hidden = true; $('#viendo').hidden = !!abierto || calibrando;
+  $('#pin').hidden = calibrando;
   const ok = $('#txt-encontrado');
   ok.textContent = t(f.tipo === 'hoja' ? 'encontrado_hoja' : f.tipo === 'sincalib' ? 'falta_calib' : HOJA ? 'encontrado_roca_hoja' : 'encontrado');
   ok.className = f.tipo === 'sincalib' ? 'aviso-calib' : 'ok';
@@ -606,11 +618,17 @@ function fijar(si) {
   congelado = si;
   btnFijar.setAttribute('aria-pressed', String(si));
   btnFijar.textContent = t(si ? 'soltar' : 'fijar');
+  pin.setAttribute('aria-pressed', String(si));
+  pin.querySelector('span').textContent = si ? '▶' : '📌';
+  pin.querySelector('small').textContent = t(si ? 'pin_soltar' : 'pin_fijar');
   const v = mind.video;
   if (v) { if (si) v.pause(); else v.play().catch(() => { }); }
   if (!si) { reiniciarSuavizado = true; claveFuente = null; }   // se vuelve a elegir qué seguir
 }
 btnFijar.onclick = () => fijar(!congelado);
+const pin = $('#pin');
+pin.querySelector('small').textContent = t('pin_fijar');
+pin.onclick = () => fijar(!congelado);
 
 // ---------- carteles de divulgación ----------
 // ar/carteles.json trae los textos; cada par de objetivos.json trae dónde apunta cada cartel en su foto (x, y de 0 a 1).

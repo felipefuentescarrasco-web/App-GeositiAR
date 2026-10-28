@@ -35,6 +35,26 @@ Pedido de Felipe del 27-10-2026. Qué quedó hecho y publicado, y qué sigue.
 - [x] Panorámicas de Drive ("Fusionadas") guardadas en
       `Parquemet/Fotos Geotour 2026/Panoramicas Drive (Fusionadas)`.
 
+## Modelos 3D y RA en terreno (pedido del 28-10, en curso)
+
+El objetivo de todo esto es la **realidad aumentada en terreno**: cada modelo sirve para proyectar
+la interpretación sobre los cuadros de los videos y armar objetivos de MindAR, como se hizo con el G1.
+
+Fotogrametría en WSL (Ubuntu 26.04): COLMAP 3.12 de apt (sin CUDA) + OpenMVS v2.3.0 compilado en
+`/opt/src/openMVS` (parche: quitar `system` de los componentes de Boost en CMakeLists.txt:193).
+Scripts en el scratchpad de la sesión: `sparse.sh` (cámaras) y `denso.sh` (denso + malla).
+Cuadros: `Parquemet/3D/GST<N>_2026/img` (3 por segundo, el más nítido de cada ventana).
+
+| Orden | Geositio | Material (Celu, 27-10) | Qué marcar | Estado |
+|---|---|---|---|---|
+| 1 | 3 (nuevo, el viejo quedó tapado) | videos 143929–144156 + fotos 144145–149 | horizontes de suelo O (raíces, materia orgánica), A, B hacia abajo | cámaras en curso |
+| 2 | 4 | video 150916 (181 cuadros listos); 144705–150916; más arriba: 151539 y foto 151620 | piroxenos: tocar uno abre la ficha del mineral | ficha del mineral hecha |
+| 3 | 6 | 152800–152915; columnas en el segundo 0:34 de 152915 | caras de las columnas (como la interpretación del G9) | pendiente |
+| 4 | 7 | 153428–153640 | fiammes (las lentejas naranjas) | pendiente |
+
+Las fotos de las 15:19 (151910, 151948, 151951) son una roca a la altura del G5, pero de la unidad del G6.
+No hay cortes transparentes en la carpeta del proyecto: preguntar a Felipe dónde están.
+
 ## Pendiente
 
 1. **Fotos de la mañana (Felipe va a terreno el 28-10).** Por cada geositio con RA (1, 2, 3, 6):

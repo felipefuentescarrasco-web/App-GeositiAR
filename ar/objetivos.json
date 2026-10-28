@@ -512,6 +512,33 @@
      ]
     },
     "origen": "20261027_140222.jpg (calce con g1_5, 50 inliers)"
+   },
+   {
+    "k": 19,
+    "obj": "ar/g1_19_obj.jpg",
+    "capa": "ar/g1_19_capa.webp",
+    "w": 750,
+    "h": 1000,
+    "cobertura": 0.12,
+    "carteles": {
+     "grietas": [
+      0.6811,
+      0.5066
+     ],
+     "cuna": [
+      0.5191,
+      0.7125
+     ],
+     "amarillo": [
+      0.5562,
+      0.2101
+     ],
+     "roca": [
+      0.7296,
+      0.6732
+     ]
+    },
+    "origen": "m105442.jpg (calce con g1_12, 413 inliers)"
    }
   ]
  },

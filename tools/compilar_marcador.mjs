@@ -2,7 +2,9 @@
 //   ar/marcador.mind  → solo la hoja impresa (ar/marcador.png);
 //   ar/g<N>_hoja.mind → las fotos de la roca de cada geositio (ar/objetivos.json) y, al final, la hoja.
 //                       El modo hoja de ar.html las sigue juntas para calibrarse solo.
-// Uso: node tools/compilar_marcador.mjs [N ...]   (necesita playwright; en la nube ya viene instalado)
+//   con --rocas, ar/g<N>.mind → solo las fotos de la roca (lo que usa el modo "sobre la roca").
+// Uso: node tools/compilar_marcador.mjs [--rocas] [N ...]   (necesita playwright; en la nube ya viene instalado;
+//      en Windows: PLAYWRIGHT=<ruta a playwright-core> CHROMIUM="C:/Program Files/Google/Chrome/Application/chrome.exe")
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -11,8 +13,9 @@ import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 let chromium;
-try { ({ chromium } = require('playwright')); }
-catch { ({ chromium } = require('/opt/node22/lib/node_modules/playwright')); }
+for (const m of [process.env.PLAYWRIGHT, 'playwright', 'playwright-core', '/opt/node22/lib/node_modules/playwright'].filter(Boolean)) {
+  try { ({ chromium } = require(m)); break; } catch { /* siguiente */ }
+}
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const TIPOS = { '.js': 'text/javascript', '.png': 'image/png', '.html': 'text/html', '.jpg': 'image/jpeg' };
@@ -40,12 +43,14 @@ const pag = await nav.newPage();
 pag.on('pageerror', e => console.log('err', e.message));
 await pag.goto('http://localhost:8791/vacio');
 const objetivos = JSON.parse(fs.readFileSync(path.join(RAIZ, 'ar/objetivos.json'), 'utf8'));
-const pedidos = process.argv.slice(2);
+const ROCAS = process.argv.includes('--rocas');
+const pedidos = process.argv.slice(2).filter(a => a !== '--rocas');
 const trabajos = [];
-if (!pedidos.length) trabajos.push({ archivo: 'ar/marcador.mind', imagenes: ['ar/marcador.png'] });
+if (!pedidos.length && !ROCAS) trabajos.push({ archivo: 'ar/marcador.mind', imagenes: ['ar/marcador.png'] });
 for (const [n, o] of Object.entries(objetivos)) {
   if (pedidos.length && !pedidos.includes(n)) continue;
-  trabajos.push({ archivo: `ar/g${n}_hoja.mind`, imagenes: [...o.pares.map(p => p.obj), 'ar/marcador.png'] });
+  if (ROCAS) trabajos.push({ archivo: `ar/g${n}.mind`, imagenes: o.pares.map(p => p.obj) });
+  else trabajos.push({ archivo: `ar/g${n}_hoja.mind`, imagenes: [...o.pares.map(p => p.obj), 'ar/marcador.png'] });
 }
 for (const tr of trabajos) {
   const t0 = Date.now();

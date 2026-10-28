@@ -8,31 +8,32 @@
    Las teselas del mapa se guardan aparte, a medida que se navega, para que el
    tramo ya recorrido siga viéndose sin señal. */
 
-const VERSION = 'v21';
+const VERSION = 'v22';
 const CACHE_ESQUELETO = 'geoparquemet-esqueleto-' + VERSION;
 const CACHE_CONTENIDO = 'geoparquemet-contenido';
 const CACHE_TESELAS = 'geoparquemet-teselas';
 /* Teselas del recorrido bajadas con "Descargar todo": no se recortan. */
 const CACHE_TESELAS_RUTA = 'geoparquemet-teselas-ruta';
 const MAX_TESELAS = 1500;
+const RENOVAR = ['/ar/g1.mind', '/ar/g1_hoja.mind'];
 
 const ESQUELETO = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './css/app.css?v=21',
-  './js/datos.js?v=21',
-  './js/i18n-datos.js?v=21',
-  './js/i18n.js?v=21',
-  './js/util.js?v=21',
-  './js/cortina.js?v=21',
-  './js/visor3d.js?v=21',
-  './js/pano.js?v=21',
-  './js/mapa.js?v=21',
-  './js/corte.js?v=21',
-  './js/escaner.js?v=21',
-  './js/vistas.js?v=21',
-  './js/app.js?v=21',
+  './css/app.css?v=22',
+  './js/datos.js?v=22',
+  './js/i18n-datos.js?v=22',
+  './js/i18n.js?v=22',
+  './js/util.js?v=22',
+  './js/cortina.js?v=22',
+  './js/visor3d.js?v=22',
+  './js/pano.js?v=22',
+  './js/mapa.js?v=22',
+  './js/corte.js?v=22',
+  './js/escaner.js?v=22',
+  './js/vistas.js?v=22',
+  './js/app.js?v=22',
   './js/vendor/three.min.js',
   './js/vendor/GLTFLoader.js',
   './js/vendor/OrbitControls.js',
@@ -69,6 +70,11 @@ self.addEventListener('activate', ev => {
           k === CACHE_TESELAS_RUTA;
         return conservar ? null : caches.delete(k);
       })))
+      /* Contenido que cambió en esta versión: se borra de la caché de contenido para que se baje de nuevo
+         (27-10-2026: objetivos de RA del Geositio 1 rehechos con las fotos de terreno). */
+      .then(() => caches.open(CACHE_CONTENIDO))
+      .then(c => Promise.all(RENOVAR.map(u => c.keys().then(ks =>
+        Promise.all(ks.filter(r => new URL(r.url).pathname.endsWith(u)).map(r => c.delete(r)))))))
       .then(() => self.clients.claim())
   );
 });

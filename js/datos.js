@@ -464,13 +464,13 @@ const MINERALES = {
         '(cristal monoclínico). En el corte transversal se ven sus dos clivajes, que se cruzan casi en ' +
         'ángulo recto (87° y 93°): la forma más simple de distinguirlo del anfíbol, cuyos clivajes forman 56° y 124°.' },
     lupa: [
-      { base: 'GST4_5.jpg', interp: 'GST4_5_interpretada.jpg', titulo: 'Cristal alargado con lupa',
+      { base: 'GST4_5.jpg', interp: 'GST4_5_interpretada.jpg', zoom: true, titulo: 'Cristal alargado con lupa',
         leyenda: 'Contorno del cristal en verde; en amarillo, alteración. Escala de 4 mm.' },
-      { base: 'GST4_6.jpg', interp: 'GST4_6_interpretada.jpg', titulo: 'Sección basal',
+      { base: 'GST4_6.jpg', interp: 'GST4_6_interpretada.jpg', zoom: true, titulo: 'Sección basal',
         leyenda: 'Cristal cortado de través: se insinúa la sección de ocho caras. Escala de 8 mm.' },
-      { base: 'GST4_7.jpg', interp: 'GST4_7_interpretada.jpg', titulo: 'Cristales entrecruzados',
+      { base: 'GST4_7.jpg', interp: 'GST4_7_interpretada.jpg', zoom: true, titulo: 'Cristales entrecruzados',
         leyenda: 'Prismas que crecieron juntos en el magma. Escala de 10 mm.' },
-      { base: 'GST4_8.jpg', interp: 'GST4_8_interpretada.jpg', titulo: 'Maclas en cruz',
+      { base: 'GST4_8.jpg', interp: 'GST4_8_interpretada.jpg', zoom: true, titulo: 'Maclas en cruz',
         leyenda: 'Dos prismas cruzados en la masa de plagioclasa. Escala de 4 mm.' },
       { base: 'GST4_9.jpg', interp: 'GST4_9_interpretada.jpg', titulo: 'Detalle de las caras',
         leyenda: 'Con aumento se ven las caras y los bordes rectos del cristal. Escala de 4 mm.' }

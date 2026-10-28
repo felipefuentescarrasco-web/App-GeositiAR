@@ -53,7 +53,7 @@ Cuadros: `Parquemet/3D/GST<N>_2026/img` (3 por segundo, el más nítido de cada 
 | 4 | 7 | 153428–153640 | fiammes (las lentejas naranjas) | pendiente |
 
 Las fotos de las 15:19 (151910, 151948, 151951) son una roca a la altura del G5, pero de la unidad del G6.
-No hay cortes transparentes en la carpeta del proyecto: preguntar a Felipe dónde están.
+Las fotos de lupa del piroxeno (GST4_5 a GST4_8) tienen versión de zoom de 3200 px sacada de los originales de `2D/` (`*_escala.jpg`). No hay cortes transparentes.
 
 ## Pendiente
 

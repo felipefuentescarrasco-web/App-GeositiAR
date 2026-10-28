@@ -128,9 +128,12 @@ const Mineral = (() => {
   function lupa(foto) {
     const img = U.el('img', { src: 'assets/fotos/' + foto.base, alt: foto.titulo || '', draggable: 'false' });
     const marco = U.el('div', { clase: 'lupa-marco' }, [img]);
-    let esc = 1, tx = 0, ty = 0;
+    let esc = 1, tx = 0, ty = 0, conInterp = false, alta = false;
+    /* al acercarse se cambia a la versión de 3200 px (assets/fotos/zoom/, sacada de los originales de 2D/) */
+    const fuente = () => 'assets/fotos/' + (alta ? 'zoom/' : '') + (conInterp ? foto.interp : foto.base);
     const pintar = () => {
       esc = Math.min(8, Math.max(1, esc));
+      if (foto.zoom && !alta && esc > 1.6) { alta = true; img.src = fuente(); }
       const r = marco.getBoundingClientRect(), mx = r.width * (esc - 1) / 2, my = r.height * (esc - 1) / 2;
       tx = Math.min(mx, Math.max(-mx, tx)); ty = Math.min(my, Math.max(-my, ty));
       img.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + esc + ')';
@@ -155,7 +158,7 @@ const Mineral = (() => {
     btnInterp.onclick = () => {
       const on = btnInterp.getAttribute('aria-pressed') !== 'true';
       btnInterp.setAttribute('aria-pressed', String(on));
-      img.src = 'assets/fotos/' + (on ? foto.interp : foto.base);
+      conInterp = on; img.src = fuente();
     };
     return U.el('div', { clase: 'lupa' }, [
       marco,
